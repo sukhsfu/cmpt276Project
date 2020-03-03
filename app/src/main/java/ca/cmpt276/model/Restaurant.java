@@ -2,6 +2,10 @@ package ca.cmpt276.model;
 
 import java.util.List;
 
+/**
+ * Holds data of a single restaurant
+ */
+
 public class Restaurant {
     String name;
     String address;
