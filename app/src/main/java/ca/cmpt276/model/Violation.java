@@ -1,5 +1,7 @@
 package ca.cmpt276.model;
-
+/**
+ * Stores data of a single violation
+ */
 public class Violation {
     String nature;
     String severity;
