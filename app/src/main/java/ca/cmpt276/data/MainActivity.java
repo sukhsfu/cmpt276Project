@@ -2,9 +2,12 @@ package ca.cmpt276.data;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,11 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
         readRestaurantData();
         readInspectionData();
+        setupRestaurantInList();
 //
 //        TextView textview = (TextView) findViewById(R.id.test);
 //        textview.setText("TrackingNumber" + inspectionSamples);
     }
-
 
     private void readInspectionData() {
         InputStream is = getResources().openRawResource(R.raw.inspectionreports_itr1);
@@ -111,4 +114,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    private void setupRestaurantInList() {
+        Button button = findViewById(R.id.tempGoToRestaurant);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = RestaurantActivity.makeLaunchIntent(MainActivity.this);
+                startActivity(intent);
+            }
+        });
+    }
+
 }
