@@ -3,20 +3,18 @@ package ca.cmpt276.model;
  * Stores data of a single violation
  */
 public class Violation {
-    String nature;
+    int type;
     String severity;
     String briefDescription;
     String detailedDescription;
+    boolean isRepeat;
 
-    public Violation(String nature, String severity, String briefDescription, String detailedDescription) {
-        this.nature = nature;
+    public Violation(int type, String severity, String detailedDescription, Boolean isRepeat) {
+        this.type = type;
         this.severity = severity;
-        this.briefDescription = briefDescription;
+        //this.briefDescription = briefDescription;
         this.detailedDescription = detailedDescription;
-    }
-
-    public String getNature() {
-        return nature;
+        this.isRepeat = isRepeat;
     }
 
     public String getSeverity() {

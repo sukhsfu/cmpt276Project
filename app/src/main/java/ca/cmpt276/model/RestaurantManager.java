@@ -25,6 +25,10 @@ public class RestaurantManager implements Iterable<Restaurant> {
         return restaurants.get(index);
     }
 
+    public void addRestaurant(Restaurant restaurant) {
+        restaurants.add(restaurant);
+    }
+
     @Override
     public Iterator<Restaurant> iterator(){
         return restaurants.iterator();

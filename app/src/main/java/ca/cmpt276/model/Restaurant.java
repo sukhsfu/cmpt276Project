@@ -7,19 +7,23 @@ import java.util.List;
  */
 
 public class Restaurant {
-    String name;
-    String address;
-    String city;
-    double latitude;
-    double longitude;
-    List<Inspection> inspections;
+    private String name;
+    private String address;
+    private String city;
+    private double latitude;
+    private double longitude;
+    private List<Inspection> inspections;
 
-    public Restaurant(String name, String address, String city, double latitude, double longitude,  List<Inspection> inspections) {
+    public Restaurant(String name, String address, String city, double latitude, double longitude) {
         this.name = name;
         this.address = address;
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
+        //this.inspections = inspections;
+    }
+
+    public void addInspections (List<Inspection> inspections) {
         this.inspections = inspections;
     }
 
