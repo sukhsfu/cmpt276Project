@@ -13,7 +13,7 @@ class RestaurantSample {
         return TrackingNumber;
     }
 
-    public void setTrcackingNumber(String trcackingNumber) {
+    public void setTrackingNumber(String trcackingNumber) {
         TrackingNumber = trcackingNumber;
     }
 

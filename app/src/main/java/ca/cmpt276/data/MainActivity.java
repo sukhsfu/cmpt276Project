@@ -10,10 +10,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,6 +18,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
+import ca.cmpt276.model.Inspection;
 
 public class MainActivity extends AppCompatActivity implements jadapter.OnNoteListener {
     private List<String> restaurant = new ArrayList<>();
@@ -98,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
                 String[] tokens = line.split(",");
                 RestaurantSample sample = new RestaurantSample();
-                sample.setTrcackingNumber(tokens[0]);
+                sample.setTrackingNumber(tokens[0]);
                 sample.setName(tokens[1]);
                 sample.setAddress(tokens[2]);
                 sample.setPhysicalcity(tokens[3]);
@@ -145,5 +143,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         startActivity(intent);
 
     }
+
+//    public static List<Inspection> getInspectionsList(int position) {
+//        return restaurant[position].inspections;
+//    }
 }
 
