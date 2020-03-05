@@ -9,8 +9,9 @@ import android.os.Bundle;
 
 public class RestaurantActivity extends AppCompatActivity {
 
-    public static Intent makeLaunchIntent(Context context) {
+    public static Intent makeLaunchIntent(Context context,int position) {
         Intent intent = new Intent(context, RestaurantActivity.class);
+        intent.putExtra("position",position);
         return intent;
     }
 

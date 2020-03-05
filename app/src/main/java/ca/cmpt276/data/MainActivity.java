@@ -1,6 +1,10 @@
 package ca.cmpt276.data;
 
+
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,7 +23,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements jadapter.OnNoteListener {
+    private List<String> restaurant = new ArrayList<>();
     private List<InspectionSample> inspectionSamples = new ArrayList<>();
     private List<RestaurantSample> restaurantSamples = new ArrayList<>();
 
@@ -112,17 +117,33 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+
+        for(int i=0;i<restaurantSamples.size();i++){
+            restaurant.add(restaurantSamples.get(i).toString());
+
+        }
     }
 
     private void setupRestaurantInList() {
-        Button button = findViewById(R.id.tempGoToRestaurant);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = RestaurantActivity.makeLaunchIntent(MainActivity.this);
-                startActivity(intent);
-            }
-        });
+
+        RecyclerView list=(RecyclerView) findViewById(R.id.mainrecyleview);
+        list.setHasFixedSize(true);
+        list.setItemViewCacheSize(20);
+        list.setDrawingCacheEnabled(true);
+        list.setNestedScrollingEnabled(false);
+        list.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        list.setLayoutManager(new LinearLayoutManager(this));
+        list.setAdapter(new jadapter(restaurant,  this));
+
+
     }
 
+    @Override
+    public void onNoteClick(int position) {
+
+        Intent intent=RestaurantActivity.makeLaunchIntent(MainActivity.this,position);
+        startActivity(intent);
+
+    }
 }
+
