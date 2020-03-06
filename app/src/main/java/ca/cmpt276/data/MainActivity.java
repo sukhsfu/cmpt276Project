@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             while ((line = reader.readLine()) != null) {
                 Log.d("MyActivityIns", "Line:" + line);
 
-                String[] tokens = line.split(",");
+                String[] tokens = line.split(",",7);
 
                 String trackingNum = tokens[0];
                 String date = tokens[1];
@@ -115,9 +115,18 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                         // there is only one violation
                         String[] indivViol = tokens[6].split(",");
                         // PROBLEM HERE ^,  03/05 ~2:00
-                        int violType = Integer.parseInt(indivViol[1]);
-                        String severity = indivViol[2];
-                        String detailedDescrip = indivViol[3];
+
+                        //Log.d("MainActivity_Viol_b4", indivViol[0]);
+                        Log.d("MainActivity_Viol", "0: " + indivViol[0] + " , 1: " + indivViol[1] + " , 2: " + indivViol[2] + " , 3: " + indivViol[3]);
+
+                        String violNum = indivViol[0].replaceAll( "[^0-9]" , "" );
+                        //Log.d("MainActivity_Viol_af", indivViol[0]);
+                        int violType = Integer.parseInt(violNum);
+                        String severity = indivViol[1];
+                        Log.d("MainActivity_Viol_afSev", indivViol[1]);
+
+
+                        String detailedDescrip = indivViol[2];
                         boolean isRepeat;
                         if (indivViol.length >= 4) {
                             // not repeat
@@ -132,25 +141,34 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
                     }
 
-                    String[] violations = tokens[6].split("|");
-                    for (int i = 0; i < violations.length; i++ ) {
-                        String[] indivViol = violations[i].split(",");
+                    else {
+                        String[] violations = tokens[6].split("|");
+                        for (int i = 0; i < violations.length; i++) {
+                            Log.d("MainActivity_ELSE", violations[i]);
+                            String[] indivViol = violations[i].split(",");
 
-                        int violType = Integer.parseInt(indivViol[1]);
-                        String severity = indivViol[2];
-                        String detailedDescrip = indivViol[3];
-                        boolean isRepeat;
-                        if (indivViol.length >= 4) {
-                            // not repeat
-                            isRepeat = false;
+                            //Log.d("MainActivity_Viol_b4", indivViol[0]);
+                            Log.d("MainActivity_Viol", "0: " + indivViol[0] + " , 1: " + indivViol[1] + " , 2: " + indivViol[2] + " , 3: " + indivViol[3]);
+
+                            String violNum = indivViol[0].replaceAll("[^0-9]", "");
+                            //Log.d("MainActivity_Viol_af", indivViol[0]);
+                            int violType = Integer.parseInt(violNum);
+                            String severity = indivViol[1];
+                            Log.d("MainActivity_Viol_afSev", indivViol[1]);
+
+                            String detailedDescrip = indivViol[2];
+                            boolean isRepeat;
+                            if (indivViol.length >= 4) {
+                                // not repeat
+                                isRepeat = false;
+                            } else {
+                                isRepeat = true;
+                            }
+
+                            Violation violation = new Violation(violType, severity, detailedDescrip, isRepeat);
+                            sample.addViolation(violation);
+
                         }
-                        else {
-                            isRepeat = true;
-                        }
-
-                        Violation violation = new Violation(violType, severity, detailedDescrip, isRepeat);
-                        sample.addViolation(violation);
-
                     }
                     //sample.setViolLump(tokens[6]);
                 }

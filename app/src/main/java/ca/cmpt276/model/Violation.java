@@ -3,11 +3,11 @@ package ca.cmpt276.model;
  * Stores data of a single violation
  */
 public class Violation {
-    int type;
-    String severity;
-    String briefDescription;
-    String detailedDescription;
-    boolean isRepeat;
+    private int type;
+    private String severity;
+    private String briefDescription;
+    private String detailedDescription;
+    private boolean isRepeat;
 
     public Violation(int type, String severity, String detailedDescription, Boolean isRepeat) {
         this.type = type;
