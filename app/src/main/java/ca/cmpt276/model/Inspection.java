@@ -54,4 +54,17 @@ public class Inspection {
     public List<Violation> getViolations() {
         return violations;
     }
+
+    @Override
+    public String toString() {
+        return "Inspection{" +
+                "trackingNumber='" + trackingNumber + '\'' +
+                ", date='" + date + '\'' +
+                ", type='" + type + '\'' +
+                ", numCriticalIssues=" + numCriticalIssues +
+                ", numNonCriticalIssues=" + numNonCriticalIssues +
+                ", hazardLevel='" + hazardLevel + '\'' +
+                ", violations=" + violations +
+                '}';
+    }
 }

@@ -26,6 +26,7 @@ import ca.cmpt276.model.Violation;
 
 public class MainActivity extends AppCompatActivity implements jadapter.OnNoteListener {
     private List<String> restaurants = new ArrayList<>();
+    private List<Inspection> inspections = new ArrayList<>();
     private List<InspectionSample> inspectionSamples = new ArrayList<>();
     private List<RestaurantSample> restaurantSamples = new ArrayList<>();
 
@@ -39,10 +40,21 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
         readRestaurantData();
         readInspectionData();
+        debugData();
         setupRestaurantInList();
 //
 //        TextView textview = (TextView) findViewById(R.id.test);
 //        textview.setText("TrackingNumber" + inspectionSamples);
+    }
+
+    private void debugData() {
+        for (Restaurant restaurant : manager) {
+            Log.d("LogAllData", "Restaurant: " + restaurant.toString());
+        }
+        for (Inspection inspection : inspections) {
+            Log.d("LogAllData", "Inspection: " + inspection.toString());
+        }
+
     }
 
     private void readRestaurantData() {
@@ -68,9 +80,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 Restaurant sample = new Restaurant(name, address, city, latitude, longitude);
                 manager.addRestaurant(sample);
 
-                //restaurantSamples.add(sample);
-
-                Log.d("MyActivity", "Just created" + sample);
+                //Log.d("MyActivity", "Just created" + sample);
 
             }
         }catch (IOException e) {
@@ -78,12 +88,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             e.printStackTrace();
 
         }
-
-
-//        for(int i=0;i<restaurantSamples.size();i++){
-//            restaurants.add(restaurantSamples.get(i).toString());
-//
-//        }
     }
 
     private void readInspectionData() {
@@ -114,79 +118,47 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                     if (!tokens[6].contains("|")) {
                         // there is only one violation
                         String[] indivViol = tokens[6].split(",");
-                        // PROBLEM HERE ^,  03/05 ~2:00
 
-                        //Log.d("MainActivity_Viol_b4", indivViol[0]);
-                        Log.d("MainActivity_Viol", "0: " + indivViol[0] + " , 1: " + indivViol[1] + " , 2: " + indivViol[2] + " , 3: " + indivViol[3]);
-
-                        String violNum = indivViol[0].replaceAll( "[^0-9]" , "" );
-                        //Log.d("MainActivity_Viol_af", indivViol[0]);
-                        int violType = Integer.parseInt(violNum);
-                        String severity = indivViol[1];
-                        Log.d("MainActivity_Viol_afSev", indivViol[1]);
-
-
-                        String detailedDescrip = indivViol[2];
-                        boolean isRepeat;
-                        if (indivViol.length >= 4) {
-                            // not repeat
-                            isRepeat = false;
-                        }
-                        else {
-                            isRepeat = true;
-                        }
-
-                        Violation violation = new Violation(violType, severity, detailedDescrip, isRepeat);
+                        Violation violation = extractViolationFromCSV(indivViol);
                         sample.addViolation(violation);
-
                     }
 
                     else {
-                        String[] violations = tokens[6].split("|");
+                        String[] violations = tokens[6].split("[|]");
                         for (int i = 0; i < violations.length; i++) {
-                            Log.d("MainActivity_ELSE", violations[i]);
                             String[] indivViol = violations[i].split(",");
-
-                            //Log.d("MainActivity_Viol_b4", indivViol[0]);
-                            Log.d("MainActivity_Viol", "0: " + indivViol[0] + " , 1: " + indivViol[1] + " , 2: " + indivViol[2] + " , 3: " + indivViol[3]);
-
-                            String violNum = indivViol[0].replaceAll("[^0-9]", "");
-                            //Log.d("MainActivity_Viol_af", indivViol[0]);
-                            int violType = Integer.parseInt(violNum);
-                            String severity = indivViol[1];
-                            Log.d("MainActivity_Viol_afSev", indivViol[1]);
-
-                            String detailedDescrip = indivViol[2];
-                            boolean isRepeat;
-                            if (indivViol.length >= 4) {
-                                // not repeat
-                                isRepeat = false;
-                            } else {
-                                isRepeat = true;
-                            }
-
-                            Violation violation = new Violation(violType, severity, detailedDescrip, isRepeat);
+                            Violation violation = extractViolationFromCSV(indivViol);
                             sample.addViolation(violation);
-
                         }
                     }
-                    //sample.setViolLump(tokens[6]);
                 }
-                else{
-                    //sample.setViolLump("None");
-                }
+                // TODO: MISSING CODE TO CONNECT INSPECTIONS TO RESTAURANT
+                Log.d("MyActivityInspection", "Inspection: " + sample);
 
-                //inspections.add(sample);
-
-                Log.d("MyActivityIns", "Just created" + sample);
+                inspections.add(sample);
 
             }
         }catch (IOException e) {
             Log.wtf("MyActivityIns", "Error reading data file on line" + line, e);
             e.printStackTrace();
+        }
+    }
 
+    private Violation extractViolationFromCSV(String[] indivViol) {
+        String violNum = indivViol[0].replaceAll("[^0-9]", "");
+        int violType = Integer.parseInt(violNum);
+        String severity = indivViol[1];
+        String detailedDescrip = indivViol[2];
+        boolean isRepeat;
+
+        if (indivViol.length >= 4) {
+            // not repeat
+            isRepeat = false;
+        } else {
+            isRepeat = true;
         }
 
+        return new Violation(violType, severity, detailedDescrip, isRepeat);
     }
 
     private void setupRestaurantInList() {
