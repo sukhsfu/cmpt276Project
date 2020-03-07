@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ca.cmpt276.model.Inspection;
@@ -40,11 +41,25 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
         readRestaurantData();
         readInspectionData();
+        Log.d("MainActivity", "BEFORE ORGANIZE------------------------------------------");
+        debugData();
+        organizeData();
+        Log.d("MainActivity", "AFTER ORGANIZE-------------------------------------------");
         debugData();
         setupRestaurantInList();
 //
 //        TextView textview = (TextView) findViewById(R.id.test);
 //        textview.setText("TrackingNumber" + inspectionSamples);
+    }
+
+    private void organizeData() {
+        for (Restaurant restaurant : manager) {
+            for (Inspection inspection : inspections) {
+                if (inspection.getTrackingNumber().equalsIgnoreCase(restaurant.getTrackingNumber())) {
+                    restaurant.addInspection(inspection);
+                }
+            }
+        }
     }
 
     private void debugData() {
@@ -68,16 +83,17 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             reader.readLine();
 
             while ((line = reader.readLine()) != null) {
-                Log.d("MyActivity", "Line:" + line);
+                //Log.d("MyActivity", "Line:" + line);
 
                 String[] tokens = line.split(",");
+                String trackingNum = tokens[0];
                 String name = tokens[1];
                 String address = tokens[2];
                 String city = tokens[3];
                 double latitude = Double.parseDouble(tokens[5]);
                 double longitude = Double.parseDouble(tokens[6]);
 
-                Restaurant sample = new Restaurant(name, address, city, latitude, longitude);
+                Restaurant sample = new Restaurant(trackingNum, name, address, city, latitude, longitude);
                 manager.addRestaurant(sample);
 
                 //Log.d("MyActivity", "Just created" + sample);
@@ -101,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             reader.readLine();
 
             while ((line = reader.readLine()) != null) {
-                Log.d("MyActivityIns", "Line:" + line);
+                //Log.d("MyActivityIns", "Line:" + line);
 
                 String[] tokens = line.split(",",7);
 
@@ -133,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                     }
                 }
                 // TODO: MISSING CODE TO CONNECT INSPECTIONS TO RESTAURANT
-                Log.d("MyActivityInspection", "Inspection: " + sample);
+                ///Log.d("MyActivityInspection", "Inspection: " + sample);
 
                 inspections.add(sample);
 

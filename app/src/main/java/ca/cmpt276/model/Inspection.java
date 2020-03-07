@@ -31,6 +31,10 @@ public class Inspection {
         violations.add(violation);
     }
 
+    public String getTrackingNumber() {
+        return trackingNumber;
+    }
+
     public String getDate() {
         return date;
     }
@@ -67,4 +71,6 @@ public class Inspection {
                 ", violations=" + violations +
                 '}';
     }
+
+
 }
