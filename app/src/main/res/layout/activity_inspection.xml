@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text='"Restaurant"'
+        android:text="Date"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,9 +22,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
-        android:text="1234 Street City, Province"
+        android:text="Inspection Type: "
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inspectionDate" />
 
@@ -33,29 +32,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="GPS Coordinates"
+        android:text="Hazard Level: "
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inspectionType" />
+        tools:layout_editor_absoluteY="135dp" />
 
     <TextView
         android:id="@+id/violationsHeader"
         android:layout_width="198dp"
         android:layout_height="55dp"
-        android:layout_marginTop="24dp"
-        android:text="Inspections"
+        android:layout_marginTop="8dp"
+        android:text="Violations"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtHazardLevel" />
 
-    <ListView
-        android:id="@+id/inspectionsListView"
-        android:layout_width="412dp"
-        android:layout_height="490dp"
-        android:layout_marginTop="242dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

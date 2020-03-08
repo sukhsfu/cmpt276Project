@@ -31,16 +31,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/item_txtCriticalIssues"
-        android:layout_alignParentStart="true"
         android:layout_marginStart="6dp"
         android:layout_marginLeft="6dp"
         android:layout_marginTop="14dp"
+        android:layout_toEndOf="@+id/item_icon"
         android:layout_toRightOf="@+id/item_txtCriticalIssues"
         android:text="# of Non Critical Issues: "
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
-        android:id="@+id/numCritIssues"
+        android:id="@+id/item_numCritIssues"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/item_txtCriticalIssues"
@@ -51,7 +51,7 @@
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/item_numNonCritIssues"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/item_txtNonCriticalIssues"

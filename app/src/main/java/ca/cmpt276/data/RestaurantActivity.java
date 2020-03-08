@@ -9,8 +9,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -62,19 +66,36 @@ public class RestaurantActivity extends AppCompatActivity {
         double longitude = restaurant.getLongitude();
         String GPS = latitude + ", " + longitude;
 
-        TextView resName = findViewById(R.id.restaurantName);
+        TextView resName = findViewById(R.id.inspectionDate);
         resName.setText(name);
-        TextView resAddress = findViewById(R.id.restaurantAddress);
+        TextView resAddress = findViewById(R.id.inspectionType);
         resAddress.setText(fullAddress);
-        TextView resGPS = findViewById(R.id.restaurantGPS);
+        TextView resGPS = findViewById(R.id.txtHazardLevel);
         resGPS.setText(GPS);
     }
 
     private void populateInspectionsListView() {
-
         // Build adapter
         ArrayAdapter<Inspection> adapter = new myListAdapter();
+        ListView list = findViewById(R.id.inspectionsListView);
+        list.setAdapter(adapter);
     }
+
+    private void registerClickCallbackListView() {
+        ListView list = findViewById(R.id.inspectionsListView);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Inspection clickedInspection = inspections.get(position);
+
+                String message = "You clicked position " + position
+                        + " which is make " + clickedInspection.getTrackingNumber();
+                Toast.makeText(RestaurantActivity.this, message, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+
 
     private class myListAdapter extends ArrayAdapter<Inspection> {
         public myListAdapter() {
@@ -90,6 +111,24 @@ public class RestaurantActivity extends AppCompatActivity {
 
             Inspection currInspection = inspections.get(position);
 
+            // get hazard level to set icon
+            String hazardLevel = currInspection.getHazardLevel();
+            ImageView iconView = itemView.findViewById(R.id.item_icon);
+            if (hazardLevel.equalsIgnoreCase("low") ) {
+                iconView.setImageResource(R.drawable.smile);
+            }
+            else if (hazardLevel.equalsIgnoreCase("moderate") ) {
+                iconView.setImageResource(R.drawable.normal);
+            } else {
+                iconView.setImageResource(R.drawable.sad);
+            }
+
+            // set critical & non-critical issues
+            TextView critText = itemView.findViewById(R.id.item_numCritIssues);
+            critText.setText(currInspection.getNumCriticalIssues() + "");
+
+            TextView nonCritText = itemView.findViewById(R.id.item_numNonCritIssues);
+            nonCritText.setText(currInspection.getNumNonCriticalIssues() + "");
 
             return itemView;
         }
