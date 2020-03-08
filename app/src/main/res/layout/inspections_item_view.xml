@@ -9,18 +9,20 @@
         android:id="@+id/item_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/item_numNonCritIssues"
+        android:layout_alignParentTop="true"
         android:adjustViewBounds="true"
         android:maxHeight="60dp"
-        app:srcCompat="@drawable/normal"/>
+        app:srcCompat="@drawable/normal" />
 
     <TextView
         android:id="@+id/item_txtCriticalIssues"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/item_inspectionDate"
         android:layout_marginStart="6dp"
         android:layout_marginLeft="6dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/item_icon"
         android:layout_toRightOf="@+id/item_icon"
         android:text="# of Critical Issues: "
@@ -33,7 +35,7 @@
         android:layout_below="@+id/item_txtCriticalIssues"
         android:layout_marginStart="6dp"
         android:layout_marginLeft="6dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/item_icon"
         android:layout_toRightOf="@+id/item_txtCriticalIssues"
         android:text="# of Non Critical Issues: "
@@ -60,5 +62,17 @@
         android:layout_toEndOf="@+id/item_txtNonCriticalIssues"
         android:text="TextView"
         android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/item_inspectionDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/item_icon"
+        android:text="inspectionDate"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
 </RelativeLayout>

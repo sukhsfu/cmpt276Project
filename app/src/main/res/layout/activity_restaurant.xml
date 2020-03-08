@@ -7,7 +7,7 @@
     tools:context=".RestaurantActivity">
 
     <TextView
-        android:id="@+id/inspectionDate"
+        android:id="@+id/item_inspectionDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -26,7 +26,7 @@
         android:layout_marginTop="16dp"
         android:text="1234 Street City, Province"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inspectionDate" />
+        app:layout_constraintTop_toBottomOf="@+id/item_inspectionDate" />
 
     <TextView
         android:id="@+id/txtHazardLevel"

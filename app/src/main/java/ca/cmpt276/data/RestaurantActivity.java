@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -66,7 +68,7 @@ public class RestaurantActivity extends AppCompatActivity {
         double longitude = restaurant.getLongitude();
         String GPS = latitude + ", " + longitude;
 
-        TextView resName = findViewById(R.id.inspectionDate);
+        TextView resName = findViewById(R.id.item_inspectionDate);
         resName.setText(name);
         TextView resAddress = findViewById(R.id.inspectionType);
         resAddress.setText(fullAddress);
@@ -112,16 +114,27 @@ public class RestaurantActivity extends AppCompatActivity {
             Inspection currInspection = inspections.get(position);
 
             // get hazard level to set icon
-            String hazardLevel = currInspection.getHazardLevel();
+            String hazardLevel = currInspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
             ImageView iconView = itemView.findViewById(R.id.item_icon);
+            Log.d("RestaurantActivity", "Hazard Level: " + hazardLevel);
             if (hazardLevel.equalsIgnoreCase("low") ) {
                 iconView.setImageResource(R.drawable.smile);
+                iconView.setColorFilter(Color.GREEN);
             }
             else if (hazardLevel.equalsIgnoreCase("moderate") ) {
                 iconView.setImageResource(R.drawable.normal);
-            } else {
+                iconView.setColorFilter(Color.YELLOW);
+
+            } else if (hazardLevel.equalsIgnoreCase("high")){
                 iconView.setImageResource(R.drawable.sad);
+                iconView.setColorFilter(Color.RED);
+
             }
+
+            // set date
+            String dateFormatted = MainActivity.dateDifference(currInspection.getDate());
+            TextView dateTxt = itemView.findViewById(R.id.item_inspectionDate);
+            dateTxt.setText(dateFormatted);
 
             // set critical & non-critical issues
             TextView critText = itemView.findViewById(R.id.item_numCritIssues);

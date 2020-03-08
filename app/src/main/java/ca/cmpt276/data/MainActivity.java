@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
     }
 
-    private String dateDifference(String A){
+    protected static String dateDifference(String A){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate today= LocalDate.now();
         String todaystring=formatter.format(today);
