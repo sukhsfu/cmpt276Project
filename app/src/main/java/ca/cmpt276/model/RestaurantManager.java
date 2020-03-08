@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Singleton class manages the list of Restaurants
+ */
+
 public class RestaurantManager implements Iterable<Restaurant> {
 
     private List<Restaurant> restaurants = new ArrayList<>();

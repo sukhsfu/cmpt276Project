@@ -8,11 +8,13 @@ public class Violation {
     private String briefDescription;
     private String detailedDescription;
     private boolean isRepeat;
+    private ViolationManager manager;
 
     public Violation(int type, String severity, String detailedDescription, Boolean isRepeat) {
+        manager = new ViolationManager();
         this.type = type;
         this.severity = severity;
-        //this.briefDescription = briefDescription;
+        this.briefDescription = manager.retrieve(type);
         this.detailedDescription = detailedDescription;
         this.isRepeat = isRepeat;
     }

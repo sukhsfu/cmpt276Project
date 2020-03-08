@@ -56,7 +56,6 @@ public class RestaurantActivity extends AppCompatActivity {
         setupRestaurantInformation();
         populateInspectionsListView();
 
-
     }
 
     private void setupRestaurantInformation() {
