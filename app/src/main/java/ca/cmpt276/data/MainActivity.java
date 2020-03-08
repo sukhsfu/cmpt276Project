@@ -148,9 +148,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             while ((line = reader.readLine()) != null) {
                 String[] tokens = line.split(",");
                 String trackingNum = tokens[0];
-                String name = tokens[1];
-                String address = tokens[2];
-                String city = tokens[3];
+                String name = tokens[1].replaceAll("[^a-zA-Z0-9 &]", "");
+                String address = tokens[2].replaceAll("[^a-zA-Z0-9 &]", "");
+                String city = tokens[3].replaceAll("[^a-zA-Z0-9 &]", "");
                 double latitude = Double.parseDouble(tokens[5]);
                 double longitude = Double.parseDouble(tokens[6]);
 

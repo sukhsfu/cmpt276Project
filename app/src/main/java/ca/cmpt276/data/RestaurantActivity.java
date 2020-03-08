@@ -5,8 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.List;
+
+import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
 
@@ -15,6 +19,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
     RestaurantManager manager = RestaurantManager.getInstance();
     Restaurant restaurant;
+    List<Inspection> inspections;
     int position;
 
     public static Intent makeLaunchIntent(Context context,int position) {
@@ -27,6 +32,7 @@ public class RestaurantActivity extends AppCompatActivity {
         Intent intent = getIntent();
         position = intent.getIntExtra("position", 0);
         restaurant = manager.retrieve(position);
+        inspections = restaurant.getInspections();
     }
 
 
@@ -38,15 +44,15 @@ public class RestaurantActivity extends AppCompatActivity {
 
         extractDataFromIntent();
         setupRestaurantInformation();
-        populateInspectionsList();
+        populateInspectionsListView();
 
     }
 
     private void setupRestaurantInformation() {
-        String name = restaurant.getName().replaceAll("[^a-zA-Z0-9 &]", "");
-        String address = restaurant.getAddress().replaceAll("[^a-zA-Z0-9 &]", "");
-        String city = restaurant.getCity().replaceAll("[^a-zA-Z0-9 &]", "");
-        String fullAddress = address + " " + city;
+        String name = restaurant.getName();
+        String address = restaurant.getAddress();
+        String city = restaurant.getCity();
+        String fullAddress = address + ", " + city;
         double latitude = restaurant.getLatitude();
         double longitude = restaurant.getLongitude();
         String GPS = latitude + ", " + longitude;
@@ -59,8 +65,9 @@ public class RestaurantActivity extends AppCompatActivity {
         resGPS.setText(GPS);
     }
 
-    private void populateInspectionsList() {
-
+    private void populateInspectionsListView() {
+        // Build adapter
+        //ArrayAdapter<Inspection> adapter = new myListAdapter();
     }
 
 
