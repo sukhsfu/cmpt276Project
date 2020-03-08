@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
     @Override
     public void onNoteClick(int position) {
-        //Restaurant restaurant=manager.retrieve(position);
+       // Restaurant restaurant=manager.retrieve(position);
         Intent intent=RestaurantActivity.makeLaunchIntent(MainActivity.this,position);
         startActivity(intent);
 
