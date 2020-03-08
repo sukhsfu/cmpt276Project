@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,10 +28,11 @@ import ca.cmpt276.model.RestaurantManager;
 import ca.cmpt276.model.Violation;
 
 public class MainActivity extends AppCompatActivity implements jadapter.OnNoteListener {
-    private List<String> restaurants = new ArrayList<>();
+    private List<String> restauranttext = new ArrayList<>();
+    private List<String> latestInspection=new ArrayList<>();
     private List<Inspection> inspections = new ArrayList<>();
-    private List<InspectionSample> inspectionSamples = new ArrayList<>();
-    private List<RestaurantSample> restaurantSamples = new ArrayList<>();
+    //private List<InspectionSample> inspectionSamples = new ArrayList<>();
+   // private List<RestaurantSample> restaurantSamples = new ArrayList<>();
 
     private RestaurantManager manager = RestaurantManager.getInstance();
 
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         organizeData();
         Log.d("MainActivity", "AFTER ORGANIZE-------------------------------------------");
         debugData();
+        setoutputdata();
         setupRestaurantInList();
 //
 //        TextView textview = (TextView) findViewById(R.id.test);
@@ -60,6 +64,60 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 }
             }
         }
+    }
+
+    private  void  setoutputdata(){
+        for (Restaurant restaurant : manager) {
+            if (restaurant.getInspections().size() != 0) {
+                Inspection instpectionret = restaurant.getInspections().get(0);
+                for (Inspection inspection : restaurant.getInspections()) {
+                    if (inspection.getDate().compareTo(instpectionret.getDate()) > 0) {
+                        instpectionret = inspection;
+                    }
+
+                }
+                restauranttext.add(restaurant.getName() + "\n\n" + dateDifference(instpectionret.getDate())+ (instpectionret.getNumCriticalIssues() + instpectionret
+                        .getNumNonCriticalIssues()) + " issuses found\n" + instpectionret.getNumCriticalIssues() + "  critical, " + instpectionret.getNumNonCriticalIssues() + "  non-critical");
+
+            }
+            else{
+                restauranttext.add(restaurant.getName() + "\n");
+            }
+        }
+
+    }
+
+    private String dateDifference(String A){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate today= LocalDate.now();
+        String todaystring=formatter.format(today);
+        int givendate=Integer.parseInt(A);
+        int todaydate=Integer.parseInt(todaystring);
+        int[] givenA={(givendate/10000),((givendate%10000)/100),(givendate%100)}; //0-yy,1-mm,2-dd
+        int[] todayA={(todaydate/10000),((todaydate%10000)/100),(todaydate%100)}; //0-yy,1-mm,2-dd
+        String[] mon={"Jan","Feb","March","April","May","June","July","August","Sept","Oct","Nov","Dec"};
+        int[]days={31,28,31,30, 31,30,31,31, 30,31,30,31};
+
+        if(givenA[0]%4==0){
+            if(givenA[0]%100==0){
+                if(givenA[0]%400==0){
+                    days[1]=29;
+                }
+            }
+            days[1]=29;
+        }
+
+       if (((todayA[0]*365+todayA[1]*days[todayA[1]-1]+todayA[2])-(givenA[0]*365+givenA[1]*days[givenA[1]-1]+givenA[2]))<=30){
+
+           return (((todayA[0]*365+todayA[1]*days[todayA[1]-1]+todayA[2])-(givenA[0]*365+givenA[1]*days[givenA[1]-1]+givenA[2]))+" days ago\n");
+       }
+       else if((todayA[0]*365+todayA[1]*30+todayA[2]-givenA[0]*365-givenA[1]*30-givenA[2])<=365){
+           return (mon[givenA[1]-1]+"  "+givenA[2]+"\n");
+       }
+       else{
+           return(mon[givenA[1]-1]+"  "+givenA[0]+"\n");
+       }
+
     }
 
     private void debugData() {
@@ -186,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         list.setNestedScrollingEnabled(false);
         list.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         list.setLayoutManager(new LinearLayoutManager(this));
-        list.setAdapter(new jadapter(restaurants,  this));
+        list.setAdapter(new jadapter(restauranttext,  this));
 
 
     }

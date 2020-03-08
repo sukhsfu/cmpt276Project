@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="1"
+        android:background="#EDD99D"
         android:padding="16dp"
         android:text="@string/restaurant"
         android:textColor="#0A0101"
