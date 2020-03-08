@@ -8,9 +8,10 @@
 
     <ImageView
         android:id="@+id/restauranticon"
-        android:layout_width="62dp"
-        android:layout_height="46dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:src="@mipmap/restaurant" />
+
 
     <TextView
         android:id="@+id/restauranttext"
@@ -18,10 +19,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="1"
-        android:background="#EDD99D"
+        android:background="#D3D3D3"
         android:padding="16dp"
         android:text="@string/restaurant"
         android:textColor="#0A0101"
         android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/hazard"
+        android:layout_width="10dp"
+        android:layout_height="match_parent"
+/>
+
 
 </LinearLayout>

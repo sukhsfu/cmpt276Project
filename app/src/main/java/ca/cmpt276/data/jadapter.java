@@ -1,5 +1,7 @@
 package ca.cmpt276.data;
+import ca.cmpt276.data.MainActivity;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
- class Mydata {
+import static ca.cmpt276.data.MainActivity.Hazards;
+
+class Mydata {
     public final long id;
     public final String text;
 
@@ -26,6 +30,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
     private List<Mydata> mydata;
     private OnNoteListener monNoteListener;
 
+
     public interface OnNoteListener{
 
         void onNoteClick(int position);
@@ -37,7 +42,9 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
         this.monNoteListener=monNoteListener;
         for ( int i=0;i<data.size();i++){
             mydata.add(new Mydata(i,data.get(i)));
+
         }
+
 
     }
 
@@ -53,6 +60,9 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
         String title =mydata.get(position).text;
         holder.txxt.setText(title);
 
+
+       // holder.Hazardimage.setBackgroundColor((Hazards.get(position)).intValue());
+
     }
 
     @Override
@@ -63,10 +73,12 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
     public class vholder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView image;
         TextView txxt;
+        TextView Hazardimage;
         OnNoteListener onNoteLister;
         public vholder( View itemView,OnNoteListener  onNoteLister) {
             super(itemView);
             image = itemView.findViewById(R.id.restauranticon);
+            Hazardimage=itemView.findViewById(R.id.hazard);
             txxt=itemView.findViewById(R.id.restauranttext);
             this.onNoteLister=onNoteLister;
             itemView.setOnClickListener(this);

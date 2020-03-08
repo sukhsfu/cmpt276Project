@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +19,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     private List<String> restauranttext = new ArrayList<>();
     private List<String> latestInspection=new ArrayList<>();
     private List<Inspection> inspections = new ArrayList<>();
+    protected static List<Integer> Hazards=new ArrayList<>();
     //private List<InspectionSample> inspectionSamples = new ArrayList<>();
    // private List<RestaurantSample> restaurantSamples = new ArrayList<>();
 
@@ -78,9 +81,18 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 }
                 restauranttext.add(restaurant.getName() + "\n\n" + dateDifference(instpectionret.getDate())+ (instpectionret.getNumCriticalIssues() + instpectionret
                         .getNumNonCriticalIssues()) + " issuses found\n" + instpectionret.getNumCriticalIssues() + "  critical, " + instpectionret.getNumNonCriticalIssues() + "  non-critical");
-
+                   if(instpectionret.getHazardLevel().equals("Low") ){
+                       Hazards.add(Color.BLUE);
+                   }
+                if(instpectionret.getHazardLevel().equals("Moderate")){
+                    Hazards.add(Color.YELLOW);
+                }
+                if(instpectionret.getHazardLevel().equals("High")) {
+                    Hazards.add(Color.RED);
+                }
             }
             else{
+                Hazards.add(Color.WHITE);
                 restauranttext.add(restaurant.getName() + "\n");
             }
         }
@@ -251,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
     @Override
     public void onNoteClick(int position) {
-
+        //Restaurant restaurant=manager.retrieve(position);
         Intent intent=RestaurantActivity.makeLaunchIntent(MainActivity.this,position);
         startActivity(intent);
 
@@ -260,5 +272,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 //    public static List<Inspection> getInspectionsList(int position) {
 //        return restaurant[position].inspections;
 //    }
+
+
 }
 
