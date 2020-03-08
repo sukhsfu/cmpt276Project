@@ -61,7 +61,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
         holder.txxt.setText(title);
 
 
-       // holder.Hazardimage.setBackgroundColor((Hazards.get(position)).intValue());
+        holder.Hazardimage.setBackgroundColor((Hazards.get(position)).intValue());
 
     }
 

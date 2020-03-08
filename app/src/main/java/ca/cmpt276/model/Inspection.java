@@ -52,6 +52,7 @@ public class Inspection {
     }
 
     public String getHazardLevel() {
+
         return hazardLevel;
     }
 
