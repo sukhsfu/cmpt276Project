@@ -41,8 +41,8 @@
 
     <TextView
         android:id="@+id/inspectionsHeader"
-        android:layout_width="167dp"
-        android:layout_height="50dp"
+        android:layout_width="198dp"
+        android:layout_height="55dp"
         android:layout_marginTop="24dp"
         android:text="Inspections"
         android:textSize="36sp"

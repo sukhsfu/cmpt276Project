@@ -1,10 +1,14 @@
 package ca.cmpt276.data;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -46,6 +50,7 @@ public class RestaurantActivity extends AppCompatActivity {
         setupRestaurantInformation();
         populateInspectionsListView();
 
+
     }
 
     private void setupRestaurantInformation() {
@@ -66,9 +71,30 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private void populateInspectionsListView() {
+
         // Build adapter
-        //ArrayAdapter<Inspection> adapter = new myListAdapter();
+        ArrayAdapter<Inspection> adapter = new myListAdapter();
     }
+
+    private class myListAdapter extends ArrayAdapter<Inspection> {
+        public myListAdapter() {
+            super(RestaurantActivity.this, R.layout.inspections_item_view, inspections);
+        }
+
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View itemView = convertView;
+            if (itemView == null) {
+                itemView = getLayoutInflater().inflate(R.layout.inspections_item_view, parent, false);
+            }
+
+            Inspection currInspection = inspections.get(position);
+
+
+            return itemView;
+        }
+    }
+
 
 
 }

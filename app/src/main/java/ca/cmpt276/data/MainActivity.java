@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         readRestaurantData();
         readInspectionData();
         organizeData();
+        debugData();
         setoutputdata();
         setupRestaurantInList();
     }
