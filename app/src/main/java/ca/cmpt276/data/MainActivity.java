@@ -75,14 +75,17 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 }
                 restauranttext.add(restaurant.getName() + "\n\n" + dateDifference(instpectionret.getDate())+ (instpectionret.getNumCriticalIssues() + instpectionret
                         .getNumNonCriticalIssues()) + " issuses found\n" + instpectionret.getNumCriticalIssues() + "  critical, " + instpectionret.getNumNonCriticalIssues() + "  non-critical");
-                   if(instpectionret.getHazardLevel().equals("Low") ){
-                       Hazards.add(Color.BLUE);
+                   if(instpectionret.getHazardLevel().equalsIgnoreCase("\"Low\"") ){
+                       Hazards.add(Color.GREEN);
                    }
-                if(instpectionret.getHazardLevel().equals("Moderate")){
+               else if(instpectionret.getHazardLevel().equalsIgnoreCase("\"Moderate\"")){
                     Hazards.add(Color.YELLOW);
                 }
-                if(instpectionret.getHazardLevel().equals("High")) {
+                else if(instpectionret.getHazardLevel().equalsIgnoreCase("\"High\"")) {
                     Hazards.add(Color.RED);
+                }
+                else{
+                    Hazards.add(Color.WHITE);
                 }
             }
             else{
