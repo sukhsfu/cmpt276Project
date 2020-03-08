@@ -47,16 +47,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
         readRestaurantData();
         readInspectionData();
-        Log.d("MainActivity", "BEFORE ORGANIZE------------------------------------------");
-        debugData();
         organizeData();
-        Log.d("MainActivity", "AFTER ORGANIZE-------------------------------------------");
-        debugData();
         setoutputdata();
         setupRestaurantInList();
-//
-//        TextView textview = (TextView) findViewById(R.id.test);
-//        textview.setText("TrackingNumber" + inspectionSamples);
     }
 
     private void organizeData() {
@@ -153,8 +146,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             reader.readLine();
 
             while ((line = reader.readLine()) != null) {
-                //Log.d("MyActivity", "Line:" + line);
-
                 String[] tokens = line.split(",");
                 String trackingNum = tokens[0];
                 String name = tokens[1];
@@ -165,9 +156,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
                 Restaurant sample = new Restaurant(trackingNum, name, address, city, latitude, longitude);
                 manager.addRestaurant(sample);
-
-                //Log.d("MyActivity", "Just created" + sample);
-
             }
         }catch (IOException e) {
             Log.wtf("MyActivity", "Error reading data file on line" + line, e);
@@ -187,8 +175,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             reader.readLine();
 
             while ((line = reader.readLine()) != null) {
-                //Log.d("MyActivityIns", "Line:" + line);
-
                 String[] tokens = line.split(",",7);
 
                 String trackingNum = tokens[0];
@@ -208,7 +194,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                         Violation violation = extractViolationFromCSV(indivViol);
                         sample.addViolation(violation);
                     }
-
                     else {
                         String[] violations = tokens[6].split("[|]");
                         for (int i = 0; i < violations.length; i++) {
@@ -218,11 +203,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                         }
                     }
                 }
-                // TODO: MISSING CODE TO CONNECT INSPECTIONS TO RESTAURANT
-                ///Log.d("MyActivityInspection", "Inspection: " + sample);
-
                 inspections.add(sample);
-
             }
         }catch (IOException e) {
             Log.wtf("MyActivityIns", "Error reading data file on line" + line, e);
@@ -257,8 +238,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         list.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setAdapter(new jadapter(restauranttext,  this));
-
-
     }
 
     @Override
@@ -266,7 +245,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
        // Restaurant restaurant=manager.retrieve(position);
         Intent intent=RestaurantActivity.makeLaunchIntent(MainActivity.this,position);
         startActivity(intent);
-
     }
 
 //    public static List<Inspection> getInspectionsList(int position) {
