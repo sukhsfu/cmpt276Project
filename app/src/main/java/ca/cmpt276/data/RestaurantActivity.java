@@ -30,7 +30,7 @@ public class RestaurantActivity extends AppCompatActivity {
     RestaurantManager manager = RestaurantManager.getInstance();
     Restaurant restaurant;
     List<Inspection> inspections;
-    int position;
+    int resPosition;
 
     public static Intent makeLaunchIntent(Context context,int position) {
         Intent intent = new Intent(context, RestaurantActivity.class);
@@ -40,8 +40,8 @@ public class RestaurantActivity extends AppCompatActivity {
 
     public void extractDataFromIntent() {
         Intent intent = getIntent();
-        position = intent.getIntExtra("position", 0);
-        restaurant = manager.retrieve(position);
+        resPosition = intent.getIntExtra("position", 0);
+        restaurant = manager.retrieve(resPosition);
         inspections = restaurant.getInspections();
     }
 
@@ -55,6 +55,7 @@ public class RestaurantActivity extends AppCompatActivity {
         extractDataFromIntent();
         setupRestaurantInformation();
         populateInspectionsListView();
+        registerClickCallbackListView();
 
     }
 
@@ -88,6 +89,8 @@ public class RestaurantActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Inspection clickedInspection = inspections.get(position);
+                Intent intent = InspectionActivity.makeLaunchIntent(RestaurantActivity.this, resPosition, position);
+                startActivity(intent);
 
                 String message = "You clicked position " + position
                         + " which is make " + clickedInspection.getTrackingNumber();
