@@ -43,8 +43,10 @@
         android:layout_height="55dp"
         android:layout_marginStart="107dp"
         android:layout_marginTop="162dp"
+        android:layout_marginBottom="1dp"
         android:text="Violations"
         android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/violationsListView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -103,6 +105,14 @@
         android:layout_marginTop="135dp"
         android:layout_marginEnd="146dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ListView
+        android:id="@+id/violationsListView"
+        android:layout_width="409dp"
+        android:layout_height="512dp"
+        android:layout_marginTop="230dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

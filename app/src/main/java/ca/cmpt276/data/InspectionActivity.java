@@ -1,22 +1,33 @@
 package ca.cmpt276.data;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
 import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
+import ca.cmpt276.model.Violation;
 
 public class InspectionActivity extends AppCompatActivity {
     RestaurantManager manager = RestaurantManager.getInstance();
     Restaurant restaurant;
     Inspection inspection;
+    List<Violation> violations;
 
     public static Intent makeLaunchIntent(Context context, int resPosition, int insPosition) {
         Intent intent = new Intent(context, InspectionActivity.class);
@@ -33,6 +44,7 @@ public class InspectionActivity extends AppCompatActivity {
 
         restaurant = manager.retrieve(resPosition);
         inspection = restaurant.getInspections().get(insPosition);
+        violations = inspection.getViolations();
     }
     public void setscreen(){
         TextView date= findViewById(R.id.item_inspectionDate);
@@ -62,5 +74,50 @@ public class InspectionActivity extends AppCompatActivity {
 
         extractDataFromIntent();
         setscreen();
+        populateViolationsListView();
+        registerClickCallbackListView();
+    }
+
+    private void populateViolationsListView() {
+        ArrayAdapter<Violation> adapter = new myListAdapter();
+        ListView list = findViewById(R.id.violationsListView);
+        list.setAdapter(adapter);
+    }
+
+    private void registerClickCallbackListView() {
+        ListView list = findViewById(R.id.violationsListView);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Violation clickedViolation = violations.get(position);
+
+                String message = clickedViolation.getDetailedDescription();
+                Toast.makeText(InspectionActivity.this, message, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private class myListAdapter extends ArrayAdapter<Violation> {
+        public myListAdapter() {
+            super(InspectionActivity.this, R.layout.violations_item_view, violations);
+        }
+
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View itemView = convertView;
+            if (itemView == null) {
+                itemView = getLayoutInflater().inflate(R.layout.violations_item_view, parent, false);
+            }
+
+            Violation currViolation = violations.get(position);
+
+            TextView briefDesc = itemView.findViewById(R.id.item_BriefDescription);
+            briefDesc.setText(currViolation.getBriefDescription());
+
+            itemView.setBackgroundColor(Color.rgb(231,231,231));
+            itemView.setPadding(50,50,50,50);
+
+            return itemView;
+        }
     }
 }
