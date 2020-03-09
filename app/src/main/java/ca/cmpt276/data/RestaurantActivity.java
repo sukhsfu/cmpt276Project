@@ -133,6 +133,9 @@ public class RestaurantActivity extends AppCompatActivity {
 
             }
 
+            itemView.setBackgroundColor(Color.rgb(231,231,231));
+            itemView.setPadding(50,50,50,50);
+
             // set date
             String dateFormatted = MainActivity.dateDifference(currInspection.getDate());
             TextView dateTxt = itemView.findViewById(R.id.item_inspectionDate);

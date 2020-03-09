@@ -11,7 +11,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:capitalize="characters"
+        android:fontFamily="sans-serif-black"
+        android:letterSpacing="0.1"
         android:text='"Restaurant"'
+        android:textAlignment="center"
+        android:textAllCaps="true"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,10 +26,11 @@
         android:id="@+id/inspectionType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
+        android:fontFamily="serif"
         android:text="1234 Street City, Province"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/item_inspectionDate" />
 
@@ -32,30 +38,36 @@
         android:id="@+id/txtHazardLevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+        android:fontFamily="serif"
         android:text="GPS Coordinates"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inspectionType" />
 
     <TextView
         android:id="@+id/violationsHeader"
-        android:layout_width="198dp"
-        android:layout_height="55dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="236dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="34dp"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.05"
         android:text="Inspections"
+        android:textAlignment="center"
+        android:textAllCaps="false"
         android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/inspectionsListView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtHazardLevel" />
 
     <ListView
         android:id="@+id/inspectionsListView"
-        android:layout_width="412dp"
-        android:layout_height="490dp"
-        android:layout_marginTop="242dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="510dp"
+        android:layout_height="597dp"
+        android:layout_marginTop="230dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
