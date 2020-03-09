@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -33,6 +34,26 @@ public class InspectionActivity extends AppCompatActivity {
         restaurant = manager.retrieve(resPosition);
         inspection = restaurant.getInspections().get(insPosition);
     }
+    public void setscreen(){
+        TextView date= findViewById(R.id.item_inspectionDate);
+        int Idate;
+        String FormattedDate;
+        Idate=Integer.parseInt(inspection.getDate());
+        String[] mon={"Jan","Feb","March","April","May","June","July","August","Sept","Oct","Nov","Dec"};
+        FormattedDate= mon[((Idate%10000)/100)-1]+" "+Idate%100+", "+Idate/10000;
+        date.setText(FormattedDate);
+        TextView InspectionType=findViewById(R.id.InspectionType);
+        String formatInspectionType=inspection.getType().substring(1,inspection.getType().length()-1);
+        InspectionType.setText(formatInspectionType);
+        String formatHazardLevel=inspection.getHazardLevel().substring(1,inspection.getHazardLevel().length()-1);
+        TextView InspectionHazardLevel=findViewById(R.id.InspectionHazardLevel);
+        InspectionHazardLevel.setText(formatHazardLevel);
+        TextView Inspectioncritical_issues=findViewById(R.id.Inspectioncritical_issues);
+        TextView Inspectionnoncritical_issues=findViewById(R.id.Inspectionnoncritical_issues);
+        Inspectioncritical_issues.setText(String.valueOf(inspection.getNumCriticalIssues()));
+        Inspectionnoncritical_issues.setText(String.valueOf(inspection.getNumNonCriticalIssues()));
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,5 +61,6 @@ public class InspectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inspection);
 
         extractDataFromIntent();
+        setscreen();
     }
 }
