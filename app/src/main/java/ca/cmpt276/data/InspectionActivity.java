@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -111,8 +112,23 @@ public class InspectionActivity extends AppCompatActivity {
 
             Violation currViolation = violations.get(position);
 
+            String briefDescription = currViolation.getBriefDescription();
+            ImageView natureIcon = itemView.findViewById(R.id.nature_icon);
+            if(briefDescription.toLowerCase().contains("food")){
+                natureIcon.setImageResource(R.drawable.food_icon);
+            }
+            else if(briefDescription.toLowerCase().contains("equipment")){
+                natureIcon.setImageResource(R.drawable.equipment_icon);
+            }
+            else if(briefDescription.toLowerCase().contains("pest")){
+                natureIcon.setImageResource(R.drawable.pest_icon);
+            }
+            else{
+                natureIcon.setImageResource(R.drawable.violation_icon);
+            }
+
             TextView briefDesc = itemView.findViewById(R.id.item_BriefDescription);
-            briefDesc.setText(currViolation.getBriefDescription());
+            briefDesc.setText(briefDescription);
 
             itemView.setBackgroundColor(Color.rgb(231,231,231));
             itemView.setPadding(50,50,50,50);
