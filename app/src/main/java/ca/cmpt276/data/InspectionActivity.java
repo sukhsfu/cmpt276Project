@@ -127,6 +127,15 @@ public class InspectionActivity extends AppCompatActivity {
                 natureIcon.setImageResource(R.drawable.violation_icon);
             }
 
+            String severity = currViolation.getSeverity();
+            ImageView severityIcon = itemView.findViewById(R.id.severity_icon);
+            if(severity.trim().equalsIgnoreCase("critical")){
+                severityIcon.setImageResource(R.drawable.critical_icon);
+            }
+            else if(severity.toLowerCase().contains("not")){
+                severityIcon.setImageResource(R.drawable.non_critical_icon);
+            }
+
             TextView briefDesc = itemView.findViewById(R.id.item_BriefDescription);
             briefDesc.setText(briefDescription);
 

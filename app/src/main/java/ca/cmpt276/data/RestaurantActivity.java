@@ -129,7 +129,6 @@ public class RestaurantActivity extends AppCompatActivity {
             } else if (hazardLevel.equalsIgnoreCase("high")){
                 iconView.setImageResource(R.drawable.sad);
                 iconView.setColorFilter(Color.RED);
-
             }
 
             itemView.setBackgroundColor(Color.rgb(231,231,231));
