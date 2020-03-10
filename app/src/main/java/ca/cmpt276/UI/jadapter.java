@@ -1,7 +1,5 @@
-package ca.cmpt276.data;
-import ca.cmpt276.data.MainActivity;
+package ca.cmpt276.UI;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ca.cmpt276.data.MainActivity.Hazards;
+import static ca.cmpt276.UI.MainActivity.Hazards;
 
 class Mydata {
     public final long id;

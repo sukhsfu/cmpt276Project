@@ -27,7 +27,7 @@
         android:layout_marginTop="0dp"
         android:layout_toEndOf="@+id/item_icon"
         android:layout_toRightOf="@+id/item_icon"
-        android:text="# of Critical Issues: "
+        android:text="@string/insItemView_critical_issues"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
@@ -40,7 +40,7 @@
         android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/item_icon"
         android:layout_toRightOf="@+id/item_txtCriticalIssues"
-        android:text="# of Non Critical Issues: "
+        android:text="@string/insItemView_non_critical_issues"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
@@ -51,7 +51,7 @@
         android:layout_marginStart="15dp"
         android:layout_marginBottom="0dp"
         android:layout_toEndOf="@+id/item_txtCriticalIssues"
-        android:text="TextView"
+        android:text="@string/insItemView_displayCrit"
         android:textSize="20sp" />
 
     <TextView
@@ -62,7 +62,7 @@
         android:layout_marginStart="15dp"
         android:layout_marginBottom="0dp"
         android:layout_toEndOf="@+id/item_txtNonCriticalIssues"
-        android:text="TextView"
+        android:text="@string/insItemView_displayNonCrit"
         android:textSize="22sp" />
 
     <TextView
@@ -74,7 +74,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp"
         android:layout_toEndOf="@+id/item_icon"
-        android:text="inspectionDate"
+        android:text="@string/insItemView_inspectiondate"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
 </RelativeLayout>

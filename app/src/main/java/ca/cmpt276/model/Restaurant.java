@@ -23,7 +23,6 @@ public class Restaurant {
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
-        //this.inspections = inspections;
     }
 
     public void addInspection (Inspection inspection) {

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="116dp"
         android:layout_marginTop="16dp"
-        android:text="Date"
+        android:text="@string/date"
         android:textSize="36sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="81dp"
-        android:text="Inspection Type: "
+        android:text="@string/inspection_type"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="135dp"
-        android:text="Hazard Level: "
+        android:text="@string/hazard_level"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,7 +44,7 @@
         android:layout_marginStart="107dp"
         android:layout_marginTop="162dp"
         android:layout_marginBottom="1dp"
-        android:text="Violations"
+        android:text="@string/violations"
         android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/violationsListView"
         app:layout_constraintStart_toStartOf="parent"
@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="81dp"
         android:layout_marginEnd="47dp"
-        android:text="critical_issues"
+        android:text="@string/critical_issues"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -85,12 +85,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="135dp"
         android:layout_marginEnd="23dp"
-        android:text="non-critical issues"
+        android:text="@string/non_critical_issues"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/Inspectioncritical_issues"
+        android:id="@+id/inspection_CriticalIssues"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="81dp"
@@ -99,7 +99,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/Inspectionnoncritical_issues"
+        android:id="@+id/inspection_NonCriticalIssues"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="135dp"

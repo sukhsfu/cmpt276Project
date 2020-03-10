@@ -1,4 +1,4 @@
-package ca.cmpt276.data;
+package ca.cmpt276.UI;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +24,10 @@ import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
 
-
+/**
+ * The RestaurantActivity is launched from the MainActivity when a restaurant is clicked.
+ * It displays details of the clicked restaurant and a list of the inspections from that restaurant.
+ */
 public class RestaurantActivity extends AppCompatActivity {
 
     RestaurantManager manager = RestaurantManager.getInstance();
@@ -38,14 +41,6 @@ public class RestaurantActivity extends AppCompatActivity {
         return intent;
     }
 
-    public void extractDataFromIntent() {
-        Intent intent = getIntent();
-        resPosition = intent.getIntExtra("position", 0);
-        restaurant = manager.retrieve(resPosition);
-        inspections = restaurant.getInspections();
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +51,13 @@ public class RestaurantActivity extends AppCompatActivity {
         populateInspectionsListView();
         registerClickCallbackListView();
 
+    }
+
+    public void extractDataFromIntent() {
+        Intent intent = getIntent();
+        resPosition = intent.getIntExtra("position", 0);
+        restaurant = manager.retrieve(resPosition);
+        inspections = restaurant.getInspections();
     }
 
     private void setupRestaurantInformation() {
@@ -91,9 +93,9 @@ public class RestaurantActivity extends AppCompatActivity {
                 Intent intent = InspectionActivity.makeLaunchIntent(RestaurantActivity.this, resPosition, position);
                 startActivity(intent);
 
-                String message = "You clicked position " + position
-                        + " which is make " + clickedInspection.getTrackingNumber();
-                Toast.makeText(RestaurantActivity.this, message, Toast.LENGTH_LONG).show();
+                //String message = "You clicked position " + position
+                //        + " which is " + clickedInspection.getTrackingNumber();
+                //Toast.makeText(RestaurantActivity.this, message, Toast.LENGTH_LONG).show();
             }
         });
     }

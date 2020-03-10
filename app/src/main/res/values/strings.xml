@@ -1,4 +1,19 @@
 <resources>
     <string name="app_name">Data</string>
     <string name="restaurant">restaurant</string>
+    <string name="date">Date</string>
+    <string name="inspection_type">Inspection Type:</string>
+    <string name="hazard_level">Hazard Level:</string>
+    <string name="violations">Violations</string>
+    <string name="critical_issues">critical issues</string>
+    <string name="non_critical_issues">non-critical issues</string>
+    <string name="restaurantActivity_restaurant">Restaurant</string>
+    <string name="restaurantActivity_address">1234 Street City, Province</string>
+    <string name="restaurantActivity_gps_coordinates">GPS Coordinates</string>
+    <string name="restaurantActivity_inspections">Inspections</string>
+    <string name="insItemView_critical_issues"># of Critical Issues:</string>
+    <string name="insItemView_non_critical_issues"># of Non Critical Issues:</string>
+    <string name="insItemView_displayCrit">TextView</string>
+    <string name="insItemView_displayNonCrit">TextView</string>
+    <string name="insItemView_inspectiondate">inspectionDate</string>
 </resources>

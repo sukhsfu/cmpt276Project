@@ -24,7 +24,7 @@ public class Inspection {
         this.numCriticalIssues = numCriticalIssues;
         this.numNonCriticalIssues = numNonCriticalIssues;
         this.hazardLevel = hazardLevel;
-        this.violations = new ArrayList<Violation>();
+        this.violations = new ArrayList<>();
     }
 
     public void addViolation(Violation violation) {

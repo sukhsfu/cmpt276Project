@@ -1,4 +1,4 @@
-package ca.cmpt276.data;
+package ca.cmpt276.UI;
 
 import org.junit.Test;
 
