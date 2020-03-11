@@ -1,5 +1,7 @@
 package ca.cmpt276.UI;
+import ca.cmpt276.UI.MainActivity;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +62,15 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
 
 
         holder.Hazardimage.setBackgroundColor((Hazards.get(position)).intValue());
-
+        if(Color.GREEN == Hazards.get(position).intValue()){
+            holder.face.setImageResource(R.drawable.smile);
+        }
+        else if (Color.RED == Hazards.get(position).intValue()){
+            holder.face.setImageResource(R.drawable.sad);
+        }
+        else if(Color.YELLOW == Hazards.get(position).intValue()){
+            holder.face.setImageResource(R.drawable.normal);
+        }
     }
 
     @Override
@@ -70,6 +80,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
 
     public class vholder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView image;
+        ImageView face;
         TextView txxt;
         TextView Hazardimage;
         OnNoteListener onNoteLister;
@@ -78,6 +89,8 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
             image = itemView.findViewById(R.id.restauranticon);
             Hazardimage=itemView.findViewById(R.id.hazard);
             txxt=itemView.findViewById(R.id.restauranttext);
+            face = itemView.findViewById(R.id.imageView4);
+
             this.onNoteLister=onNoteLister;
             itemView.setOnClickListener(this);
         }
