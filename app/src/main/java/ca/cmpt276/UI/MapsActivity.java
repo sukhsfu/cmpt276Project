@@ -86,9 +86,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 for (Location location : locationResult.getLocations()) {
                     if (location != null) {
+
                         wayLatitude = location.getLatitude();
                         wayLongitude = location.getLongitude();
                         LatLng curLocation = new LatLng(wayLatitude, wayLongitude);
+                        if(mFusedLocationProviderClient != null){
+                            mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
+                        }
                         moveCamera(curLocation, DEFAULT_ZOOM);
                     }
                 }
@@ -96,17 +100,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
 
     }
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
 
     private void initMap(){
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -123,7 +116,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationPermissionGranted = true;
                 initMap();
                 getUserLocation();
-                //getUserLocation();
             }
         } else {
             ActivityCompat.requestPermissions(this, permissions,
@@ -141,7 +133,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     locationPermissionGranted = true;
                     //initMap();
-                    getUserLocation();
+                    //getUserLocation();
                 } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
@@ -175,7 +167,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onComplete(@NonNull Task<Location> task) {
                 if(task.isSuccessful()){
                     Location location = task.getResult();
-                    //GeoPoint geopoint = new GeoPoint(location.getLatitude(), location.getLongitude());
                     LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     moveCamera(curLocation, DEFAULT_ZOOM);
                 }
