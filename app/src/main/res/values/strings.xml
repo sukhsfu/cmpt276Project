@@ -16,4 +16,5 @@
     <string name="insItemView_displayCrit">TextView</string>
     <string name="insItemView_displayNonCrit">TextView</string>
     <string name="insItemView_inspectiondate">inspectionDate</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

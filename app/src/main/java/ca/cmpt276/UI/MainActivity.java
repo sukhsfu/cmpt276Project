@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         debugData();
         setOutputData();
         setupRestaurantInList();
+
+        startActivity(new Intent(this, MapsActivity.class));
     }
 
     private void readRestaurantData() {
