@@ -9,6 +9,9 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -21,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,7 +41,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_REQUEST_CODE = 1000;
     private static final float DEFAULT_ZOOM = 15;
+    public static final String TAG = "mapsActivity";
     private GoogleMap mMap;
+    private Marker mMarker;
+    private ImageView mInfo;
     RestaurantManager manager = RestaurantManager.getInstance();
 
     //private FusedLocationProviderClient mLocationClient;
@@ -51,10 +58,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        //LatLng sydney = new LatLng(-34, 151);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        for (Restaurant restaurant : manager) {
+            LatLng displayRestaurant = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(displayRestaurant).title(restaurant.getName()));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(displayRestaurant));
+        }
 
         if(locationPermissionGranted){
             getUserLocation();
@@ -75,6 +83,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        mInfo = findViewById(R.id.restaurantInfo);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         initMap();
@@ -110,6 +119,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void initMap(){
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(MapsActivity.this);
+
+        mInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMarker.isInfoWindowShown()) {
+                    mMarker.hideInfoWindow();
+                } else {
+                    mMarker.showInfoWindow();
+                }
+            }
+        });
     }
 
     private void getLocationPermission(){
@@ -148,17 +168,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-        // Add a marker in Sydney and move the camera
-//        LatLng sydney = new LatLng(-34, 151);
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
-        //Restaurant restaurant = manager.retrieve(0);
-        for (Restaurant restaurant : manager) {
-            LatLng displayRestaurant = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(displayRestaurant).title(restaurant.getName()));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(displayRestaurant));
-        }
 
 
     private void getUserLocation(){
@@ -195,6 +204,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void moveCamera (LatLng latlng, float zoom){
+        Log.d(TAG, "move Camera: moving the camera to: lat: " + latlng.latitude + " long: " + latlng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoom));
+
+    }
+
+    private void moveCamera (LatLng latlng, float zoom, Restaurant restaurant){
+        Log.d(TAG, "move Camera: moving the camera to: lat: " + latlng.latitude + " long: " + latlng.longitude);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoom));
+
+        mMap.clear();
+
+        String snippet = "Address: " + restaurant.getAddress();
+        MarkerOptions options = new MarkerOptions()
+                .position(latlng)
+                .title(restaurant.getName())
+                .snippet(snippet);
+        mMarker = mMap.addMarker(options);
     }
 }
