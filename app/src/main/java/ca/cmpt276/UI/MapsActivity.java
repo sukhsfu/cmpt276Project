@@ -11,9 +11,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import ca.cmpt276.model.Restaurant;
+import ca.cmpt276.model.RestaurantManager;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    RestaurantManager manager = RestaurantManager.getInstance();
+
     //private FusedLocationProviderClient mLocationClient;
 
     @Override
@@ -41,8 +46,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//        LatLng sydney = new LatLng(-34, 151);
+//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        //Restaurant restaurant = manager.retrieve(0);
+        for (Restaurant restaurant : manager) {
+            LatLng displayRestaurant = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
+            mMap.addMarker(new MarkerOptions().position(displayRestaurant).title(restaurant.getName()));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(displayRestaurant));
+        }
+
+
     }
 }
