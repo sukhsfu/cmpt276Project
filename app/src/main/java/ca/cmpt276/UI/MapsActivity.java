@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -99,6 +100,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.setMyLocationEnabled(true);
             //mMap.getUiSettings().setAllGesturesEnabled(true);
         }
+
+        setupInfoWindows();
+    }
+
+    private void setupInfoWindows() {
+        if (mMap!=null) {
+            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+                @Override
+                public View getInfoWindow(Marker marker) {
+                    return null;
+                }
+
+                @Override
+                public View getInfoContents(Marker marker) {
+                    View row = getLayoutInflater().inflate(R.layout.custom_info_window, null);
+
+                    TextView name = row.findViewById(R.id.resName);
+                    TextView address = row.findViewById(R.id.resAddress);
+                    TextView hazardLevel = row.findViewById(R.id.resHazardLevel);
+
+                    LatLng latlng = marker.getPosition();
+                    Restaurant res = findRestaurantInListFromLatLng(latlng);
+                    Inspection inspection = getMostRecentInspection(res);
+                    String hazardLev = inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
+
+                    name.setText(res.getName());
+                    address.setText(res.getAddress());
+                    hazardLevel.setText("Hazard Level: " + hazardLev);
+
+                    return row;
+                }
+            });
+        }
+    }
+
+    private Restaurant findRestaurantInListFromLatLng(LatLng latLng) {
+        for (Restaurant restaurant:manager) {
+            if (restaurant.getLatitude()==latLng.latitude && restaurant.getLongitude()==latLng.longitude) {
+                return restaurant;
+            }
+        }
+        return null;
     }
 
     private Inspection getMostRecentInspection(Restaurant restaurant) {
