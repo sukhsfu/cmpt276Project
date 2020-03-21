@@ -6,11 +6,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 import android.widget.Button;
 
 import java.io.BufferedReader;
@@ -27,6 +35,11 @@ import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
 import ca.cmpt276.model.Violation;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * The MainActivity reads in and organizes data from CSV file into model, then displays the
@@ -38,14 +51,17 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     private List<Inspection> inspections = new ArrayList<>();
     protected static List<Integer> Hazards=new ArrayList<>();
 
-    private RestaurantManager manager = RestaurantManager.getInstance();
+    private RestaurantManager manager = RestaurantManager.getInstance();private TextView mTextViewResult;
+    String url = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
+    JSONObject obj;
+    String tmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        //startDownload();  This function can be used if we want to download data to external storage
         readRestaurantData();
         readInspectionData();
         organizeData();
@@ -71,6 +87,69 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         });
     }
 
+    private void jsonParse(){
+
+//        mTextViewResult = findViewById(R.id.text_view_result);
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                    final String myResponse = response.body().string();
+
+                    try {
+                        obj = new JSONObject(myResponse);
+
+                    } catch (Throwable t) {
+
+                    }
+
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                tmp = obj.getJSONObject("result").getJSONArray("resources").getJSONObject(0).getString("url");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            OkHttpClient client2 = new OkHttpClient();
+                            Request request2 = new Request.Builder().url(tmp).build();
+
+                            client2.newCall(request2).enqueue(new Callback() {
+                                @Override
+                                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                    e.printStackTrace();;
+                                }
+
+                                @Override
+                                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                                    if(response.isSuccessful()){
+                                        final String myCSV = response.body().string();
+                                        MainActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mTextViewResult.setText(myCSV);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+//                            mTextViewResult.setText(tmp);
+                        }
+                    });
+                }
+
+            }
+        });
+    }
     private void readRestaurantData() {
         InputStream is = getResources().openRawResource(R.raw.restaurants_itr1);
         BufferedReader reader = new BufferedReader(
@@ -261,6 +340,18 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setAdapter(new jadapter(restaurantText,  this));
     }
+    public void startDownload(View view){
+//        Uri uri = Uri.parse("https://upload.wikimedia.org/wikipedia/commons/2/2d/Snake_River_%285mb%29.jpg");
+        Uri uri = Uri.parse("http://data.surrey.ca/dataset/3c8cb648-0e80-4659-9078-ef4917b90ffb/resource/0e5d04a2-be9b-40fe-8de2-e88362ea916b/download/restaurants.csv");
+        DownloadManager.Request request1 = new DownloadManager.Request(uri);
+        request1.setTitle("CSVDownload");
+        request1.setDescription("Updatting CSV");
+        request1.setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS,"myCSV");
+
+        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        downloadManager.enqueue(request1);
+    }
+
 
     @Override
     public void onNoteClick(int position) {
