@@ -99,6 +99,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishAffinity();
+    }
+
     private void setupSwitchButton() {
         Button btnSwitch = (Button) findViewById(R.id.btnSwitch);
 

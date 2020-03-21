@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
+        finishAffinity();
     }
 
     private void setupButtonSwitchToMap() {
