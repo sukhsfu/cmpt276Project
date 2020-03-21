@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,8 +52,23 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         debugData();
         setOutputData();
         setupRestaurantInList();
+        setupButtonSwitchToMap();
+    }
 
-        startActivity(new Intent(this, MapsActivity.class));
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
+    private void setupButtonSwitchToMap() {
+        Button switchMap = (Button) findViewById(R.id.btnSwitchMap);
+        switchMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, MapsActivity.class));
+            }
+        });
     }
 
     private void readRestaurantData() {
