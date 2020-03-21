@@ -127,12 +127,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     LatLng latlng = marker.getPosition();
                     Restaurant res = findRestaurantInListFromLatLng(latlng);
-                    Inspection inspection = getMostRecentInspection(res);
-                    String hazardLev = inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
+                    String hazardLev;
+                    if (res.getInspections().isEmpty()) {
+                        hazardLev = "No inspections found.";
+                    } else {
+                        Inspection inspection = getMostRecentInspection(res);
+                        hazardLev = "Hazard Level: " + inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
+                    }
 
                     name.setText(res.getName());
                     address.setText(res.getAddress());
-                    hazardLevel.setText("Hazard Level: " + hazardLev);
+                    hazardLevel.setText(hazardLev);
 
                     return row;
                 }
