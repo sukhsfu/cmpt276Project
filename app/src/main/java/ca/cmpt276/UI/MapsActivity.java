@@ -23,6 +23,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -32,6 +33,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.Locale;
 
+import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
 
@@ -43,8 +45,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final float DEFAULT_ZOOM = 15;
     public static final String TAG = "mapsActivity";
     private GoogleMap mMap;
-    private Marker mMarker;
-    private ImageView mInfo;
     RestaurantManager manager = RestaurantManager.getInstance();
 
     //private FusedLocationProviderClient mLocationClient;
@@ -60,7 +60,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         for (Restaurant restaurant : manager) {
             LatLng displayRestaurant = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(displayRestaurant).title(restaurant.getName()));
+            MarkerOptions options = new MarkerOptions();
+            options.position(displayRestaurant);
+            options.title(restaurant.getName());
+            String snippet;
+            if (restaurant.getInspections().isEmpty()) {
+                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                snippet = "Address: " + restaurant.getAddress() + "\nNo Inspection Data.";
+            } else {
+                Inspection inspection = getMostRecentInspection(restaurant);
+                String hazardLev = inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
+                Log.d(TAG, inspection.toString());
+
+                if (hazardLev.equalsIgnoreCase("low")) {
+                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.low_hazard_green_check));
+                } else if (hazardLev.equalsIgnoreCase("moderate")) {
+                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.non_critical_icon));
+                } else if (hazardLev.equalsIgnoreCase("high")){
+                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.critical_icon));
+                }
+                snippet = "Address: " + restaurant.getAddress() + "\nHazard Level: " + hazardLev;
+            }
+            options.snippet(snippet);
+
+            mMap.addMarker(options);
             mMap.moveCamera(CameraUpdateFactory.newLatLng(displayRestaurant));
         }
 
@@ -78,12 +101,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    private Inspection getMostRecentInspection(Restaurant restaurant) {
+        Inspection inspectionReturn = restaurant.getInspections().get(0);
+        for (Inspection inspection : restaurant.getInspections()) {
+            if (inspection.getDate().compareTo(inspectionReturn.getDate()) > 0) {
+                inspectionReturn = inspection;
+            }
+
+        }
+        return inspectionReturn;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        mInfo = findViewById(R.id.restaurantInfo);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         initMap();
@@ -120,16 +153,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(MapsActivity.this);
 
-        mInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mMarker.isInfoWindowShown()) {
-                    mMarker.hideInfoWindow();
-                } else {
-                    mMarker.showInfoWindow();
-                }
-            }
-        });
     }
 
     private void getLocationPermission(){
@@ -209,17 +232,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private void moveCamera (LatLng latlng, float zoom, Restaurant restaurant){
-        Log.d(TAG, "move Camera: moving the camera to: lat: " + latlng.latitude + " long: " + latlng.longitude);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoom));
-
-        mMap.clear();
-
-        String snippet = "Address: " + restaurant.getAddress();
-        MarkerOptions options = new MarkerOptions()
-                .position(latlng)
-                .title(restaurant.getName())
-                .snippet(snippet);
-        mMarker = mMap.addMarker(options);
-    }
 }
