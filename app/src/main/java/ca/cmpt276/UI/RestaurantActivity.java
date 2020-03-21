@@ -34,10 +34,12 @@ public class RestaurantActivity extends AppCompatActivity {
     Restaurant restaurant;
     List<Inspection> inspections;
     int resPosition;
+    int backIndex;
 
-    public static Intent makeLaunchIntent(Context context,int position) {
+    public static Intent makeLaunchIntent(Context context,int position, int index) {
         Intent intent = new Intent(context, RestaurantActivity.class);
         intent.putExtra("position",position);
+        intent.putExtra("index", index);
         return intent;
     }
 
@@ -53,9 +55,24 @@ public class RestaurantActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        switch (backIndex){
+            case 0:
+                startActivity(new Intent(RestaurantActivity.this, MainActivity.class));
+                break;
+            case 1:
+                startActivity(new Intent(RestaurantActivity.this, MapsActivity.class));
+                // go back to maps activity
+                break;
+        }
+    }
+
     public void extractDataFromIntent() {
         Intent intent = getIntent();
         resPosition = intent.getIntExtra("position", 0);
+        backIndex = intent.getIntExtra("index", 0);
         restaurant = manager.retrieve(resPosition);
         inspections = restaurant.getInspections();
     }

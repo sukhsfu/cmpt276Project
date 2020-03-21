@@ -92,6 +92,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 snippet = "Address: " + restaurant.getAddress() + "\nHazard Level: " + hazardLev;
             }
+
             options.snippet(snippet);
 
             mMap.addMarker(options);
@@ -106,6 +107,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         setupInfoWindows();
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Toast.makeText(MapsActivity.this, "Test ", Toast.LENGTH_SHORT).show();
+
+                //Intent intent = new Intent(MapsActivity.this, PlaceActivity.class);
+                //startActivity(intent);
+                LatLng latlng = marker.getPosition();
+                Restaurant restaurant = findRestaurantInListFromLatLng(latlng);
+                int position = manager.getIndex(restaurant);
+                Intent intent=RestaurantActivity.makeLaunchIntent(MapsActivity.this,position, 1);
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void setupInfoWindows() {
@@ -138,11 +155,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     name.setText(res.getName());
                     address.setText(res.getAddress());
                     hazardLevel.setText(hazardLev);
-
                     return row;
                 }
             });
         }
+
     }
 
     private Restaurant findRestaurantInListFromLatLng(LatLng latLng) {
