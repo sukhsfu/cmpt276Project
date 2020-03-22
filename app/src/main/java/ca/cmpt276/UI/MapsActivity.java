@@ -66,6 +66,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Intent intent = new Intent(this, ReadDataService.class);
+        startService(intent);
+
         Toast.makeText(this, "On Create called", Toast.LENGTH_SHORT).show();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
@@ -97,7 +101,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         };
-
     }
 
     private void initMap(){
@@ -308,7 +311,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 }
             });
-
         }
 
     }
