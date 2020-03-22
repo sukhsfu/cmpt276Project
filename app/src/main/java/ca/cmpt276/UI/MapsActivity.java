@@ -112,8 +112,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Marker marker;
         mMap = googleMap;
 
+
         for (Restaurant restaurant : manager) {
             marker = addMarker(restaurant);
+            Toast.makeText(this, marker.toString(), Toast.LENGTH_SHORT).show();
+            marker.showInfoWindow();
         }
 
         if(locationPermissionGranted){
