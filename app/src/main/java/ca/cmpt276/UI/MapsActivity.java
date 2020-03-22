@@ -59,11 +59,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     RestaurantManager manager = RestaurantManager.getInstance();
 
-    //private FusedLocationProviderClient mLocationClient;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private boolean locationPermissionGranted = false;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        Toast.makeText(this, "On Create called", Toast.LENGTH_SHORT).show();
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+        //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        initMap();
+        getLocationPermission();
+        setupSwitchButton();
+
+        // user location updates
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(20 * 1000);
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+
+                        LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        if(mFusedLocationProviderClient != null){
+                            mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
+                        }
+                        moveCamera(curLocation, DEFAULT_ZOOM);
+                    }
+                }
+            }
+        };
+
+    }
+
+    private void initMap(){
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(MapsActivity.this);
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -102,42 +143,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             launchInfoWindow(restaurant);
             Toast.makeText(this, "index is" + resId, Toast.LENGTH_SHORT).show();
         }
-
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        Toast.makeText(this, "On Create called", Toast.LENGTH_SHORT).show();
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-        initMap();
-        getLocationPermission();
-        setupSwitchButton();
-
-        // user location updates
-        locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(20 * 1000);
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    if (location != null) {
-
-                        LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                        if(mFusedLocationProviderClient != null){
-                            mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
-                        }
-                        moveCamera(curLocation, DEFAULT_ZOOM);
-                    }
-                }
-            }
-        };
 
     }
 
@@ -251,13 +256,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(new Intent(MapsActivity.this, MainActivity.class));
             }
         });
-    }
-
-    private void initMap(){
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(MapsActivity.this);
-
     }
 
     private void getLocationPermission(){
