@@ -60,8 +60,7 @@ public class RestaurantActivity extends AppCompatActivity {
         tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(RestaurantActivity.this, MapsActivity.class);
-                intent.putExtra("Restaurant", resPosition);
+                Intent intent = MapsActivity.makeLaunchIntent(RestaurantActivity.this, resPosition);
                 startActivity(intent);
             }
         });

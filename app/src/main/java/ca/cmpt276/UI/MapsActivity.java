@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -56,6 +57,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int LOCATION_REQUEST_CODE = 1000;
     private static final float DEFAULT_ZOOM = 15;
     public static final String TAG = "mapsActivity";
+    public static final String POSITION = "position";
     private GoogleMap mMap;
     RestaurantManager manager = RestaurantManager.getInstance();
 
@@ -63,6 +65,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean locationPermissionGranted = false;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+
+    public static Intent makeLaunchIntent(Context context, int position) {
+        Intent intent = new Intent(context, MapsActivity.class);
+        intent.putExtra(POSITION,position);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,9 +147,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        if(getIntent().hasExtra("Restaurant")){
-            int resId = getIntent().getIntExtra("Restaurant", 0);
+        if(getIntent().hasExtra(POSITION)){
+            int resId = getIntent().getIntExtra(POSITION, 0);
             Restaurant restaurant = manager.retrieve(resId);
+            moveCamera(new LatLng(restaurant.getLatitude(), restaurant.getLongitude()), DEFAULT_ZOOM);
 
             launchInfoWindow(restaurant);
             Toast.makeText(this, "index is" + resId, Toast.LENGTH_SHORT).show();
