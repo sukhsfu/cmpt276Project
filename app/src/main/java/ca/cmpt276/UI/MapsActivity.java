@@ -67,36 +67,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Toast.makeText(this, "On Ready called", Toast.LENGTH_SHORT).show();
+        Marker marker;
         mMap = googleMap;
 
         for (Restaurant restaurant : manager) {
-            LatLng displayRestaurant = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
-            MarkerOptions options = new MarkerOptions();
-            options.position(displayRestaurant);
-            options.title(restaurant.getName());
-            String snippet;
-            if (restaurant.getInspections().isEmpty()) {
-                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                snippet = "Address: " + restaurant.getAddress() + "\nNo Inspection Data.";
-            } else {
-                Inspection inspection = getMostRecentInspection(restaurant);
-                String hazardLev = inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
-                Log.d(TAG, inspection.toString());
-
-                if (hazardLev.equalsIgnoreCase("low")) {
-                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.low_hazard_green_check));
-                } else if (hazardLev.equalsIgnoreCase("moderate")) {
-                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.non_critical_icon));
-                } else if (hazardLev.equalsIgnoreCase("high")){
-                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.critical_icon));
-                }
-                snippet = "Address: " + restaurant.getAddress() + "\nHazard Level: " + hazardLev;
-            }
-
-            options.snippet(snippet);
-
-            mMap.addMarker(options);
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(displayRestaurant));
+            marker = addMarker(restaurant);
         }
 
         if(locationPermissionGranted){
@@ -111,10 +87,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Toast.makeText(MapsActivity.this, "Test ", Toast.LENGTH_SHORT).show();
-
-                //Intent intent = new Intent(MapsActivity.this, PlaceActivity.class);
-                //startActivity(intent);
                 LatLng latlng = marker.getPosition();
                 Restaurant restaurant = findRestaurantInListFromLatLng(latlng);
                 int position = manager.getIndex(restaurant);
@@ -123,6 +95,81 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        if(getIntent().hasExtra("Restaurant")){
+            int resId = getIntent().getIntExtra("Restaurant", 0);
+            Restaurant restaurant = manager.retrieve(resId);
+
+            launchInfoWindow(restaurant);
+            Toast.makeText(this, "index is" + resId, Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        Toast.makeText(this, "On Create called", Toast.LENGTH_SHORT).show();
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+        //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        initMap();
+        getLocationPermission();
+        setupSwitchButton();
+
+        // user location updates
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(20 * 1000);
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+
+                        LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        if(mFusedLocationProviderClient != null){
+                            mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
+                        }
+                        moveCamera(curLocation, DEFAULT_ZOOM);
+                    }
+                }
+            }
+        };
+
+    }
+
+    private Marker addMarker(Restaurant restaurant){
+        LatLng displayRestaurant = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
+        MarkerOptions options = new MarkerOptions();
+        options.position(displayRestaurant);
+        options.title(restaurant.getName());
+        String snippet;
+        if (restaurant.getInspections().isEmpty()) {
+            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+            snippet = "Address: " + restaurant.getAddress() + "\nNo Inspection Data.";
+        } else {
+            Inspection inspection = getMostRecentInspection(restaurant);
+            String hazardLev = inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
+            Log.d(TAG, inspection.toString());
+
+            if (hazardLev.equalsIgnoreCase("low")) {
+                options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.low_hazard_green_check));
+            } else if (hazardLev.equalsIgnoreCase("moderate")) {
+                options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.non_critical_icon));
+            } else if (hazardLev.equalsIgnoreCase("high")){
+                options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.critical_icon));
+            }
+            snippet = "Address: " + restaurant.getAddress() + "\nHazard Level: " + hazardLev;
+        }
+
+        options.snippet(snippet);
+
+        Marker marker = mMap.addMarker(options);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(displayRestaurant));
+        return marker;
     }
 
     private void setupInfoWindows() {
@@ -162,6 +209,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    public void launchInfoWindow(Restaurant restaurant){
+
+        Marker marker = addMarker(restaurant);
+        marker.showInfoWindow();
+        Toast.makeText(this, "show Info window on", Toast.LENGTH_SHORT).show();
+    }
+
     private Restaurant findRestaurantInListFromLatLng(LatLng latLng) {
         for (Restaurant restaurant:manager) {
             if (restaurant.getLatitude()==latLng.latitude && restaurant.getLongitude()==latLng.longitude) {
@@ -180,42 +234,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
         return inspectionReturn;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-        initMap();
-        getLocationPermission();
-        setupSwitchButton();
-
-
-        // user location updates
-        locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(20 * 1000);
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    if (location != null) {
-
-                        LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                        if(mFusedLocationProviderClient != null){
-                            mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
-                        }
-                        moveCamera(curLocation, DEFAULT_ZOOM);
-                    }
-                }
-            }
-        };
-
     }
 
     @Override

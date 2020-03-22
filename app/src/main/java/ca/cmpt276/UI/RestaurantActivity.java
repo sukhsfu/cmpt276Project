@@ -52,7 +52,19 @@ public class RestaurantActivity extends AppCompatActivity {
         setupRestaurantInformation();
         populateInspectionsListView();
         registerClickCallbackListView();
+        setupGPSClickCallback();
+    }
 
+    private void setupGPSClickCallback() {
+        TextView tv = (TextView) findViewById(R.id.txtGPS);
+        tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RestaurantActivity.this, MapsActivity.class);
+                intent.putExtra("Restaurant", resPosition);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -90,7 +102,7 @@ public class RestaurantActivity extends AppCompatActivity {
         resName.setText(name);
         TextView resAddress = findViewById(R.id.inspectionType);
         resAddress.setText(fullAddress);
-        TextView resGPS = findViewById(R.id.txtHazardLevel);
+        TextView resGPS = findViewById(R.id.txtGPS);
         resGPS.setText(GPS);
     }
 
