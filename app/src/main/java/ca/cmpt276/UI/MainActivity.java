@@ -1,18 +1,26 @@
 package ca.cmpt276.UI;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.IOException;
 
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.TextView;
 
@@ -22,9 +30,12 @@ import org.json.JSONObject;
 import android.widget.Button;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -61,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //startDownload();  This function can be used if we want to download data to external storage
+        jsonParse();
         readRestaurantData();
         readInspectionData();
         organizeData();
@@ -89,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
     private void jsonParse(){
 
-//        mTextViewResult = findViewById(R.id.text_view_result);
+
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
@@ -136,7 +147,31 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                                         MainActivity.this.runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                mTextViewResult.setText(myCSV);
+                                                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                                                    int request_code = 0;
+
+                                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, request_code);
+                                                } else {
+                                                    final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+                                                    File file = new File(path, "data.csv");
+                                                    try {
+                                                        file.createNewFile();
+                                                    } catch (IOException e) {
+                                                        System.out.println("An error occurred.");
+                                                        e.printStackTrace();
+                                                    }
+                                                    try {
+
+                                                        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+                                                        writer.write(myCSV);
+                                                        writer.close();
+                                                    } catch (IOException e) {
+                                                        throw new RuntimeException("Unable to write to File " + e);
+
+                                                    }
+                                                }
                                             }
                                         });
                                     }
@@ -340,17 +375,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setAdapter(new jadapter(restaurantText,  this));
     }
-    public void startDownload(View view){
-//        Uri uri = Uri.parse("https://upload.wikimedia.org/wikipedia/commons/2/2d/Snake_River_%285mb%29.jpg");
-        Uri uri = Uri.parse("http://data.surrey.ca/dataset/3c8cb648-0e80-4659-9078-ef4917b90ffb/resource/0e5d04a2-be9b-40fe-8de2-e88362ea916b/download/restaurants.csv");
-        DownloadManager.Request request1 = new DownloadManager.Request(uri);
-        request1.setTitle("CSVDownload");
-        request1.setDescription("Updatting CSV");
-        request1.setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS,"myCSV");
 
-        DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-        downloadManager.enqueue(request1);
-    }
 
 
     @Override
