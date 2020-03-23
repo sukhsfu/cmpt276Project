@@ -29,6 +29,10 @@ public class RestaurantManager implements Iterable<Restaurant> {
         return restaurants.get(index);
     }
 
+    public int getIndex(Restaurant restaurant){
+        return restaurants.indexOf(restaurant);
+    }
+
     public void addRestaurant(Restaurant restaurant) {
         restaurants.add(restaurant);
     }

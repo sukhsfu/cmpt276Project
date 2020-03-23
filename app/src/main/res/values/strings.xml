@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Data</string>
+    <string name="app_name">Restaurant Inspections</string>
     <string name="restaurant">restaurant</string>
     <string name="date">Date</string>
     <string name="inspection_type">Inspection Type:</string>
@@ -16,4 +16,13 @@
     <string name="insItemView_displayCrit">TextView</string>
     <string name="insItemView_displayNonCrit">TextView</string>
     <string name="insItemView_inspectiondate">inspectionDate</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_main_stack">MainActivityStack</string>
+    <string name="tab_txtMap">Map</string>
+    <string name="tab_txtList">List</string>
+    <string name="switch_tab">Show Restaurant List View</string>
+    <string name="switch_tab_map">Show Map View</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
