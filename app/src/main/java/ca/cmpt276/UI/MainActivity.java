@@ -1,4 +1,5 @@
 package ca.cmpt276.UI;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -73,7 +74,11 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         jsonParse();
-        readRestaurantData();
+        try{
+        readRestaurantData();}
+        catch (IOException e){
+
+        }
         readInspectionData();
         organizeData();
         debugData();
@@ -185,8 +190,11 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             }
         });
     }
-    private void readRestaurantData() {
-        InputStream is = getResources().openRawResource(R.raw.restaurants_itr1);
+    private void readRestaurantData()  throws IOException{
+        final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+        File file = new File(path, "data.csv");
+        InputStream is = new FileInputStream(file);
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(is, Charset.forName("UTF-8"))
         );
@@ -196,15 +204,16 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             reader.readLine();
 
             while ((line = reader.readLine()) != null) {
-                String[] tokens = line.split(",");
+                String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
                 String trackingNum = tokens[0];
                 String name = tokens[1].replaceAll("[^a-zA-Z0-9 &]", "");
                 String address = tokens[2].replaceAll("[^a-zA-Z0-9 &]", "");
                 String city = tokens[3].replaceAll("[^a-zA-Z0-9 &]", "");
+                String facetype = tokens[4].replaceAll("[^a-zA-Z0-9 &]","");
                 double latitude = Double.parseDouble(tokens[5]);
                 double longitude = Double.parseDouble(tokens[6]);
 
-                Restaurant sample = new Restaurant(trackingNum, name, address, city, latitude, longitude);
+                Restaurant sample = new Restaurant(trackingNum, name, address, city, facetype, latitude, longitude);
                 manager.addRestaurant(sample);
             }
         }catch (IOException e) {
