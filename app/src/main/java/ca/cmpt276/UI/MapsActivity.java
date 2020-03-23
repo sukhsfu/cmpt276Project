@@ -50,6 +50,10 @@ import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
 
+/**
+ * MapsActivity displays Google map centered to user's location and has markers for every restaurant
+ */
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -81,7 +85,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Toast.makeText(this, "On Create called", Toast.LENGTH_SHORT).show();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         initMap();
         getLocationPermission();
@@ -126,15 +129,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         for (Restaurant restaurant : manager) {
             marker = addMarker(restaurant);
-            Toast.makeText(this, marker.toString(), Toast.LENGTH_SHORT).show();
-            marker.showInfoWindow();
         }
 
         if(locationPermissionGranted){
             getUserLocation();
-
             mMap.setMyLocationEnabled(true);
-            //mMap.getUiSettings().setAllGesturesEnabled(true);
         }
 
         setupInfoWindows();
@@ -230,10 +229,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void launchInfoWindow(Restaurant restaurant){
-
         Marker marker = addMarker(restaurant);
         marker.showInfoWindow();
-        Toast.makeText(this, "show Info window on", Toast.LENGTH_SHORT).show();
     }
 
     private Restaurant findRestaurantInListFromLatLng(LatLng latLng) {
@@ -251,7 +248,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (inspection.getDate().compareTo(inspectionReturn.getDate()) > 0) {
                 inspectionReturn = inspection;
             }
-
         }
         return inspectionReturn;
     }

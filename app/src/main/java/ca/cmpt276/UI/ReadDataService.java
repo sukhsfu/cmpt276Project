@@ -44,7 +44,6 @@ public class ReadDataService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -157,7 +156,6 @@ public class ReadDataService extends Service {
         } else {
             isRepeat = true;
         }
-
         return new Violation(violType, severity, detailedDescrip, isRepeat);
     }
 }
