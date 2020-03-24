@@ -65,21 +65,31 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
     private RestaurantManager manager = RestaurantManager.getInstance();private TextView mTextViewResult;
     String url = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
+    String url2 = " http://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
     JSONObject obj;
     String tmp;
+    JSONObject obj2;
+    String tmp2;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        jsonParse2();
         jsonParse();
+
         try{
         readRestaurantData();}
         catch (IOException e){
 
         }
-        readInspectionData();
+        try{
+        readInspectionData();}
+        catch (IOException e){
+
+        }
         organizeData();
         debugData();
         setOutputData();
@@ -160,7 +170,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                                                 } else {
                                                     final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
-                                                    File file = new File(path, "data.csv");
+
+                                                       File file = new File(path, "data.csv");
+
                                                     try {
                                                         file.createNewFile();
                                                     } catch (IOException e) {
@@ -182,7 +194,100 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                                     }
                                 }
                             });
-//                            mTextViewResult.setText(tmp);
+                            //textView.setText(tmp);
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
+    private void jsonParse2(){
+
+
+        OkHttpClient client3 = new OkHttpClient();
+        Request request3 = new Request.Builder()
+                .url(url2)
+                .build();
+        client3.newCall(request3).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call3, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call3, @NotNull Response response3) throws IOException {
+                if (response3.isSuccessful()){
+                    final String myResponse3 = response3.body().string();
+
+                    try {
+                        obj2 = new JSONObject(myResponse3);
+
+                    } catch (Throwable t) {
+
+                    }
+
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                tmp2 = obj2.getJSONObject("result").getJSONArray("resources").getJSONObject(0).getString("url");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            OkHttpClient client4 = new OkHttpClient();
+                            Request request4 = new Request.Builder().url(tmp2).build();
+
+                            client4.newCall(request4).enqueue(new Callback() {
+                                @Override
+                                public void onFailure(@NotNull Call call3, @NotNull IOException e) {
+                                    e.printStackTrace();;
+                                }
+
+                                @Override
+                                public void onResponse(@NotNull Call call3, @NotNull Response response3) throws IOException {
+                                    if(response3.isSuccessful()){
+                                        final String myCSV2 = response3.body().string();
+                                        MainActivity.this.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                //System.out.println(myCSV2);
+                                                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                                                    int request_code = 0;
+
+                                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, request_code);
+                                                } else {
+                                                    final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+
+                                                    File file2 = new File(path, "inspection.csv");
+
+
+
+                                                    try {
+                                                        file2.createNewFile();
+                                                    } catch (IOException e) {
+                                                        System.out.println("An error occurred.");
+                                                        e.printStackTrace();
+                                                    }
+                                                    try {
+
+                                                        BufferedWriter writer2 = new BufferedWriter(new FileWriter(file2));
+                                                        writer2.write(myCSV2);
+                                                        writer2.close();
+                                                    } catch (IOException e) {
+                                                        throw new RuntimeException("Unable to write to File " + e);
+
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                           // System.out.println(tmp2);
                         }
                     });
                 }
@@ -223,46 +328,63 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         }
     }
 
-    private void readInspectionData() {
-        InputStream is = getResources().openRawResource(R.raw.inspectionreports_itr1);
+    private void readInspectionData()throws IOException {
+        final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+        File file = new File(path, "inspection.csv");
+        InputStream is = new FileInputStream(file);
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(is, Charset.forName("UTF-8"))
         );
 
+       /* InputStream is = getResources().openRawResource(R.raw.inspectionreports_itr1);
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(is, Charset.forName("UTF-8"))
+        );
+*/
         String line = "";
         try {
             reader.readLine();
 
             while ((line = reader.readLine()) != null) {
-                String[] tokens = line.split(",",7);
-
-                String trackingNum = tokens[0];
-                String date = tokens[1];
-                String type = tokens[2];
-                int numCritical = Integer.parseInt(tokens[3]);
-                int numNonCritical = Integer.parseInt(tokens[4]);
-                String hazardRating = tokens[5];
-
-                Inspection sample = new Inspection(trackingNum, date, type, numCritical, numNonCritical, hazardRating);
-
-                if(tokens.length >= 7 && tokens[6].length() > 0) {
-                    if (!tokens[6].contains("|")) {
-                        // there is only one violation
-                        String[] indivViol = tokens[6].split(",");
-
-                        Violation violation = extractViolationFromCSV(indivViol);
-                        sample.addViolation(violation);
-                    }
-                    else {
-                        String[] violations = tokens[6].split("[|]");
-                        for (int i = 0; i < violations.length; i++) {
-                            String[] indivViol = violations[i].split(",");
-                            Violation violation = extractViolationFromCSV(indivViol);
-                            sample.addViolation(violation);
+                String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                if(tokens.length!=0) {
+                    String trackingNum = tokens[0];
+                    String date = tokens[1];
+                    String type = tokens[2];
+                    int numCritical = Integer.parseInt(tokens[3]);
+                    int numNonCritical = Integer.parseInt(tokens[4]);
+                    String hazardRating = "";
+                    if (tokens.length == 5) {
+                        Inspection sample = new Inspection(trackingNum, date, type, numCritical, numNonCritical, hazardRating);
+                        inspections.add(sample);
+                    } else {
+                        if (tokens.length == 7) {
+                            hazardRating = tokens[6];
                         }
+
+
+                        Inspection sample = new Inspection(trackingNum, date, type, numCritical, numNonCritical, hazardRating);
+
+                        if (tokens[5].length() > 0) {
+                            if (!tokens[5].contains("|")) {
+                                // there is only one violation
+                                String[] indivViol = tokens[5].split(",");
+
+                                Violation violation = extractViolationFromCSV(indivViol);
+                                sample.addViolation(violation);
+                            } else {
+                                String[] violations = tokens[5].split("[|]");
+                                for (int i = 0; i < violations.length; i++) {
+                                    String[] indivViol = violations[i].split(",");
+                                    Violation violation = extractViolationFromCSV(indivViol);
+                                    sample.addViolation(violation);
+                                }
+                            }
+                        }
+                        inspections.add(sample);
                     }
                 }
-                inspections.add(sample);
             }
         }catch (IOException e) {
             Log.wtf("MyActivityIns", "Error reading data file on line" + line, e);

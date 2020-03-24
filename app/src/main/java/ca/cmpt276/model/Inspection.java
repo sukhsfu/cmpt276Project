@@ -14,6 +14,7 @@ public class Inspection {
     private int numCriticalIssues;
     private int numNonCriticalIssues;
     private String hazardLevel;
+//    private String voli;
     private List<Violation> violations;
 
     public Inspection(String trackingNumber, String date, String type,
@@ -24,12 +25,14 @@ public class Inspection {
         this.numCriticalIssues = numCriticalIssues;
         this.numNonCriticalIssues = numNonCriticalIssues;
         this.hazardLevel = hazardLevel;
+//        this.voli = voli;
         this.violations = new ArrayList<>();
     }
 
     public void addViolation(Violation violation) {
         violations.add(violation);
     }
+//    public String getVoli(){return voli;}
 
     public String getTrackingNumber() {
         return trackingNumber;
@@ -69,6 +72,7 @@ public class Inspection {
                 ", numCriticalIssues=" + numCriticalIssues +
                 ", numNonCriticalIssues=" + numNonCriticalIssues +
                 ", hazardLevel='" + hazardLevel + '\'' +
+//                ", voli = '" + voli + '\'' +
                 ", violations=" + violations +
                 '}';
     }
