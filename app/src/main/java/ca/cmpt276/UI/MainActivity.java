@@ -77,8 +77,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        jsonParse2();
-        jsonParse();
+
+        //jsonParse2();
+        //jsonParse();
 
         try{
         readRestaurantData();}
@@ -97,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         setupButtonSwitchToMap();
     }
 
+
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -113,188 +116,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         });
     }
 
-    private void jsonParse(){
 
-
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.isSuccessful()){
-                    final String myResponse = response.body().string();
-
-                    try {
-                        obj = new JSONObject(myResponse);
-
-                    } catch (Throwable t) {
-
-                    }
-
-                    MainActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                tmp = obj.getJSONObject("result").getJSONArray("resources").getJSONObject(0).getString("url");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            OkHttpClient client2 = new OkHttpClient();
-                            Request request2 = new Request.Builder().url(tmp).build();
-
-                            client2.newCall(request2).enqueue(new Callback() {
-                                @Override
-                                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                                    e.printStackTrace();;
-                                }
-
-                                @Override
-                                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                                    if(response.isSuccessful()){
-                                        final String myCSV = response.body().string();
-                                        MainActivity.this.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                                                    int request_code = 0;
-
-                                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, request_code);
-                                                } else {
-                                                    final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
-
-                                                       File file = new File(path, "data.csv");
-
-                                                    try {
-                                                        file.createNewFile();
-                                                    } catch (IOException e) {
-                                                        System.out.println("An error occurred.");
-                                                        e.printStackTrace();
-                                                    }
-                                                    try {
-
-                                                        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-                                                        writer.write(myCSV);
-                                                        writer.close();
-                                                    } catch (IOException e) {
-                                                        throw new RuntimeException("Unable to write to File " + e);
-
-                                                    }
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                            //textView.setText(tmp);
-                        }
-                    });
-                }
-
-            }
-        });
-    }
-
-    private void jsonParse2(){
-
-
-        OkHttpClient client3 = new OkHttpClient();
-        Request request3 = new Request.Builder()
-                .url(url2)
-                .build();
-        client3.newCall(request3).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call3, @NotNull IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call3, @NotNull Response response3) throws IOException {
-                if (response3.isSuccessful()){
-                    final String myResponse3 = response3.body().string();
-
-                    try {
-                        obj2 = new JSONObject(myResponse3);
-
-                    } catch (Throwable t) {
-
-                    }
-
-                    MainActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                tmp2 = obj2.getJSONObject("result").getJSONArray("resources").getJSONObject(0).getString("url");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            OkHttpClient client4 = new OkHttpClient();
-                            Request request4 = new Request.Builder().url(tmp2).build();
-
-                            client4.newCall(request4).enqueue(new Callback() {
-                                @Override
-                                public void onFailure(@NotNull Call call3, @NotNull IOException e) {
-                                    e.printStackTrace();;
-                                }
-
-                                @Override
-                                public void onResponse(@NotNull Call call3, @NotNull Response response3) throws IOException {
-                                    if(response3.isSuccessful()){
-                                        final String myCSV2 = response3.body().string();
-                                        MainActivity.this.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                //System.out.println(myCSV2);
-                                                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                                                    int request_code = 0;
-
-                                                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, request_code);
-                                                } else {
-                                                    final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
-
-                                                    File file2 = new File(path, "inspection.csv");
-
-
-
-                                                    try {
-                                                        file2.createNewFile();
-                                                    } catch (IOException e) {
-                                                        System.out.println("An error occurred.");
-                                                        e.printStackTrace();
-                                                    }
-                                                    try {
-
-                                                        BufferedWriter writer2 = new BufferedWriter(new FileWriter(file2));
-                                                        writer2.write(myCSV2);
-                                                        writer2.close();
-                                                    } catch (IOException e) {
-                                                        throw new RuntimeException("Unable to write to File " + e);
-
-                                                    }
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                           // System.out.println(tmp2);
-                        }
-                    });
-                }
-
-            }
-        });
-    }
     private void readRestaurantData()  throws IOException{
         final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
