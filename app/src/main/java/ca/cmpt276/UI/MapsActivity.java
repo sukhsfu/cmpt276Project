@@ -134,6 +134,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //mMap.getUiSettings().setAllGesturesEnabled(true);
         }
 
+        if(getIntent().hasExtra(POSITION)){
+            int resId = getIntent().getIntExtra(POSITION, 0);
+            Restaurant restaurant = manager.retrieve(resId);
+            Log.d(TAG, restaurant.toString());
+            moveCamera(new LatLng(restaurant.getLatitude(), restaurant.getLongitude()), DEFAULT_ZOOM);
+            Log.d(TAG, "After Move Camera");
+
+            launchInfoWindow(restaurant);
+            Toast.makeText(this, "index is" + resId, Toast.LENGTH_SHORT).show();
+        }
+
         setupInfoWindows();
 
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
@@ -146,15 +157,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
-
-        if(getIntent().hasExtra(POSITION)){
-            int resId = getIntent().getIntExtra(POSITION, 0);
-            Restaurant restaurant = manager.retrieve(resId);
-            moveCamera(new LatLng(restaurant.getLatitude(), restaurant.getLongitude()), DEFAULT_ZOOM);
-
-            launchInfoWindow(restaurant);
-            Toast.makeText(this, "index is" + resId, Toast.LENGTH_SHORT).show();
-        }
 
     }
 
@@ -322,7 +324,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             });
 
         }
-
     }
 
     private void moveCamera (LatLng latlng, float zoom){
