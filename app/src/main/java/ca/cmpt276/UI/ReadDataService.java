@@ -34,7 +34,6 @@ public class ReadDataService extends Service {
         readInspectionData();
         organizeData();
         debugData();
-        Toast.makeText(this, "Service started", Toast.LENGTH_SHORT).show();
         return START_STICKY;
     }
 

@@ -82,7 +82,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Intent intent = new Intent(this, ReadDataService.class);
         startService(intent);
 
-        Toast.makeText(this, "On Create called", Toast.LENGTH_SHORT).show();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
@@ -122,20 +121,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(this, "On Ready called", Toast.LENGTH_SHORT).show();
         Marker marker;
         mMap = googleMap;
 
+        if(getIntent().hasExtra(POSITION)){
+            int resId = getIntent().getIntExtra(POSITION, 0);
+            Restaurant restaurant = manager.retrieve(resId);
+            moveCamera(new LatLng(restaurant.getLatitude(), restaurant.getLongitude()), DEFAULT_ZOOM);
+            launchInfoWindow(restaurant);
+        }
+        else{
+            if(locationPermissionGranted){
+                getUserLocation();
+            }
+        }
+        // show blue dot for user's current location
+        mMap.setMyLocationEnabled(true);
 
         for (Restaurant restaurant : manager) {
             marker = addMarker(restaurant);
         }
-
-        if(locationPermissionGranted){
-            getUserLocation();
-            mMap.setMyLocationEnabled(true);
-        }
-
         setupInfoWindows();
 
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
@@ -148,16 +153,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
-
-        if(getIntent().hasExtra(POSITION)){
-            int resId = getIntent().getIntExtra(POSITION, 0);
-            Restaurant restaurant = manager.retrieve(resId);
-            moveCamera(new LatLng(restaurant.getLatitude(), restaurant.getLongitude()), DEFAULT_ZOOM);
-
-            launchInfoWindow(restaurant);
-            Toast.makeText(this, "index is" + resId, Toast.LENGTH_SHORT).show();
-        }
-
     }
 
     private Marker addMarker(Restaurant restaurant){
@@ -187,7 +182,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         options.snippet(snippet);
 
         Marker marker = mMap.addMarker(options);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(displayRestaurant));
         return marker;
     }
 
@@ -278,7 +272,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     == PackageManager.PERMISSION_GRANTED){
                 locationPermissionGranted = true;
                 initMap();
-                getUserLocation();
             }
         } else {
             ActivityCompat.requestPermissions(this, permissions,
@@ -295,8 +288,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     locationPermissionGranted = true;
-                    //initMap();
-                    getUserLocation();
                 } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }
@@ -320,7 +311,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             });
         }
-
     }
 
     private void moveCamera (LatLng latlng, float zoom){
