@@ -23,6 +23,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,7 +55,8 @@ public class update extends AppCompatDialogFragment {
 
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog builderdownload =  builder.create();
         builder.setTitle("Update Data").setMessage("New data detected on server, would you like to update")
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
@@ -63,11 +66,24 @@ public class update extends AppCompatDialogFragment {
                 }).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                builderdownload.setTitle("Downloading");
+                builderdownload.show();
+                System.out.println("executed");
                 jsonParse();
                 jsonParse2();
+
+
+
+
             }
         });
-        return builder.create();
+
+           return builder.create();
+
+
+
+
+
     }
 
     private void jsonParse(){
