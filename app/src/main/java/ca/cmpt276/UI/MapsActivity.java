@@ -13,17 +13,10 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.Api;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -38,13 +31,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
@@ -106,7 +93,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if(mFusedLocationProviderClient != null){
                             mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
                         }
-                        moveCamera(curLocation, DEFAULT_ZOOM);
+                        moveCamera(curLocation);
                     }
                 }
             }
@@ -121,13 +108,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Marker marker;
         mMap = googleMap;
 
         if(getIntent().hasExtra(POSITION)){
             int resId = getIntent().getIntExtra(POSITION, 0);
             Restaurant restaurant = manager.retrieve(resId);
-            moveCamera(new LatLng(restaurant.getLatitude(), restaurant.getLongitude()), DEFAULT_ZOOM);
+            moveCamera(new LatLng(restaurant.getLatitude(), restaurant.getLongitude()));
             launchInfoWindow(restaurant);
         }
         else{
@@ -139,7 +125,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
 
         for (Restaurant restaurant : manager) {
-            marker = addMarker(restaurant);
+            addMarker(restaurant);
         }
         setupInfoWindows();
 
@@ -181,8 +167,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         options.snippet(snippet);
 
-        Marker marker = mMap.addMarker(options);
-        return marker;
+        return mMap.addMarker(options);
     }
 
     private void setupInfoWindows() {
@@ -205,7 +190,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     LatLng latlng = marker.getPosition();
                     Restaurant res = findRestaurantInListFromLatLng(latlng);
                     String hazardLev;
-                    if (res.getInspections().isEmpty()) {
+                    if ( res.getInspections().isEmpty() ) {
                         hazardLev = getString(R.string.maps_infoWin_noInsp);
                     } else {
                         Inspection inspection = getMostRecentInspection(res);
@@ -253,7 +238,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setupSwitchButton() {
-        Button btnSwitch = (Button) findViewById(R.id.btnSwitch);
+        Button btnSwitch = findViewById(R.id.btnSwitch);
 
         btnSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -306,16 +291,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 public void onComplete(@NonNull Task<Location> task) {
                     if (task.isSuccessful()) {
                         Location curLocation = task.getResult();
-                        moveCamera(new LatLng(curLocation.getLatitude(), curLocation.getLongitude()), DEFAULT_ZOOM);
+                        moveCamera(new LatLng(curLocation.getLatitude(), curLocation.getLongitude()));
                     }
                 }
             });
         }
     }
 
-    private void moveCamera (LatLng latlng, float zoom){
+    private void moveCamera(LatLng latlng){
         Log.d(TAG, "move Camera: moving the camera to: lat: " + latlng.latitude + " long: " + latlng.longitude);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, MapsActivity.DEFAULT_ZOOM));
     }
 
 }

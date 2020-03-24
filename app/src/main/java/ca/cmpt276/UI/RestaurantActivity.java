@@ -16,9 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.Toolbar;
-
 import java.util.List;
 
 import ca.cmpt276.model.Inspection;
