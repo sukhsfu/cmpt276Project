@@ -56,7 +56,7 @@ public class RestaurantActivity extends AppCompatActivity {
     }
 
     private void setupGPSClickCallback() {
-        TextView tv = (TextView) findViewById(R.id.txtGPS);
+        TextView tv = findViewById(R.id.txtGPS);
         tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,7 +117,7 @@ public class RestaurantActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Inspection clickedInspection = inspections.get(position);
+                //Inspection clickedInspection = inspections.get(position);
                 Intent intent = InspectionActivity.makeLaunchIntent(RestaurantActivity.this, resPosition, position);
                 startActivity(intent);
 
@@ -171,10 +171,11 @@ public class RestaurantActivity extends AppCompatActivity {
 
             // set critical & non-critical issues
             TextView critText = itemView.findViewById(R.id.item_numCritIssues);
-            critText.setText(currInspection.getNumCriticalIssues() + "");
+            critText.setText(getString(R.string.inspection_setNumCrit, currInspection.getNumCriticalIssues()));
 
             TextView nonCritText = itemView.findViewById(R.id.item_numNonCritIssues);
-            nonCritText.setText(currInspection.getNumNonCriticalIssues() + "");
+            critText.setText(getString(R.string.inspection_setNumCrit, currInspection.getNumCriticalIssues()));
+            nonCritText.setText(getString(R.string.inspection_setNumNonCrit, currInspection.getNumNonCriticalIssues()));
 
             return itemView;
         }

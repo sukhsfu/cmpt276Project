@@ -171,7 +171,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String snippet;
         if (restaurant.getInspections().isEmpty()) {
             options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-            snippet = "Address: " + restaurant.getAddress() + "\nNo Inspection Data.";
+            snippet = getString(R.string.maps_markerSnippet_noInsp, restaurant.getAddress());
         } else {
             Inspection inspection = getMostRecentInspection(restaurant);
             String hazardLev = inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
@@ -284,7 +284,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     == PackageManager.PERMISSION_GRANTED){
                 locationPermissionGranted = true;
                 initMap();
-                getUserLocation();
+               // getUserLocation();
             }
         } else {
             ActivityCompat.requestPermissions(this, permissions,
