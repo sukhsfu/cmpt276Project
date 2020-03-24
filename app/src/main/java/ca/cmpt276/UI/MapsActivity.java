@@ -176,7 +176,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             } else if (hazardLev.equalsIgnoreCase("high")){
                 options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.critical_icon));
             }
-            snippet = "Address: " + restaurant.getAddress() + "\nHazard Level: " + hazardLev;
+            snippet = getString(R.string.maps_markerSnippet, restaurant.getAddress(), hazardLev);
         }
 
         options.snippet(snippet);
@@ -206,10 +206,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Restaurant res = findRestaurantInListFromLatLng(latlng);
                     String hazardLev;
                     if (res.getInspections().isEmpty()) {
-                        hazardLev = "No inspections found.";
+                        hazardLev = getString(R.string.maps_infoWin_noInsp);
                     } else {
                         Inspection inspection = getMostRecentInspection(res);
-                        hazardLev = "Hazard Level: " + inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
+                        hazardLev = getString(R.string.maps_infoWin_hazLev ,inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", ""));
                     }
 
                     name.setText(res.getName());
@@ -289,7 +289,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     locationPermissionGranted = true;
                 } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.location_permission_denied, Toast.LENGTH_SHORT).show();
                 }
                 break;
             }

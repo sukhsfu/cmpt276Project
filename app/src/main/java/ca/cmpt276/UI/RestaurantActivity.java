@@ -171,7 +171,6 @@ public class RestaurantActivity extends AppCompatActivity {
             critText.setText(getString(R.string.inspection_setNumCrit, currInspection.getNumCriticalIssues()));
 
             TextView nonCritText = itemView.findViewById(R.id.item_numNonCritIssues);
-            critText.setText(getString(R.string.inspection_setNumCrit, currInspection.getNumCriticalIssues()));
             nonCritText.setText(getString(R.string.inspection_setNumNonCrit, currInspection.getNumNonCriticalIssues()));
 
             return itemView;

@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     }
 
     private void setupButtonSwitchToMap() {
-        Button switchMap = (Button) findViewById(R.id.btnSwitchMap);
+        Button switchMap = findViewById(R.id.btnSwitchMap);
         switchMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
