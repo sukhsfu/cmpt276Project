@@ -50,6 +50,10 @@ import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
 
+/**
+ * MapsActivity displays Google map centered to user's location and has markers for every restaurant
+ */
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -78,10 +82,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Intent intent = new Intent(this, ReadDataService.class);
         startService(intent);
 
-        Toast.makeText(this, "On Create called", Toast.LENGTH_SHORT).show();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         initMap();
         getLocationPermission();
@@ -119,35 +121,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(this, "On Ready called", Toast.LENGTH_SHORT).show();
         Marker marker;
         mMap = googleMap;
-
-
-        for (Restaurant restaurant : manager) {
-            marker = addMarker(restaurant);
-            Toast.makeText(this, marker.toString(), Toast.LENGTH_SHORT).show();
-            marker.showInfoWindow();
-        }
-
-        if(locationPermissionGranted){
-            getUserLocation();
-
-            mMap.setMyLocationEnabled(true);
-            //mMap.getUiSettings().setAllGesturesEnabled(true);
-        }
 
         if(getIntent().hasExtra(POSITION)){
             int resId = getIntent().getIntExtra(POSITION, 0);
             Restaurant restaurant = manager.retrieve(resId);
-            Log.d(TAG, restaurant.toString());
             moveCamera(new LatLng(restaurant.getLatitude(), restaurant.getLongitude()), DEFAULT_ZOOM);
-            Log.d(TAG, "After Move Camera");
-
             launchInfoWindow(restaurant);
-            Toast.makeText(this, "index is" + resId, Toast.LENGTH_SHORT).show();
         }
+        else{
+            if(locationPermissionGranted){
+                getUserLocation();
+            }
+        }
+        // show blue dot for user's current location
+        mMap.setMyLocationEnabled(true);
 
+        for (Restaurant restaurant : manager) {
+            marker = addMarker(restaurant);
+        }
         setupInfoWindows();
 
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
@@ -160,7 +153,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
-
     }
 
     private Marker addMarker(Restaurant restaurant){
@@ -190,7 +182,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         options.snippet(snippet);
 
         Marker marker = mMap.addMarker(options);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(displayRestaurant));
         return marker;
     }
 
@@ -232,10 +223,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void launchInfoWindow(Restaurant restaurant){
-
         Marker marker = addMarker(restaurant);
         marker.showInfoWindow();
-        Toast.makeText(this, "show Info window on", Toast.LENGTH_SHORT).show();
     }
 
     private Restaurant findRestaurantInListFromLatLng(LatLng latLng) {
@@ -253,7 +242,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (inspection.getDate().compareTo(inspectionReturn.getDate()) > 0) {
                 inspectionReturn = inspection;
             }
-
         }
         return inspectionReturn;
     }
@@ -284,7 +272,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     == PackageManager.PERMISSION_GRANTED){
                 locationPermissionGranted = true;
                 initMap();
-               // getUserLocation();
             }
         } else {
             ActivityCompat.requestPermissions(this, permissions,
@@ -301,8 +288,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     locationPermissionGranted = true;
-                    //initMap();
-                    getUserLocation();
                 } else {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 }

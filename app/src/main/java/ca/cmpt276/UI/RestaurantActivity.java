@@ -62,6 +62,7 @@ public class RestaurantActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = MapsActivity.makeLaunchIntent(RestaurantActivity.this, resPosition);
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -120,10 +121,6 @@ public class RestaurantActivity extends AppCompatActivity {
                 //Inspection clickedInspection = inspections.get(position);
                 Intent intent = InspectionActivity.makeLaunchIntent(RestaurantActivity.this, resPosition, position);
                 startActivity(intent);
-
-                //String message = "You clicked position " + position
-                //        + " which is " + clickedInspection.getTrackingNumber();
-                //Toast.makeText(RestaurantActivity.this, message, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -180,7 +177,4 @@ public class RestaurantActivity extends AppCompatActivity {
             return itemView;
         }
     }
-
-
-
 }
