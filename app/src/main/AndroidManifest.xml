@@ -42,8 +42,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RestaurantActivity" />
-        <activity android:name=".InspectionActivity" />
+        <activity android:name=".RestaurantActivity" android:parentActivityName=".MainActivity" />
+        <activity android:name=".InspectionActivity" android:parentActivityName=".RestaurantActivity"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

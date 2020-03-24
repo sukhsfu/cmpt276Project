@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import java.util.List;
 
@@ -53,6 +54,8 @@ public class RestaurantActivity extends AppCompatActivity {
         populateInspectionsListView();
         registerClickCallbackListView();
         setupGPSClickCallback();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void setupGPSClickCallback() {
@@ -66,6 +69,8 @@ public class RestaurantActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     @Override
     public void onBackPressed() {

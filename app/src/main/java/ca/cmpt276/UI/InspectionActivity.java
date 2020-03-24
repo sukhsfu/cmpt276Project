@@ -55,6 +55,8 @@ public class InspectionActivity extends AppCompatActivity {
         setScreen();
         populateViolationsListView();
         registerClickCallbackListView();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
     public void extractDataFromIntent() {

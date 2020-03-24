@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RestaurantActivity">
+    tools:context=".RestaurantActivity"
+    >
 
     <TextView
         android:id="@+id/item_inspectionDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:capitalize="characters"
         android:fontFamily="sans-serif-black"
         android:letterSpacing="0.1"
