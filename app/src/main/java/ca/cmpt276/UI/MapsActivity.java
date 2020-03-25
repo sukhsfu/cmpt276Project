@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -54,6 +55,7 @@ import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -188,9 +190,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         openUpdate();
+
+        setupSwitchButton();
         initMap();
         getLocationPermission();
-        setupSwitchButton();
+
 
 
         // user location updates

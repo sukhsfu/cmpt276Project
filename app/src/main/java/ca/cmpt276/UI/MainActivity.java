@@ -170,10 +170,11 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
             while ((line = reader.readLine()) != null) {
                 String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                System.out.println(tokens);
                 if(tokens.length!=0) {
                     String trackingNum = tokens[0];
                     String date = tokens[1];
-                    String type = tokens[2];
+                    String type = tokens[2].replaceAll("[^a-zA-Z0-9 &]","");;
                     int numCritical = Integer.parseInt(tokens[3]);
                     int numNonCritical = Integer.parseInt(tokens[4]);
                     String hazardRating = "";
@@ -182,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                         inspections.add(sample);
                     } else {
                         if (tokens.length == 7) {
-                            hazardRating = tokens[6];
+                            hazardRating = tokens[6].replaceAll("[^a-zA-Z0-9 &]","");;
                         }
 
 
@@ -246,13 +247,13 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 }
                 restaurantText.add(restaurant.getName() + "\n\n" + dateDifference(inspectionRet.getDate())+ (inspectionRet.getNumCriticalIssues() + inspectionRet
                         .getNumNonCriticalIssues()) + " issues found\n" + inspectionRet.getNumCriticalIssues() + "  critical, " + inspectionRet.getNumNonCriticalIssues() + "  non-critical");
-                   if(inspectionRet.getHazardLevel().equalsIgnoreCase("\"Low\"") ){
+                   if(inspectionRet.getHazardLevel().equalsIgnoreCase("Low") ){
                        Hazards.add(Color.GREEN);
                    }
-               else if(inspectionRet.getHazardLevel().equalsIgnoreCase("\"Moderate\"")){
+               else if(inspectionRet.getHazardLevel().equalsIgnoreCase("Moderate")){
                     Hazards.add(Color.YELLOW);
                 }
-                else if(inspectionRet.getHazardLevel().equalsIgnoreCase("\"High\"")) {
+                else if(inspectionRet.getHazardLevel().equalsIgnoreCase("High")) {
                     Hazards.add(Color.RED);
                 }
                 else{

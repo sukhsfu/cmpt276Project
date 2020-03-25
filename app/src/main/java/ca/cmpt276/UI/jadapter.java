@@ -74,6 +74,12 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
         else if(title.contains("Zugba Flame Grilled Chicken")){
             holder.image.setImageResource(R.mipmap.zubra);
         }
+        else if(title.contains("7Eleven")){
+            holder.image.setImageResource(R.mipmap.seven);
+        }
+
+
+
         holder.Hazardimage.setBackgroundColor((Hazards.get(position)).intValue());
         if(Color.GREEN == Hazards.get(position).intValue()){
             holder.face.setImageResource(R.drawable.smile);

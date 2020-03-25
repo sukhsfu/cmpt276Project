@@ -45,38 +45,43 @@ public class update extends AppCompatDialogFragment {
     Context context;
     Activity activity;
     @NonNull
-     private Helper helper;
     String url = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
     String url2 = " http://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
     JSONObject obj;
     String tmp;
     JSONObject obj2;
     String tmp2;
+    AlertDialog.Builder builder;
+    AlertDialog builderdownload;
 
     @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        AlertDialog builderdownload =  builder.create();
-        builder.setTitle("Update Data").setMessage("New data detected on server, would you like to update")
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState)  {
+         builder = new AlertDialog.Builder(activity);
+         builderdownload =  builder.create();
+         builder.setTitle("Update Data").setMessage("New data detected on server, would you like to update")
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // does nothing
+
                     }
                 }).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                builderdownload.setTitle("Downloading");
+                builderdownload.setIcon(R.mipmap.loading);
+                builderdownload.setTitle("Download complete.");
+                builderdownload.setMessage("Synchronized Data with City.");
+                builderdownload.create();
                 builderdownload.show();
-                System.out.println("executed");
+
                 jsonParse();
                 jsonParse2();
-
+                builderdownload.cancel();
 
 
 
             }
         });
+
 
            return builder.create();
 
@@ -258,6 +263,7 @@ public class update extends AppCompatDialogFragment {
 
             }
         });
+
     }
     @Override
     public void onAttach(@NonNull Context context) {
