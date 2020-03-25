@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     private List<Inspection> inspections = new ArrayList<>();
     protected static List<Integer> Hazards=new ArrayList<>();
 
+
+
     private RestaurantManager manager = RestaurantManager.getInstance();private TextView mTextViewResult;
     String url = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
     String url2 = " http://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
@@ -78,8 +80,18 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //jsonParse2();
-        //jsonParse();
+
+        final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(path, "data.csv");
+
+
+
+
+
+        if(!file.exists()){
+            readRestaurantData1();
+            readInspectionData1();
+        }
 
         try{
         readRestaurantData();}
@@ -98,6 +110,84 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         setupButtonSwitchToMap();
     }
 
+    private void readInspectionData1() {
+        InputStream is = getResources().openRawResource(R.raw.inspectionreports_itr1);
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(is, Charset.forName("UTF-8"))
+        );
+
+        String line = "";
+        try {
+            reader.readLine();
+
+            while ((line = reader.readLine()) != null) {
+                String[] tokens = line.split(",",7);
+
+                String trackingNum = tokens[0];
+                String date = tokens[1];
+                String type = tokens[2];
+                int numCritical = Integer.parseInt(tokens[3]);
+                int numNonCritical = Integer.parseInt(tokens[4]);
+                String hazardRating = tokens[5];
+
+                Inspection sample = new Inspection(trackingNum, date, type, numCritical, numNonCritical, hazardRating);
+
+                if(tokens.length >= 7 && tokens[6].length() > 0) {
+                    if (!tokens[6].contains("|")) {
+                        // there is only one violation
+                        String[] indivViol = tokens[6].split(",");
+
+                        Violation violation = extractViolationFromCSV(indivViol);
+                        sample.addViolation(violation);
+                    }
+                    else {
+                        String[] violations = tokens[6].split("[|]");
+                        for (int i = 0; i < violations.length; i++) {
+                            String[] indivViol = violations[i].split(",");
+                            Violation violation = extractViolationFromCSV(indivViol);
+                            sample.addViolation(violation);
+                        }
+                    }
+                }
+                inspections.add(sample);
+            }
+        }catch (IOException e) {
+            Log.wtf("MyActivityIns", "Error reading data file on line" + line, e);
+            e.printStackTrace();
+        }
+
+    }
+
+
+    private void readRestaurantData1() {
+        InputStream is = getResources().openRawResource(R.raw.restaurants_itr1);
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(is, Charset.forName("UTF-8"))
+        );
+
+        String line = "";
+        try {
+            reader.readLine();
+
+            while ((line = reader.readLine()) != null) {
+                String[] tokens = line.split(",");
+                String trackingNum = tokens[0];
+                String name = tokens[1].replaceAll("[^a-zA-Z0-9 &]", "");
+                String address = tokens[2].replaceAll("[^a-zA-Z0-9 &]", "");
+                String city = tokens[3].replaceAll("[^a-zA-Z0-9 &]", "");
+                double latitude = Double.parseDouble(tokens[5]);
+                double longitude = Double.parseDouble(tokens[6]);
+
+                Restaurant sample = new Restaurant(trackingNum, name, address, city,"", latitude, longitude);
+                manager.addRestaurant(sample);
+            }
+        }catch (IOException e) {
+            Log.wtf("MyActivity", "Error reading data file on line" + line, e);
+            e.printStackTrace();
+
+        }
+
+    }
 
 
     @Override
@@ -120,8 +210,12 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     private void readRestaurantData()  throws IOException{
         final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
+
         File file = new File(path, "data.csv");
-        InputStream is = new FileInputStream(file);
+        InputStream is= new FileInputStream(file);;
+
+
+
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(is, Charset.forName("UTF-8"))
         );
@@ -154,16 +248,14 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
         File file = new File(path, "inspection.csv");
-        InputStream is = new FileInputStream(file);
+        InputStream is = new FileInputStream(file);;
+
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(is, Charset.forName("UTF-8"))
         );
 
-       /* InputStream is = getResources().openRawResource(R.raw.inspectionreports_itr1);
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(is, Charset.forName("UTF-8"))
-        );
-*/
+
+
         String line = "";
         try {
             reader.readLine();

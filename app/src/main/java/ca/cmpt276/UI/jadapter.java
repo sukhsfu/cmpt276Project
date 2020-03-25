@@ -77,6 +77,21 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
         else if(title.contains("7Eleven")){
             holder.image.setImageResource(R.mipmap.seven);
         }
+        else if(title.contains("Quizno's")){
+            holder.image.setImageResource(R.mipmap.quizno);
+        }
+        else if(title.contains("Starbucks")){
+            holder.image.setImageResource(R.mipmap.starbucks);
+        }
+        else if(title.contains("Papa John's")){
+            holder.image.setImageResource(R.mipmap.papa);
+        }
+        else if(title.contains("Pizza Hut")){
+            holder.image.setImageResource(R.mipmap.pizzahut);
+        }
+        else{
+            holder.image.setImageResource(R.mipmap.restaurant);
+        }
 
 
 

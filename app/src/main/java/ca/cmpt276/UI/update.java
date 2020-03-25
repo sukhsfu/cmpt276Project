@@ -33,6 +33,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -48,6 +50,7 @@ public class update extends AppCompatDialogFragment {
     String url = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
     String url2 = " http://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
     JSONObject obj;
+    JSONObject obj9;
     String tmp;
     JSONObject obj2;
     String tmp2;
@@ -75,6 +78,7 @@ public class update extends AppCompatDialogFragment {
 
                 jsonParse();
                 jsonParse2();
+                savetime();
                 builderdownload.cancel();
 
 
@@ -115,6 +119,7 @@ public class update extends AppCompatDialogFragment {
                     }
                             try {
                                 tmp = obj.getJSONObject("result").getJSONArray("resources").getJSONObject(0).getString("url");
+                                //String last_modified= obj.getJSONObject("result").getJSONArray("resources").getJSONObject(0).getString("last_modified");
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -265,6 +270,81 @@ public class update extends AppCompatDialogFragment {
         });
 
     }
+    public void savetime(){   //saving local_time and last_modified stime.
+        final String[] A = new String[1];
+        A[0]="";
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                    final String myResponse = response.body().string();
+
+                    try {
+                        obj9 = new JSONObject(myResponse);
+
+                    } catch (Throwable t) {
+
+                    }
+                    try {
+                        A[0] = obj9.getJSONObject("result").getJSONArray("resources").getJSONObject(0).getString("last_modified");
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy'-'MM'-'dd'T'hh:mm");
+                        LocalDateTime today = LocalDateTime.now();
+                        String todaystring = formatter.format(today);
+                        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                            int request_code = 0;
+
+                            ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, request_code);
+                        } else {
+
+                            final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+
+                            File file = new File(path, "time.txt");
+                            if(!file.exists()) {
+                                try {
+                                    file.createNewFile();
+                                } catch (IOException e) {
+                                    System.out.println("An error occurred.");
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            try{
+                                BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+                                writer.write(todaystring);
+                                writer.newLine();
+                                writer.write(A[0]);
+                                writer.close();
+                            } catch (IOException e) {
+                                throw new RuntimeException("Unable to write to File " + e);
+
+                            }
+
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        });
+
+
+
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
             super.onAttach(context);
