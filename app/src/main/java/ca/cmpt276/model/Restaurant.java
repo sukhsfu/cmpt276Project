@@ -12,15 +12,17 @@ public class Restaurant {
     private String name;
     private String address;
     private String city;
+    private String facetype;
     private double latitude;
     private double longitude;
     private List<Inspection> inspections = new ArrayList<>();
 
-    public Restaurant(String trackingNumber, String name, String address, String city, double latitude, double longitude) {
+    public Restaurant(String trackingNumber, String name, String address, String city, String facetype, double latitude, double longitude) {
         this.trackingNumber = trackingNumber;
         this.name = name;
         this.address = address;
         this.city = city;
+        this.facetype = facetype;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -43,6 +45,8 @@ public class Restaurant {
 
     public String getCity() { return city; }
 
+    public String getFacetype() {return facetype; }
+
     public double getLatitude() {
         return latitude;
     }
@@ -60,6 +64,7 @@ public class Restaurant {
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", city='" + city + '\'' +
+                ", facetype'" + facetype +'\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", inspections=" + inspections.toString() +

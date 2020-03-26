@@ -59,6 +59,44 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
     public void onBindViewHolder( vholder holder, int position) {
         String title =mydata.get(position).text;
         holder.txxt.setText(title);
+        if(title.contains("Lee Yuen Seafood Restaurant")) {
+            holder.image.setImageResource(R.mipmap.leeyuan);
+        }
+        else if(title.contains("A&W")){
+            holder.image.setImageResource(R.mipmap.aw);
+        }
+        else if(title.contains("Top In Town Pizza")||title.contains("Top in Town Pizza")){
+            holder.image.setImageResource(R.mipmap.toppizza);
+        }
+        else if(title.contains("104 Sushi & Co")){
+            holder.image.setImageResource(R.mipmap.sushi);
+        }
+        else if(title.contains("Zugba Flame Grilled Chicken")){
+            holder.image.setImageResource(R.mipmap.zubra);
+        }
+        else if(title.contains("7Eleven")){
+            holder.image.setImageResource(R.mipmap.seven);
+        }
+        else if(title.contains("Quizno's")){
+            holder.image.setImageResource(R.mipmap.quizno);
+        }
+        else if(title.contains("Starbucks")){
+            holder.image.setImageResource(R.mipmap.starbucks);
+        }
+        else if(title.contains("Papa John's")){
+            holder.image.setImageResource(R.mipmap.papa);
+        }
+        else if(title.contains("Pizza Hut")){
+            holder.image.setImageResource(R.mipmap.pizzahut);
+        }
+        else if(title.contains("Northview Golf & Country Club")){
+            holder.image.setImageResource(R.mipmap.north);
+        }
+
+        else{
+            holder.image.setImageResource(R.mipmap.restaurant);
+        }
+
 
 
         holder.Hazardimage.setBackgroundColor((Hazards.get(position)).intValue());

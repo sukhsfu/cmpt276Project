@@ -3,7 +3,10 @@ package ca.cmpt276.UI;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Context;
@@ -11,6 +14,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -33,15 +37,37 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * MapsActivity displays Google map centered to user's location and has markers for every restaurant
  */
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -56,6 +82,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean locationPermissionGranted = false;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+    String last_modified="";
+    String last_modified2;
+    boolean update_required;
+
+
+
+    String url = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
+
+    JSONObject obj;
 
     public static Intent makeLaunchIntent(Context context, int position) {
         Intent intent = new Intent(context, MapsActivity.class);
@@ -165,9 +200,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             snippet = getString(R.string.maps_markerSnippet, restaurant.getAddress(), hazardLev);
         }
 
-        options.snippet(snippet);
+        setupInfoWindows();
 
-        return mMap.addMarker(options);
+    }
+
+
+    public void openUpdate() {
+        Fragment Update;
+        FragmentManager FM=getSupportFragmentManager();
+        Update =FM.findFragmentByTag("example dialog");
+        if(Update==null){
+            FragmentTransaction FT=FM.beginTransaction();
+            Update = new update();
+            FT.add(Update,"example dialog");
+            FT.commit();
+        }
+
     }
 
     private void setupInfoWindows() {
@@ -230,6 +278,200 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         return inspectionReturn;
     }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+        //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+         File file = new File(path, "time.txt");
+
+        if(!file.exists()||file.length()==0) {
+
+             try{
+             file.createNewFile();
+                 openUpdate();
+             }
+             catch (IOException e){
+
+             }
+
+         }
+         else{
+
+           comparetime();
+         }
+
+
+
+
+
+
+
+
+        setupSwitchButton();
+        initMap();
+        getLocationPermission();
+
+
+
+        // user location updates
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(20 * 1000);
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+
+                        LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        if(mFusedLocationProviderClient != null){
+                            mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
+                        }
+                        moveCamera(curLocation, DEFAULT_ZOOM);
+                    }
+                }
+            }
+        };
+
+    }
+    public String readtime(){  //read local_time in file and last_modified in file
+        final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(path, "time.txt");
+        String line="";
+        try{
+        InputStream is = new FileInputStream(file);
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(is, Charset.forName("UTF-8"))
+            );
+
+            line=reader.readLine();
+            last_modified2=reader.readLine();
+            return line;}
+        catch (IOException e){
+            System.out.println("error occured in reading data in readtime");
+            e.printStackTrace();
+        }
+
+      return line;
+
+    }
+    public void comparetime(){
+        String filetime=readtime();
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                    final String myResponse = response.body().string();
+
+                    try {
+                        obj = new JSONObject(myResponse);
+
+                    } catch (Throwable t) {
+
+                    }
+                    try {
+                        last_modified= obj.getJSONObject("result").getJSONArray("resources").getJSONObject(0).getString("last_modified");
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy'-'MM'-'dd'T'hh:mm");
+                        LocalDateTime today = LocalDateTime.now();
+                        String todaystring = formatter.format(today);
+                        String a1=todaystring.substring(8,10)+todaystring.substring(11,13)+todaystring.substring(14,16);
+                        String  b1=filetime.substring(8,10)+filetime.substring(11,13)+filetime.substring(14,16);
+
+                        int a=Integer.parseInt(a1);//local time
+                        int b=Integer.parseInt(b1);//lastmodified from server.
+                        int c=a%100+((a%10000)/100)*60+(a/10000)*24*60;//local_time
+                        int d=b%100+((b%10000)/100)*60+(b/10000)*24*60;//lastmodified from server.
+
+                        if((c-d)>=(20*60))
+                        {
+
+
+                            if(last_modified.equals(last_modified2)) {
+
+                            }
+                            else{
+
+                                openUpdate();
+                            }
+
+                        }
+                        else{
+
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        });
+        //
+        //
+        //
+
+
+
+
+
+
+
+    }
+
+
+/* public void date_checker(){  //storing last_modified
+        String A="";
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.isSuccessful()){
+                    final String myResponse = response.body().string();
+
+                    try {
+                        obj = new JSONObject(myResponse);
+
+                    } catch (Throwable t) {
+
+                    }
+                    try {
+                        last_modified= obj.getJSONObject("result").getJSONArray("resources").getJSONObject(0).getString("last_modified");
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        });
+
+
+    }
+    */
 
     @Override
     public void onBackPressed() {
