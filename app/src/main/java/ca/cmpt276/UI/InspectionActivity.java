@@ -79,10 +79,10 @@ public class InspectionActivity extends AppCompatActivity {
         date.setText(FormattedDate);
 
         TextView InspectionType=findViewById(R.id.InspectionType);
-        String formatInspectionType=inspection.getType().substring(1,inspection.getType().length()-1);
+        String formatInspectionType=inspection.getType();
         InspectionType.setText(formatInspectionType);
 
-        String formatHazardLevel=inspection.getHazardLevel().substring(1,inspection.getHazardLevel().length()-1);
+        String formatHazardLevel=inspection.getHazardLevel();
         TextView InspectionHazardLevel=findViewById(R.id.InspectionHazardLevel);
         InspectionHazardLevel.setText(formatHazardLevel);
 
