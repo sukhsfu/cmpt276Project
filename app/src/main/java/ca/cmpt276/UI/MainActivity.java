@@ -391,6 +391,22 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
        }
 
     }
+    private Violation extractViolationFromCSV(String[] indivViol) {
+        String violNum = indivViol[0].replaceAll("[^0-9]", "");
+        int violType = Integer.parseInt(violNum);
+        String severity = indivViol[1];
+        String detailedDescrip = indivViol[2];
+        boolean isRepeat;
+
+        if (indivViol.length >= 4) {
+            // not repeat
+            isRepeat = false;
+        } else {
+            isRepeat = true;
+        }
+
+        return new Violation(violType, severity, detailedDescrip, isRepeat);
+    }
 
     private void setupRestaurantInList() {
 

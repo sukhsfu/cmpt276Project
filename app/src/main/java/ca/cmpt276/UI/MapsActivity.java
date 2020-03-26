@@ -98,7 +98,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return intent;
     }
 
-    @Override
+/*    @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         Intent intent = new Intent(this, ReadDataService.class);
@@ -134,7 +134,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
     }
-
+*/
     private void initMap(){
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -185,6 +185,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (restaurant.getInspections().isEmpty()) {
             options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
             snippet = getString(R.string.maps_markerSnippet_noInsp, restaurant.getAddress());
+            options.snippet(snippet);
         } else {
             Inspection inspection = getMostRecentInspection(restaurant);
             String hazardLev = inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
@@ -200,7 +201,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             snippet = getString(R.string.maps_markerSnippet, restaurant.getAddress(), hazardLev);
         }
 
-        setupInfoWindows();
+        //setupInfoWindows();
+        return mMap.addMarker(options);
 
     }
 
@@ -310,10 +312,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
-        setupSwitchButton();
+
         initMap();
         getLocationPermission();
-
+        setupSwitchButton();
 
 
         // user location updates
@@ -333,7 +335,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         if(mFusedLocationProviderClient != null){
                             mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
                         }
-                        moveCamera(curLocation, DEFAULT_ZOOM);
+                        moveCamera(curLocation);
                     }
                 }
             }
