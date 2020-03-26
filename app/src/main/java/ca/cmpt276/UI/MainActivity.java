@@ -59,20 +59,9 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements jadapter.OnNoteListener {
     private List<String> restaurantText = new ArrayList<>();
-    private List<Inspection> inspections = new ArrayList<>();
     protected static List<Integer> Hazards=new ArrayList<>();
 
-
-
     private RestaurantManager manager = RestaurantManager.getInstance();
-    private TextView mTextViewResult;
-    String url = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
-    String url2 = " http://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
-    JSONObject obj;
-    String tmp;
-    JSONObject obj2;
-    String tmp2;
-    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

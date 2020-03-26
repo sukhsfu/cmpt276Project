@@ -6,6 +6,8 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +31,12 @@ public class ReadDataService extends Service {
 
     private List<Inspection> inspections = new ArrayList<>();
     private RestaurantManager manager = RestaurantManager.getInstance();
+    String url = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
+    String url2 = " http://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
+    JSONObject obj;
+    String tmp;
+    JSONObject obj2;
+    String tmp2;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -53,7 +61,7 @@ public class ReadDataService extends Service {
         }
         organizeData();
         debugData();
-        
+
         return START_STICKY;
     }
 
