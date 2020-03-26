@@ -98,6 +98,68 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return intent;
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+        //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        Intent intent = new Intent(this, ReadDataService.class);
+        startService(intent);
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            int request_code = 0;
+
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, request_code);
+        } else {
+            final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File file = new File(path, "time.txt");
+
+            if (!file.exists() || file.length() == 0) {
+
+                try {
+                    file.createNewFile();
+                    openUpdate();
+                } catch (IOException e) {
+
+                }
+
+            } else {
+
+                comparetime();
+
+            }
+            initMap();
+            getLocationPermission();
+            setupSwitchButton();
+
+
+            // user location updates
+            locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setInterval(20 * 1000);
+            locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    if (locationResult == null) {
+                        return;
+                    }
+                    for (Location location : locationResult.getLocations()) {
+                        if (location != null) {
+
+                            LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                            if(mFusedLocationProviderClient != null){
+                                mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
+                            }
+                            moveCamera(curLocation);
+                        }
+                    }
+                }
+            };
+        }
+    }
+
 /*    @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -281,74 +343,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return inspectionReturn;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-            int request_code = 0;
-
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, request_code);
-        } else {
-            final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            File file = new File(path, "time.txt");
-
-            if (!file.exists() || file.length() == 0) {
-
-                try {
-                    file.createNewFile();
-                    openUpdate();
-                } catch (IOException e) {
-
-                }
-
-            } else {
-
-                comparetime();
-
-            }
-            initMap();
-            getLocationPermission();
-            setupSwitchButton();
-
-
-            // user location updates
-            locationRequest = LocationRequest.create();
-            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setInterval(20 * 1000);
-            locationCallback = new LocationCallback() {
-                @Override
-                public void onLocationResult(LocationResult locationResult) {
-                    if (locationResult == null) {
-                        return;
-                    }
-                    for (Location location : locationResult.getLocations()) {
-                        if (location != null) {
-
-                            LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                            if(mFusedLocationProviderClient != null){
-                                mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
-                            }
-                            moveCamera(curLocation);
-                        }
-                    }
-                }
-            };
-        }
-
-
-
-
-
-
-
-
-
-
-
-    }
     public String readtime(){  //read local_time in file and last_modified in file
         final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File file = new File(path, "time.txt");
