@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -61,6 +62,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+/**
+ * MapsActivity displays Google map centered to user's location and has markers for every restaurant
+ */
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
 
@@ -69,10 +74,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int LOCATION_REQUEST_CODE = 1000;
     private static final float DEFAULT_ZOOM = 15;
     public static final String TAG = "mapsActivity";
+    public static final String POSITION = "position";
     private GoogleMap mMap;
     RestaurantManager manager = RestaurantManager.getInstance();
 
-    //private FusedLocationProviderClient mLocationClient;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private boolean locationPermissionGranted = false;
     private LocationRequest locationRequest;
@@ -87,44 +92,112 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     JSONObject obj;
 
+    public static Intent makeLaunchIntent(Context context, int position) {
+        Intent intent = new Intent(context, MapsActivity.class);
+        intent.putExtra(POSITION,position);
+        return intent;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        Intent intent = new Intent(this, ReadDataService.class);
+        startService(intent);
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+
+        initMap();
+        getLocationPermission();
+        setupSwitchButton();
+
+        // user location updates
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(20 * 1000);
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+
+                        LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        if(mFusedLocationProviderClient != null){
+                            mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
+                        }
+                        moveCamera(curLocation);
+                    }
+                }
+            }
+        };
+    }
+
+    private void initMap(){
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(MapsActivity.this);
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        for (Restaurant restaurant : manager) {
-            LatLng displayRestaurant = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
-            MarkerOptions options = new MarkerOptions();
-            options.position(displayRestaurant);
-            options.title(restaurant.getName());
-            String snippet;
-            if (restaurant.getInspections().isEmpty()) {
-                options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                snippet = "Address: " + restaurant.getAddress() + "\nNo Inspection Data.";
-            } else {
-                Inspection inspection = getMostRecentInspection(restaurant);
-                String hazardLev = inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
-                Log.d(TAG, inspection.toString());
-
-                if (hazardLev.equalsIgnoreCase("low")) {
-                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.low_hazard_green_check));
-                } else if (hazardLev.equalsIgnoreCase("moderate")) {
-                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.non_critical_icon));
-                } else if (hazardLev.equalsIgnoreCase("high")){
-                    options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.critical_icon));
-                }
-                snippet = "Address: " + restaurant.getAddress() + "\nHazard Level: " + hazardLev;
-            }
-            options.snippet(snippet);
-
-            mMap.addMarker(options);
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(displayRestaurant));
+        if(getIntent().hasExtra(POSITION)){
+            int resId = getIntent().getIntExtra(POSITION, 0);
+            Restaurant restaurant = manager.retrieve(resId);
+            moveCamera(new LatLng(restaurant.getLatitude(), restaurant.getLongitude()));
+            launchInfoWindow(restaurant);
         }
+        else{
+            if(locationPermissionGranted){
+                getUserLocation();
+            }
+        }
+        // show blue dot for user's current location
+        mMap.setMyLocationEnabled(true);
 
-        if(locationPermissionGranted){
-            getUserLocation();
+        for (Restaurant restaurant : manager) {
+            addMarker(restaurant);
+        }
+        setupInfoWindows();
 
-            mMap.setMyLocationEnabled(true);
-            //mMap.getUiSettings().setAllGesturesEnabled(true);
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                LatLng latlng = marker.getPosition();
+                Restaurant restaurant = findRestaurantInListFromLatLng(latlng);
+                int position = manager.getIndex(restaurant);
+                Intent intent=RestaurantActivity.makeLaunchIntent(MapsActivity.this,position, 1);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private Marker addMarker(Restaurant restaurant){
+        LatLng displayRestaurant = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
+        MarkerOptions options = new MarkerOptions();
+        options.position(displayRestaurant);
+        options.title(restaurant.getName());
+        String snippet;
+        if (restaurant.getInspections().isEmpty()) {
+            options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+            snippet = getString(R.string.maps_markerSnippet_noInsp, restaurant.getAddress());
+        } else {
+            Inspection inspection = getMostRecentInspection(restaurant);
+            String hazardLev = inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
+            Log.d(TAG, inspection.toString());
+
+            if (hazardLev.equalsIgnoreCase("low")) {
+                options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.low_hazard_green_check));
+            } else if (hazardLev.equalsIgnoreCase("moderate")) {
+                options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.non_critical_icon));
+            } else if (hazardLev.equalsIgnoreCase("high")){
+                options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.critical_icon));
+            }
+            snippet = getString(R.string.maps_markerSnippet, restaurant.getAddress(), hazardLev);
         }
 
         setupInfoWindows();
@@ -165,21 +238,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     LatLng latlng = marker.getPosition();
                     Restaurant res = findRestaurantInListFromLatLng(latlng);
                     String hazardLev;
-                    if (res.getInspections().isEmpty()) {
-                        hazardLev = "No inspections found.";
+                    if ( res.getInspections().isEmpty() ) {
+                        hazardLev = getString(R.string.maps_infoWin_noInsp);
                     } else {
                         Inspection inspection = getMostRecentInspection(res);
-                        hazardLev = "Hazard Level: " + inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
+                        hazardLev = getString(R.string.maps_infoWin_hazLev ,inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", ""));
                     }
 
                     name.setText(res.getName());
                     address.setText(res.getAddress());
                     hazardLevel.setText(hazardLev);
-
                     return row;
                 }
             });
         }
+
+    }
+
+    public void launchInfoWindow(Restaurant restaurant){
+        Marker marker = addMarker(restaurant);
+        marker.showInfoWindow();
     }
 
     private Restaurant findRestaurantInListFromLatLng(LatLng latLng) {
@@ -197,7 +275,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (inspection.getDate().compareTo(inspectionReturn.getDate()) > 0) {
                 inspectionReturn = inspection;
             }
-
         }
         return inspectionReturn;
     }
@@ -403,7 +480,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void setupSwitchButton() {
-        Button btnSwitch = (Button) findViewById(R.id.btnSwitch);
+        Button btnSwitch = findViewById(R.id.btnSwitch);
 
         btnSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -411,13 +488,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(new Intent(MapsActivity.this, MainActivity.class));
             }
         });
-    }
-
-    private void initMap(){
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(MapsActivity.this);
-
     }
 
     private void getLocationPermission(){
@@ -429,7 +499,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     == PackageManager.PERMISSION_GRANTED){
                 locationPermissionGranted = true;
                 initMap();
-                getUserLocation();
             }
         } else {
             ActivityCompat.requestPermissions(this, permissions,
@@ -446,10 +515,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     locationPermissionGranted = true;
-                    //initMap();
-                    getUserLocation();
                 } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.location_permission_denied, Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
@@ -466,18 +533,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 public void onComplete(@NonNull Task<Location> task) {
                     if (task.isSuccessful()) {
                         Location curLocation = task.getResult();
-                        moveCamera(new LatLng(curLocation.getLatitude(), curLocation.getLongitude()), DEFAULT_ZOOM);
+                        moveCamera(new LatLng(curLocation.getLatitude(), curLocation.getLongitude()));
                     }
                 }
             });
-
         }
-
     }
 
-    private void moveCamera (LatLng latlng, float zoom){
+    private void moveCamera(LatLng latlng){
         Log.d(TAG, "move Camera: moving the camera to: lat: " + latlng.latitude + " long: " + latlng.longitude);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, zoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, MapsActivity.DEFAULT_ZOOM));
     }
 
 }

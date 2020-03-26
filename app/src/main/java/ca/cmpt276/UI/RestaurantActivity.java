@@ -16,8 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.util.List;
 
 import ca.cmpt276.model.Inspection;
@@ -34,10 +32,12 @@ public class RestaurantActivity extends AppCompatActivity {
     Restaurant restaurant;
     List<Inspection> inspections;
     int resPosition;
+    int backIndex;
 
-    public static Intent makeLaunchIntent(Context context,int position) {
+    public static Intent makeLaunchIntent(Context context,int position, int index) {
         Intent intent = new Intent(context, RestaurantActivity.class);
         intent.putExtra("position",position);
+        intent.putExtra("index", index);
         return intent;
     }
 
@@ -50,12 +50,43 @@ public class RestaurantActivity extends AppCompatActivity {
         setupRestaurantInformation();
         populateInspectionsListView();
         registerClickCallbackListView();
+        setupGPSClickCallback();
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void setupGPSClickCallback() {
+        TextView tv = findViewById(R.id.txtGPS);
+        tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = MapsActivity.makeLaunchIntent(RestaurantActivity.this, resPosition);
+                startActivity(intent);
+                finish();
+            }
+        });
+    }
+
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        switch (backIndex){
+            case 0:
+                startActivity(new Intent(RestaurantActivity.this, MainActivity.class));
+                break;
+            case 1:
+                startActivity(new Intent(RestaurantActivity.this, MapsActivity.class));
+                // go back to maps activity
+                break;
+        }
     }
 
     public void extractDataFromIntent() {
         Intent intent = getIntent();
         resPosition = intent.getIntExtra("position", 0);
+        backIndex = intent.getIntExtra("index", 0);
         restaurant = manager.retrieve(resPosition);
         inspections = restaurant.getInspections();
     }
@@ -73,7 +104,7 @@ public class RestaurantActivity extends AppCompatActivity {
         resName.setText(name);
         TextView resAddress = findViewById(R.id.inspectionType);
         resAddress.setText(fullAddress);
-        TextView resGPS = findViewById(R.id.txtHazardLevel);
+        TextView resGPS = findViewById(R.id.txtGPS);
         resGPS.setText(GPS);
     }
 
@@ -89,13 +120,9 @@ public class RestaurantActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Inspection clickedInspection = inspections.get(position);
+                //Inspection clickedInspection = inspections.get(position);
                 Intent intent = InspectionActivity.makeLaunchIntent(RestaurantActivity.this, resPosition, position);
                 startActivity(intent);
-
-                //String message = "You clicked position " + position
-                //        + " which is " + clickedInspection.getTrackingNumber();
-                //Toast.makeText(RestaurantActivity.this, message, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -143,15 +170,12 @@ public class RestaurantActivity extends AppCompatActivity {
 
             // set critical & non-critical issues
             TextView critText = itemView.findViewById(R.id.item_numCritIssues);
-            critText.setText(currInspection.getNumCriticalIssues() + "");
+            critText.setText(getString(R.string.inspection_setNumCrit, currInspection.getNumCriticalIssues()));
 
             TextView nonCritText = itemView.findViewById(R.id.item_numNonCritIssues);
-            nonCritText.setText(currInspection.getNumNonCriticalIssues() + "");
+            nonCritText.setText(getString(R.string.inspection_setNumNonCrit, currInspection.getNumNonCriticalIssues()));
 
             return itemView;
         }
     }
-
-
-
 }

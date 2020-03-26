@@ -54,8 +54,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * The MainActivity reads in and organizes data from CSV file into model, then displays the
- * list of restaurants to the user.
+ * The MainActivity displays the list of restaurants to the user.
  */
 
 public class MainActivity extends AppCompatActivity implements jadapter.OnNoteListener {
@@ -197,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     }
 
     private void setupButtonSwitchToMap() {
-        Button switchMap = (Button) findViewById(R.id.btnSwitchMap);
+        Button switchMap = findViewById(R.id.btnSwitchMap);
         switchMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -393,23 +392,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
     }
 
-    private Violation extractViolationFromCSV(String[] indivViol) {
-        String violNum = indivViol[0].replaceAll("[^0-9]", "");
-        int violType = Integer.parseInt(violNum);
-        String severity = indivViol[1];
-        String detailedDescrip = indivViol[2];
-        boolean isRepeat;
-
-        if (indivViol.length >= 4) {
-            // not repeat
-            isRepeat = false;
-        } else {
-            isRepeat = true;
-        }
-
-        return new Violation(violType, severity, detailedDescrip, isRepeat);
-    }
-
     private void setupRestaurantInList() {
 
         RecyclerView list= findViewById(R.id.mainrecyleview);
@@ -426,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
     @Override
     public void onNoteClick(int position) {
-        Intent intent=RestaurantActivity.makeLaunchIntent(MainActivity.this,position);
+        Intent intent=RestaurantActivity.makeLaunchIntent(MainActivity.this,position, 0);
         startActivity(intent);
     }
 
