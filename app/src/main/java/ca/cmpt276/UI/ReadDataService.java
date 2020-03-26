@@ -65,7 +65,7 @@ public class ReadDataService extends Service {
                 double latitude = Double.parseDouble(tokens[5]);
                 double longitude = Double.parseDouble(tokens[6]);
 
-                Restaurant sample = new Restaurant(trackingNum, name, address, city, latitude, longitude);
+                Restaurant sample = new Restaurant(trackingNum, name, address, city,"", latitude, longitude);
                 manager.addRestaurant(sample);
             }
         }catch (IOException e) {

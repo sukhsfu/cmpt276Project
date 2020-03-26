@@ -64,7 +64,8 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
 
 
-    private RestaurantManager manager = RestaurantManager.getInstance();private TextView mTextViewResult;
+    private RestaurantManager manager = RestaurantManager.getInstance();
+    private TextView mTextViewResult;
     String url = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
     String url2 = " http://data.surrey.ca/api/3/action/package_show?id=fraser-health-restaurant-inspection-reports";
     JSONObject obj;
