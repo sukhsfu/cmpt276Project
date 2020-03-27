@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import ca.cmpt276.model.Inspection;
@@ -26,7 +28,12 @@ import ca.cmpt276.model.Violation;
 /**
  * The ReadDataService reads in and organizes data from CSV file into model
  */
-
+class sortinspection implements Comparator<Inspection>
+{
+    public int compare(Inspection a, Inspection b){
+        return (b.getDate().compareTo(a.getDate()));
+    }
+}
 public class ReadDataService extends Service {
 
     private List<Inspection> inspections = new ArrayList<>();
@@ -101,6 +108,7 @@ public class ReadDataService extends Service {
             e.printStackTrace();
 
         }
+        manager.sortRestaurantList();
     }
 
     private void readInspectionDataInitial() {
@@ -148,6 +156,7 @@ public class ReadDataService extends Service {
             Log.wtf("MyActivityIns", "Error reading data file on line" + line, e);
             e.printStackTrace();
         }
+        Collections.sort(inspections,new sortinspection());
     }
 
     private void readRestaurantData()  throws IOException{
@@ -185,6 +194,7 @@ public class ReadDataService extends Service {
             e.printStackTrace();
 
         }
+        manager.sortRestaurantList();
     }
 
     private void readInspectionData()throws IOException {
@@ -248,6 +258,7 @@ public class ReadDataService extends Service {
             Log.wtf("MyActivityIns", "Error reading data file on line" + line, e);
             e.printStackTrace();
         }
+        Collections.sort(inspections,new sortinspection());
     }
 
     private void organizeData() {
