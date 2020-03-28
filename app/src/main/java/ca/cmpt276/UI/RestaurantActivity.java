@@ -16,6 +16,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
 
 import ca.cmpt276.model.Inspection;
@@ -60,7 +63,9 @@ public class RestaurantActivity extends AppCompatActivity {
         tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = MapsActivity.makeLaunchIntent(RestaurantActivity.this, resPosition);
+                double lat = restaurant.getLatitude();
+                double lng = restaurant.getLongitude();
+                Intent intent = MapsActivity.makeLaunchIntent(RestaurantActivity.this, lat, lng);
                 startActivity(intent);
                 finish();
             }
