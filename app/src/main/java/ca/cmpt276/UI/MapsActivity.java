@@ -72,7 +72,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int LOCATION_REQUEST_CODE = 1000;
     private static final float DEFAULT_ZOOM = 15;
     public static final String TAG = "mapsActivity";
-    public static final String POSITION = "position";
+    public static final String LATITUDE = "lat";
+    public static final String LONGITUDE = "lng";
     private GoogleMap mMap;
     RestaurantManager manager = RestaurantManager.getInstance();
 
@@ -159,43 +160,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-/*    @Override
-    protected void onCreate(Bundle savedInstanceState) {
 
-        Intent intent = new Intent(this, ReadDataService.class);
-        startService(intent);
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-
-        initMap();
-        getLocationPermission();
-        setupSwitchButton();
-
-        // user location updates
-        locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(20 * 1000);
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    if (location != null) {
-
-                        LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                        if(mFusedLocationProviderClient != null){
-                            mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
-                        }
-                        moveCamera(curLocation);
-                    }
-                }
-            }
-        };
-    }
-*/
     private void initMap(){
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -206,14 +171,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        if(getIntent().hasExtra(POSITION)){
-            int resId = getIntent().getIntExtra(POSITION, 0);
-            Restaurant restaurant = manager.retrieve(resId);
-            moveCamera(new LatLng(restaurant.getLatitude(), restaurant.getLongitude()));
-            launchInfoWindow(restaurant);
-        }
-        else{
-            if(locationPermissionGranted){
+        if (getIntent().hasExtra(LATITUDE)) {
+            if(getIntent().hasExtra(LONGITUDE)){
+                double lat = getIntent().getDoubleExtra(LATITUDE, 0.0);
+                double lng = getIntent().getDoubleExtra(LONGITUDE, 0.0);
+                LatLng latlng = new LatLng(lat, lng);
+                Restaurant restaurant = findRestaurantInListFromLatLng(latlng);
+                moveCamera(latlng);
+                Log.d("Moving camera to ","restaurant");
+                launchInfoWindow(restaurant);
+            }
+        } else {
+            if (locationPermissionGranted) {
                 getUserLocation();
             }
         }
@@ -426,45 +395,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
-/* public void date_checker(){  //storing last_modified
-        String A="";
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.isSuccessful()){
-                    final String myResponse = response.body().string();
-
-                    try {
-                        obj = new JSONObject(myResponse);
-
-                    } catch (Throwable t) {
-
-                    }
-                    try {
-                        last_modified= obj.getJSONObject("result").getJSONArray("resources").getJSONObject(0).getString("last_modified");
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            }
-        });
-
-
-    }
-    */
 
     @Override
     public void onBackPressed() {
