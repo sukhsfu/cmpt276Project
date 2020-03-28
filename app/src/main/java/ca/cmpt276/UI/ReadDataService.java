@@ -160,6 +160,9 @@ public class ReadDataService extends Service {
     }
 
     private void readRestaurantData()  throws IOException{
+
+        manager.clearRestaurants();
+
         final File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
 

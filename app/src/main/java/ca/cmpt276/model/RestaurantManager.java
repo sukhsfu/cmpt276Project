@@ -11,12 +11,13 @@ import java.util.List;
  */
 
 
-class sortrestaurant implements Comparator<Restaurant>
+class SortRestaurant implements Comparator<Restaurant>
 {
     public int compare(Restaurant a, Restaurant b){
         return (a.getName().compareTo(b.getName()));
     }
 }
+
 public class RestaurantManager implements Iterable<Restaurant> {
 
     private List<Restaurant> restaurants = new ArrayList<>();
@@ -45,9 +46,16 @@ public class RestaurantManager implements Iterable<Restaurant> {
     public void addRestaurant(Restaurant restaurant) {
         restaurants.add(restaurant);
     }
-    public void sortRestaurantList(){
-        Collections.sort(restaurants,new sortrestaurant());
+
+    public void clearRestaurants() {
+        restaurants.clear();
     }
+
+    public void sortRestaurantList(){
+        Collections.sort(restaurants,new SortRestaurant());
+    }
+
+
 
     @Override
     public Iterator<Restaurant> iterator(){
