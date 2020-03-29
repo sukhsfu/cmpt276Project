@@ -74,7 +74,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final String TAG = "mapsActivity";
     public static final String LATITUDE = "lat";
     public static final String LONGITUDE = "lng";
-   // private static final String POSITION = ;
     private GoogleMap mMap;
     RestaurantManager manager = RestaurantManager.getInstance();
 
@@ -92,9 +91,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     JSONObject obj;
 
-    public static Intent makeLaunchIntent(Context context, int position) {
+    public static Intent makeLaunchIntent(Context context, double lat, double lng) {
         Intent intent = new Intent(context, MapsActivity.class);
-       // intent.putExtra(POSITION,position);
+        intent.putExtra(LATITUDE, lat);
+        intent.putExtra(LONGITUDE, lng);
         return intent;
     }
 
