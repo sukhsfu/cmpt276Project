@@ -74,6 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final String TAG = "mapsActivity";
     public static final String LATITUDE = "lat";
     public static final String LONGITUDE = "lng";
+   // private static final String POSITION = ;
     private GoogleMap mMap;
     RestaurantManager manager = RestaurantManager.getInstance();
 
@@ -93,7 +94,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public static Intent makeLaunchIntent(Context context, int position) {
         Intent intent = new Intent(context, MapsActivity.class);
-        intent.putExtra(POSITION,position);
+       // intent.putExtra(POSITION,position);
         return intent;
     }
 
@@ -332,6 +333,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
       return line;
 
     }
+
     public void comparetime(){
         String filetime=readtime();
         OkHttpClient client = new OkHttpClient();
@@ -394,7 +396,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
     }
-
 
     @Override
     public void onBackPressed() {
