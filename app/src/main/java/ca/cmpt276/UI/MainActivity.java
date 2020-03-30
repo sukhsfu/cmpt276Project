@@ -1,43 +1,15 @@
 package ca.cmpt276.UI;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.IOException;
-
-
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.app.DownloadManager;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.ContextThemeWrapper;
-import android.view.View;
-import android.widget.TextView;
-
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
-import org.json.JSONObject;
-import android.widget.Button;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -46,12 +18,6 @@ import java.util.List;
 import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
-import ca.cmpt276.model.Violation;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * The MainActivity displays the list of restaurants to the user.
@@ -91,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         });
     }
 
-    private  void setOutputData(){
+    private void setOutputData(){
         for (Restaurant restaurant : manager) {
             if (restaurant.getInspections().size() != 0) {
                 Inspection inspectionRet = restaurant.getInspections().get(0);
@@ -101,8 +67,11 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                     }
 
                 }
-                restaurantText.add(restaurant.getName() + "\n\n" + dateDifference(inspectionRet.getDate())+ (inspectionRet.getNumCriticalIssues() + inspectionRet
-                        .getNumNonCriticalIssues()) + " issues found\n" + inspectionRet.getNumCriticalIssues() + "  critical, " + inspectionRet.getNumNonCriticalIssues() + "  non-critical");
+                restaurantText.add(restaurant.getName()
+                        + "\n\n" + dateDifference(inspectionRet.getDate())
+                        + getString(R.string.issues_restaurant_tab, (inspectionRet.getNumCriticalIssues() + inspectionRet.getNumNonCriticalIssues()) )
+                        + getString(R.string.critical_restaurant_tab,inspectionRet.getNumCriticalIssues())
+                        + getString(R.string.non_critical_restaurant_tab , inspectionRet.getNumNonCriticalIssues()) );
                    if(inspectionRet.getHazardLevel().equalsIgnoreCase("Low") ){
                        Hazards.add(Color.GREEN);
                    }
@@ -122,6 +91,16 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             }
         }
 
+    }
+
+    private static String[] getMonthArray(Context context) {
+        String[] mon={context.getResources().getString(R.string.jan), context.getResources().getString(R.string.feb),
+                context.getResources().getString(R.string.march), context.getResources().getString(R.string.april),
+                context.getResources().getString(R.string.may), context.getResources().getString(R.string.june),
+                context.getResources().getString(R.string.july), context.getResources().getString(R.string.aug),
+                context.getResources().getString(R.string.sept), context.getResources().getString(R.string.oct),
+                context.getResources().getString(R.string.nov), context.getResources().getString(R.string.dec)};
+        return mon;
     }
 
     protected static String dateDifference(String A){
@@ -145,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         }
 
        if (((todayA[0]*365+todayA[1]*days[todayA[1]-1]+todayA[2])-(givenA[0]*365+givenA[1]*days[givenA[1]-1]+givenA[2]))<=30){
-
            return (((todayA[0]*365+todayA[1]*days[todayA[1]-1]+todayA[2])-(givenA[0]*365+givenA[1]*days[givenA[1]-1]+givenA[2]))+" days ago\n");
        }
        else if((todayA[0]*365+todayA[1]*30+todayA[2]-givenA[0]*365-givenA[1]*30-givenA[2])<=365){

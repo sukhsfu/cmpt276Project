@@ -30,4 +30,26 @@
     <string name="maps_infoWin_noInsp">Pas de Données d\'Inspection.</string>
     <string name="maps_infoWin_hazLev">le Niveau de Danger: %1$s</string>
     <string name="location_permission_denied">Permission refusée.</string>
+
+    <string name="days_ago">il y a %1$d jours\n</string>
+    <string name="jan">Janvier</string>
+    <string name="feb">Fèvrier</string>
+    <string name="march">Mars</string>
+    <string name="april">Avril</string>
+    <string name="may">Mai</string>
+    <string name="june">Juin</string>
+    <string name="july">Juillet</string>
+    <string name="aug">Août</string>
+    <string name="sept">Septembre</string>
+    <string name="oct">Octobre</string>
+    <string name="nov">Novembre</string>
+    <string name="dec">Dècembre</string>
+
+    <string name="formatted_date">le %2$d %1$s, %3$d</string>
+
+    <string name="issues_restaurant_tab">%1$d problèmes trouvés\n</string>
+    <string name="critical_restaurant_tab">%1$d problèmes critique,</string>
+    <string name="non_critical_restaurant_tab">%1$d problèmes non-critique</string>
+
+
 </resources>
