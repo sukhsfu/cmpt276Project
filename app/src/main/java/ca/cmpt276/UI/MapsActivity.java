@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -66,7 +68,6 @@ import okhttp3.Response;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_REQUEST_CODE = 1000;
@@ -83,8 +84,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationCallback locationCallback;
     String last_modified="";
     String last_modified2;
-    boolean update_required;
 
+    private String[] spinnerList = {"Name", "Hazard", "Violations", "Favorites"};
 
 
     String url = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
@@ -126,9 +127,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
             } else {
-
                 comparetime();
-
             }
 
             initMap();
@@ -159,6 +158,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             };
         }
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, spinnerList);
+        MaterialBetterSpinner betterSpinner = (MaterialBetterSpinner) findViewById(R.id.spinner_options);
+        betterSpinner.setAdapter(arrayAdapter);
     }
 
 

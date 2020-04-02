@@ -22,7 +22,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,12 +49,6 @@ import java.util.List;
 import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
-import ca.cmpt276.model.Violation;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * The MainActivity displays the list of restaurants to the user.
@@ -73,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         setupRestaurantInList();
         setupButtonSwitchToMap();
     }
-
 
     @Override
     public void onBackPressed() {
