@@ -102,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                         case 3:
                             //TODO filter restaurants by favorites
                             break;
+                        case 4:
+                            //TODO filter restaurants by combined criteria
+                            break;
                     }
 
                 }
@@ -236,7 +239,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 searchView.setQueryHint("All favorites");
                 // TODO: populate restaurant list to be favorites only
                 break;
-
+            case 4:
+                searchView.setQueryHint("Favorite, pizza, low, 5 or less");
+                break;
         }
     }
 
