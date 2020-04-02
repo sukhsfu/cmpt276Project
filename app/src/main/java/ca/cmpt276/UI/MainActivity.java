@@ -222,8 +222,21 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Toast.makeText(this, "Position is: " + position, Toast.LENGTH_SHORT).show();
         selectedSpinnerPOS = position;
-        if(selectedSpinnerPOS == 3){
-            // TODO: populate restaurant list to be favorites only
+        switch (selectedSpinnerPOS){
+            case 0:
+                searchView.setQueryHint("Pizza");
+                break;
+            case 1:
+                searchView.setQueryHint("Low");
+                break;
+            case 2:
+                searchView.setQueryHint("Less than 10");
+                break;
+            case 3:
+                searchView.setQueryHint("All favorites");
+                // TODO: populate restaurant list to be favorites only
+                break;
+
         }
     }
 

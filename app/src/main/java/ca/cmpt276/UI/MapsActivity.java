@@ -544,8 +544,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String item = parent.getItemAtPosition(position).toString();
         Toast.makeText(this, "Position is: " + position, Toast.LENGTH_SHORT).show();
         selectedSpinnerPOS = position;
-        if(selectedSpinnerPOS == 3){
-            // TODO: populate markers to be favorites only
+        switch (selectedSpinnerPOS){
+            case 0:
+                searchView.setQueryHint("Pizza");
+                //searchView.clearFocus();
+                break;
+            case 1:
+                searchView.setQueryHint("Low");
+                break;
+            case 2:
+                searchView.setQueryHint("Less than 10");
+                break;
+            case 3:
+                searchView.setQueryHint("All favorites");
+                // TODO: populate markers to be favorites only
+                break;
+
         }
     }
 
