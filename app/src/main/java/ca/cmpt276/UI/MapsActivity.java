@@ -205,7 +205,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-
     private void initMap(){
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -541,8 +540,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String item = parent.getItemAtPosition(position).toString();
-        Toast.makeText(this, "Position is: " + position, Toast.LENGTH_SHORT).show();
+        //String item = parent.getItemAtPosition(position).toString();
+        //Toast.makeText(this, "Position is: " + position, Toast.LENGTH_SHORT).show();
         selectedSpinnerPOS = position;
         switch (selectedSpinnerPOS){
             case 0:
@@ -559,7 +558,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 searchView.setQueryHint("All favorites");
                 // TODO: populate markers to be favorites only
                 break;
-
         }
     }
 

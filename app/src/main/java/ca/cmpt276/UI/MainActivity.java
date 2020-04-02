@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(this, "Position is: " + position, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Position is: " + position, Toast.LENGTH_SHORT).show();
         selectedSpinnerPOS = position;
         switch (selectedSpinnerPOS){
             case 0:
