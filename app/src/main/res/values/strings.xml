@@ -29,7 +29,7 @@
     <string name="maps_infoWin_noInsp">No inspections found.</string>
     <string name="maps_infoWin_hazLev">Hazard Level: %1$s</string>
     <string name="location_permission_denied">Permission Denied</string>
-
+    <string name="search">Search...</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

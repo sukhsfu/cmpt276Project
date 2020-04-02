@@ -91,9 +91,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String last_modified="";
     String last_modified2;
 
-    private String[] spinnerList = {"Name", "Hazard", "Violations", "Favorites"};
-
-
     String url = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
 
     JSONObject obj;
