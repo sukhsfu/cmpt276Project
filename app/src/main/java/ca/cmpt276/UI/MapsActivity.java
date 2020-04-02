@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,6 +79,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final String LONGITUDE = "lng";
     private GoogleMap mMap;
     RestaurantManager manager = RestaurantManager.getInstance();
+    private SearchView searchView;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private boolean locationPermissionGranted = false;
@@ -161,8 +164,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_dropdown_item_1line, spinnerList);
-        MaterialBetterSpinner betterSpinner = (MaterialBetterSpinner) findViewById(R.id.spinner_options);
-        betterSpinner.setAdapter(arrayAdapter);
+        MaterialBetterSpinner mySpinner = (MaterialBetterSpinner) findViewById(R.id.spinner_options);
+        mySpinner.setAdapter(arrayAdapter);
+
+        mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                int selectedPOS = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        searchView = findViewById(R.id.mapSearchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String searchText = searchView.getQuery().toString();
+                if(searchText != null || !searchText.equals("")){
+                    updateMarkers(searchText);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.equals("") || newText == null){
+                    mMap.clear();
+                    populateAllMarkers();
+                }
+                return false;
+            }
+        });
     }
 
 
@@ -209,6 +245,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
+    }
+
+    private void populateAllMarkers(){
+        for (Restaurant restaurant : manager) {
+            addMarker(restaurant);
+        }
+    }
+
+    private void updateMarkers(String search){
+        mMap.clear();
+        for(Restaurant restaurant: manager){
+            if(restaurant.getName().contains(search)){
+                addMarker(restaurant);
+            }
+        }
+        setupInfoWindows();
     }
 
     private Marker addMarker(Restaurant restaurant){

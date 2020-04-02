@@ -21,7 +21,7 @@
         android:hint="Search for"
         android:textColorHint="#05ab9a" />
 
-    <androidx.appcompat.widget.SearchView
+    <SearchView
         android:id="@+id/mapSearchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
