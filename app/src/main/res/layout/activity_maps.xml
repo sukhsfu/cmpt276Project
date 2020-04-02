@@ -13,13 +13,11 @@
         android:background="#FFFFFF"
         android:theme="@style/AppTheme" />
 
-    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-        android:id="@+id/spinner_options"
+    <Spinner
+        android:id="@+id/mapSpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:hint="Search for"
-        android:textColorHint="#05ab9a" />
+        android:hint="Search for"/>
 
     <SearchView
         android:id="@+id/mapSearchView"
@@ -27,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_toRightOf="@+id/spinner_options"
+        android:layout_toRightOf="@+id/mapSpinner"
         android:queryHint="Search..."
         app:iconifiedByDefault="false"/>
 

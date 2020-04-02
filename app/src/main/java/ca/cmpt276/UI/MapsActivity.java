@@ -8,11 +8,13 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,7 +70,7 @@ import okhttp3.Response;
  * MapsActivity displays Google map centered to user's location and has markers for every restaurant
  */
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -80,6 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     RestaurantManager manager = RestaurantManager.getInstance();
     private SearchView searchView;
+    private int selectedSpinnerPOS = 0;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private boolean locationPermissionGranted = false;
@@ -162,22 +165,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             };
         }
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_dropdown_item_1line, spinnerList);
-        MaterialBetterSpinner mySpinner = (MaterialBetterSpinner) findViewById(R.id.spinner_options);
-        mySpinner.setAdapter(arrayAdapter);
-
-        mySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int selectedPOS = position;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+        Spinner spinner = (Spinner) findViewById(R.id.mapSpinner);
+        spinner.setOnItemSelectedListener(this);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.menu_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
         searchView = findViewById(R.id.mapSearchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -185,7 +178,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public boolean onQueryTextSubmit(String query) {
                 String searchText = searchView.getQuery().toString();
                 if(searchText != null || !searchText.equals("")){
-                    updateMarkers(searchText);
+                    switch(selectedSpinnerPOS){
+                        case 0:
+                            updateMarkersByName(searchText);
+                            break;
+                        case 1:
+                            updateMarkersByHazard(searchText);
+                            break;
+                        case 2:
+                            updateMarkersByViolation(searchText);
+                            break;
+                        case 3:
+                            updateMarkersByFavorite(searchText);
+                            break;
+                    }
+
                 }
                 return false;
             }
@@ -253,14 +260,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void updateMarkers(String search){
+    private void updateMarkersByName(String name){
         mMap.clear();
         for(Restaurant restaurant: manager){
-            if(restaurant.getName().contains(search)){
+            if(restaurant.getName().toLowerCase().contains(name.toLowerCase())){
                 addMarker(restaurant);
             }
         }
         setupInfoWindows();
+    }
+
+    private void updateMarkersByHazard(String searchText){
+        //TODO
+    }
+
+    private void updateMarkersByViolation(String searchText){
+        //TODO
+    }
+
+    private void updateMarkersByFavorite(String searchText){
+
     }
 
     private Marker addMarker(Restaurant restaurant){
@@ -290,9 +309,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //setupInfoWindows();
         return mMap.addMarker(options);
-
     }
-
 
     public void openUpdate() {
         Fragment Update;
@@ -525,4 +542,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, MapsActivity.DEFAULT_ZOOM));
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String item = parent.getItemAtPosition(position).toString();
+        Toast.makeText(this, "Position is: " + position, Toast.LENGTH_SHORT).show();
+        selectedSpinnerPOS = position;
+        if(selectedSpinnerPOS == 3){
+            // TODO: populate markers to be favorites only
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }
