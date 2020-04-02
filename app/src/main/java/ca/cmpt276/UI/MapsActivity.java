@@ -188,6 +188,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         case 3:
                             updateMarkersByFavorite(searchText);
                             break;
+                        case 4:
+                            updateMarkersByCombined(searchText);
+                            break;
                     }
 
                 }
@@ -275,7 +278,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateMarkersByFavorite(String searchText){
+        //TODO
+    }
 
+    private void updateMarkersByCombined(String searchText){
+        //TODO
     }
 
     private Marker addMarker(Restaurant restaurant){
@@ -557,6 +564,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case 3:
                 searchView.setQueryHint("All favorites");
                 // TODO: populate markers to be favorites only
+                break;
+            case 4:
+                searchView.setQueryHint("Favorite, pizza, low, 5 or less");
                 break;
         }
     }

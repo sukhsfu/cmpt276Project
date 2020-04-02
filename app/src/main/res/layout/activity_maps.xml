@@ -20,7 +20,7 @@
 
     <SearchView
         android:id="@+id/mapSearchView"
-        android:layout_width="match_parent"
+        android:layout_width="310dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
