@@ -43,14 +43,29 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     protected static List<Integer> Hazards=new ArrayList<>();
 
     private RestaurantManager manager = RestaurantManager.getInstance();
+    private static final String SEARCH_TEXT = "SearchText";
+    private static final String SPINNER_POS = "SpinnerPOS";
     private SearchView searchView;
     private int selectedSpinnerPOS = 0;
+    private String searchText;
+    private boolean searchPerformed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        if(intent.hasExtra(SPINNER_POS) && intent.hasExtra(SEARCH_TEXT)){
+            searchText = intent.getStringExtra(SEARCH_TEXT);
+            searchPerformed = true;
+            selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
+            //Toast.makeText(this, "spinner " + selectedSpinnerPOS + " " + searchText, Toast.LENGTH_SHORT).show();
+            updateRestaurantList();
+        }else{
+            // TODO populate entire list normally
+        }
 
         setOutputData();
         setupRestaurantInList();
@@ -67,26 +82,11 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                String searchText = searchView.getQuery().toString();
-                if(searchText != null || !searchText.equals("")){
-                    switch(selectedSpinnerPOS){
-                        case 0:
-                            //TODO filter restaurants by name
-                            break;
-                        case 1:
-                            //TODO filter restaurants by hazard level
-                            break;
-                        case 2:
-                            //TODO filter restaurants by violations
-                            break;
-                        case 3:
-                            //TODO filter restaurants by favorites
-                            break;
-                        case 4:
-                            //TODO filter restaurants by combined criteria
-                            break;
-                    }
-
+                String text = searchView.getQuery().toString();
+                if(text != null || !text.equals("")){
+                    searchText = text;
+                    searchPerformed = true;
+                    updateRestaurantList();
                 }
                 return false;
             }
@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             @Override
             public boolean onQueryTextChange(String newText) {
                 if(newText.equals("") || newText == null){
+                    searchPerformed = false;
                    // TODO populate all restaurants
                 }
                 return false;
@@ -112,7 +113,12 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         switchMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, MapsActivity.class));
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                if(searchPerformed){
+                    intent.putExtra(SPINNER_POS, selectedSpinnerPOS);
+                    intent.putExtra(SEARCH_TEXT, searchText);
+                }
+                startActivity(intent);
             }
         });
     }
@@ -211,6 +217,10 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     @Override
     public void onNoteClick(int position) {
         Intent intent=RestaurantActivity.makeLaunchIntent(MainActivity.this,position, 0);
+        if(searchPerformed){
+            intent.putExtra(SEARCH_TEXT, searchText);
+            intent.putExtra(SPINNER_POS, selectedSpinnerPOS);
+        }
         startActivity(intent);
     }
 
