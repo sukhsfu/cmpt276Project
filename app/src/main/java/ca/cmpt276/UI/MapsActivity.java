@@ -54,8 +54,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
@@ -307,7 +312,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateMarkersByViolation(String searchText){
-        //TODO
+        mMap.clear();
+        String search = searchText.toLowerCase();
+        String searchParam="";
+        if(search.contains("less") || search.contains("<")){
+            searchParam = "less";
+        }else if(search.toLowerCase().contains("more") || search.contains("greater") || search.contains(">")){
+            searchParam = "more";
+        }
+
+        if(searchParam != ""){
+            final StringBuilder sb = new StringBuilder(searchText.length());
+            for(int i = 0; i < searchText.length(); i++){
+                final char c = searchText.charAt(i);
+                if(c > 47 && c < 58){
+                    sb.append(c);
+                }
+            }
+            int numViolations = Integer.parseInt(sb.toString());
+            for(Restaurant restaurant: manager){
+                int num = getRecentNumCriticalViolations(restaurant);
+                switch(searchParam){
+                    case "less":
+                        if(num <= numViolations){
+                            addMarker(restaurant);
+                        }
+                        break;
+                    case "more":
+                        if(num >= numViolations){
+                            addMarker(restaurant);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+            setupInfoWindows();
+        }
     }
 
     private void updateMarkersByFavorite(String searchText){
@@ -425,6 +466,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return null;
         }
 
+    }
+
+    private int getRecentNumCriticalViolations(Restaurant restaurant){
+        int numCriticalViolations = 0;
+        Calendar cal = Calendar.getInstance();
+        Date today = cal.getTime();
+        cal.add(Calendar.YEAR, -1);
+        Date lastYear = cal.getTime();
+
+        List<Inspection> inspections = restaurant.getInspections();
+        for(Inspection inspection: inspections){
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+            try{
+                Date date = formatter.parse(inspection.getDate());
+                if(date.after(lastYear)){
+                    numCriticalViolations = numCriticalViolations + inspection.getNumCriticalIssues();
+                }
+            }catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return numCriticalViolations;
     }
 
     public String readtime(){  //read local_time in file and last_modified in file
