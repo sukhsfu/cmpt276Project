@@ -434,6 +434,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
       return line;
 
     }
+
     public void comparetime(){
         String filetime=readtime();
         OkHttpClient client = new OkHttpClient();
@@ -496,7 +497,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
     }
-
 
     @Override
     public void onBackPressed() {

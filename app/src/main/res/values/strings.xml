@@ -31,6 +31,31 @@
     <string name="location_permission_denied">Permission Denied</string>
     <string name="search">Search...</string>
 
+    <string name="days_ago">%1$d days ago\n</string>
+    <string name="jan">January</string>
+    <string name="feb">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="aug">August</string>
+    <string name="sept">September</string>
+    <string name="oct">October</string>
+    <string name="nov">November</string>
+    <string name="dec">December</string>
+
+    <string name="formatted_date">%1$s %2$d, %3$d</string>
+
+    <string name="issues_restaurant_tab">%1$d issues found\n</string>
+    <string name="critical_restaurant_tab">%1$d critical,</string>
+    <string name="non_critical_restaurant_tab">%1$d non-critical.</string>
+
+
+
+
+
+
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!--<string name="hello_blank_fragment">Hello blank fragment</string> -->
 </resources>
