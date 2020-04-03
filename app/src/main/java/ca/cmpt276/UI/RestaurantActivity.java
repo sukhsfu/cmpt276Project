@@ -31,11 +31,16 @@ import ca.cmpt276.model.RestaurantManager;
  */
 public class RestaurantActivity extends AppCompatActivity {
 
-    RestaurantManager manager = RestaurantManager.getInstance();
-    Restaurant restaurant;
-    List<Inspection> inspections;
-    int resPosition;
-    int backIndex;
+    private RestaurantManager manager = RestaurantManager.getInstance();
+    private Restaurant restaurant;
+    private List<Inspection> inspections;
+    private int resPosition;
+    private int backIndex;
+    private static final String SEARCH_TEXT = "SearchText";
+    private static final String SPINNER_POS = "SpinnerPOS";
+    private boolean searchPerformed = false;
+    private String searchText;
+    private int selectedSpinnerPOS;
 
     public static Intent makeLaunchIntent(Context context,int position, int index) {
         Intent intent = new Intent(context, RestaurantActivity.class);
@@ -48,6 +53,13 @@ public class RestaurantActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant);
+
+        Intent intent = getIntent();
+        if(intent.hasExtra(SEARCH_TEXT) && intent.hasExtra(SPINNER_POS)){
+            searchPerformed = true;
+            searchText = intent.getStringExtra(SEARCH_TEXT);
+            selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
+        }
 
         extractDataFromIntent();
         setupRestaurantInformation();
@@ -79,10 +91,20 @@ public class RestaurantActivity extends AppCompatActivity {
         super.onBackPressed();
         switch (backIndex){
             case 0:
-                startActivity(new Intent(RestaurantActivity.this, MainActivity.class));
+                Intent intent = new Intent(RestaurantActivity.this, MainActivity.class);
+                if(searchPerformed){
+                    intent.putExtra(SPINNER_POS, selectedSpinnerPOS);
+                    intent.putExtra(SEARCH_TEXT, searchText);
+                }
+                startActivity(intent);
                 break;
             case 1:
-                startActivity(new Intent(RestaurantActivity.this, MapsActivity.class));
+                Intent intent1 = new Intent(RestaurantActivity.this, MapsActivity.class);
+                if(searchPerformed){
+                    intent1.putExtra(SPINNER_POS, selectedSpinnerPOS);
+                    intent1.putExtra(SEARCH_TEXT, searchText);
+                }
+                startActivity(intent1);
                 // go back to maps activity
                 break;
         }
