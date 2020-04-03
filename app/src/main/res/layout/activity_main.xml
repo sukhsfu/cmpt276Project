@@ -7,6 +7,33 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/mainToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:theme="@style/AppTheme"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/mainSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/mainToolbar" />
+
+    <SearchView
+        android:id="@+id/mainSearchView"
+        android:layout_width="310dp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/mainSpinner"
+        android:queryHint="@string/search"
+        app:iconifiedByDefault="false"
+        app:layout_constraintEnd_toEndOf="@+id/mainToolbar"
+        app:layout_constraintStart_toEndOf="@+id/mainSpinner"
+        app:layout_constraintTop_toTopOf="@id/mainToolbar" />
+
     <Button
         android:id="@+id/btnSwitchMap"
         android:layout_width="wrap_content"
@@ -20,7 +47,7 @@
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/mainrecyleview"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/mainToolbar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/mainrecyleview"

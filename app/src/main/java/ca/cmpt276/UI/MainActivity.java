@@ -3,8 +3,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.ContextThemeWrapper;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.SearchView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,11 +38,13 @@ import ca.cmpt276.model.RestaurantManager;
  * The MainActivity displays the list of restaurants to the user.
  */
 
-public class MainActivity extends AppCompatActivity implements jadapter.OnNoteListener {
+public class MainActivity extends AppCompatActivity implements jadapter.OnNoteListener, AdapterView.OnItemSelectedListener {
     private List<String> restaurantText = new ArrayList<>();
     protected static List<Integer> Hazards=new ArrayList<>();
 
     private RestaurantManager manager = RestaurantManager.getInstance();
+    private SearchView searchView;
+    private int selectedSpinnerPOS = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +55,51 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         setOutputData();
         setupRestaurantInList();
         setupButtonSwitchToMap();
-    }
 
+        Spinner spinner = (Spinner) findViewById(R.id.mainSpinner);
+        spinner.setOnItemSelectedListener(this);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.menu_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        searchView = findViewById(R.id.mainSearchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String searchText = searchView.getQuery().toString();
+                if(searchText != null || !searchText.equals("")){
+                    switch(selectedSpinnerPOS){
+                        case 0:
+                            //TODO filter restaurants by name
+                            break;
+                        case 1:
+                            //TODO filter restaurants by hazard level
+                            break;
+                        case 2:
+                            //TODO filter restaurants by violations
+                            break;
+                        case 3:
+                            //TODO filter restaurants by favorites
+                            break;
+                        case 4:
+                            //TODO filter restaurants by combined criteria
+                            break;
+                    }
+
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.equals("") || newText == null){
+                   // TODO populate all restaurants
+                }
+                return false;
+            }
+        });
+    }
 
     @Override
     public void onBackPressed() {
@@ -124,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         }
 
        if (((todayA[0]*365+todayA[1]*days[todayA[1]-1]+todayA[2])-(givenA[0]*365+givenA[1]*days[givenA[1]-1]+givenA[2]))<=30){
+
            return (((todayA[0]*365+todayA[1]*days[todayA[1]-1]+todayA[2])-(givenA[0]*365+givenA[1]*days[givenA[1]-1]+givenA[2]))+" days ago\n");
        }
        else if((todayA[0]*365+todayA[1]*30+todayA[2]-givenA[0]*365-givenA[1]*30-givenA[2])<=365){
@@ -153,5 +214,33 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         startActivity(intent);
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        //Toast.makeText(this, "Position is: " + position, Toast.LENGTH_SHORT).show();
+        selectedSpinnerPOS = position;
+        switch (selectedSpinnerPOS){
+            case 0:
+                searchView.setQueryHint("Pizza");
+                break;
+            case 1:
+                searchView.setQueryHint("Low");
+                break;
+            case 2:
+                searchView.setQueryHint("Less than 10");
+                break;
+            case 3:
+                searchView.setQueryHint("All favorites");
+                // TODO: populate restaurant list to be favorites only
+                break;
+            case 4:
+                searchView.setQueryHint("Favorite, pizza, low, 5 or less");
+                break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }
 
