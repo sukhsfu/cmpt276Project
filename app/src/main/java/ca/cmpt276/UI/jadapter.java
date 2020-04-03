@@ -1,6 +1,4 @@
 package ca.cmpt276.UI;
-import ca.cmpt276.UI.MainActivity;
-
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +55,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
 
     @Override
     public void onBindViewHolder( vholder holder, int position) {
-        String title =mydata.get(position).text;
+        String title = mydata.get(position).text;
         holder.txxt.setText(title);
         if(title.contains("Lee Yuen Seafood Restaurant")) {
             holder.image.setImageResource(R.mipmap.leeyuan);
