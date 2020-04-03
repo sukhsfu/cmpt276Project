@@ -3,23 +3,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
-import android.view.ContextThemeWrapper;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.TextView;
-
-import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
-import org.json.JSONObject;
-import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -121,6 +110,28 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 startActivity(intent);
             }
         });
+    }
+
+    private void updateRestaurantList(){
+        switch(selectedSpinnerPOS){
+            case 0:
+                //TODO filter restaurants by name
+                // use searchText field to get the search value entered for each case
+                break;
+            case 1:
+                //TODO filter restaurants by hazard level
+                break;
+            case 2:
+                //TODO filter restaurants by violations
+                break;
+            case 3:
+                //TODO filter restaurants by favorites
+                break;
+            case 4:
+                //TODO filter restaurants by combined criteria
+                break;
+        }
+
     }
 
     private void setOutputData(){
