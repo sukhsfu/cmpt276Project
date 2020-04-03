@@ -10,10 +10,10 @@
         android:id="@+id/item_inspectionDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="116dp"
         android:layout_marginTop="16dp"
         android:text="@string/date"
         android:textSize="36sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,14 +39,14 @@
 
     <TextView
         android:id="@+id/violationsHeader"
-        android:layout_width="198dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="107dp"
+        android:layout_width="227dp"
+        android:layout_height="56dp"
         android:layout_marginTop="162dp"
         android:layout_marginBottom="1dp"
         android:text="@string/violations"
         android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/violationsListView"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,19 +54,19 @@
         android:id="@+id/InspectionType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="132dp"
-        android:layout_marginTop="81dp"
+        android:layout_marginStart="10dp"
 
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="81dp"
+        app:layout_constraintStart_toEndOf="@+id/inspectionType"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/InspectionHazardLevel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="132dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="135dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/txtGPS"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -94,8 +94,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="81dp"
-        android:layout_marginEnd="147dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="7dp"
+        app:layout_constraintEnd_toStartOf="@+id/textView3"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -103,8 +103,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="135dp"
-        android:layout_marginEnd="146dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="7dp"
+        app:layout_constraintEnd_toStartOf="@+id/textView4"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView

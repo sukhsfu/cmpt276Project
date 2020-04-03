@@ -48,26 +48,24 @@
 
     <TextView
         android:id="@+id/violationsHeader"
-        android:layout_width="236dp"
-        android:layout_height="49dp"
+        android:layout_width="239dp"
+        android:layout_height="109dp"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="34dp"
         android:fontFamily="sans-serif-medium"
         android:letterSpacing="0.05"
         android:text="@string/restaurantActivity_inspections"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/inspectionsListView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/item_inspectionDate"
+        app:layout_constraintStart_toStartOf="@+id/item_inspectionDate"
         app:layout_constraintTop_toBottomOf="@+id/txtGPS" />
 
     <ListView
         android:id="@+id/inspectionsListView"
         android:layout_width="510dp"
         android:layout_height="597dp"
-        android:layout_marginTop="230dp"
+        android:layout_marginTop="250dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
