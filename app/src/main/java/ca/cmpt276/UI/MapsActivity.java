@@ -92,6 +92,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int selectedSpinnerPOS = 0;
     private boolean searchPerformed = false;
     private String searchText;
+    private Spinner spinner;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private boolean locationPermissionGranted = false;
@@ -170,7 +171,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             };
         }
 
-        Spinner spinner = (Spinner) findViewById(R.id.mapSpinner);
+        spinner = (Spinner) findViewById(R.id.mapSpinner);
         spinner.setOnItemSelectedListener(this);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.menu_array, android.R.layout.simple_spinner_item);
@@ -219,6 +220,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             searchPerformed = true;
             selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
             updateMarkers();
+            spinner.setSelection(selectedSpinnerPOS);
+            searchView.setQuery(searchText, false);
         }else{
             for (Restaurant restaurant : manager) {
                 addMarker(restaurant);

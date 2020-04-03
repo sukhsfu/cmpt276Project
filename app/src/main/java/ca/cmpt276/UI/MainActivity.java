@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     private SearchView searchView;
     private int selectedSpinnerPOS = 0;
     private String searchText;
+    private Spinner spinner;
     private boolean searchPerformed = false;
 
     @Override
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         setupRestaurantInList();
         setupButtonSwitchToMap();
 
-        Spinner spinner = (Spinner) findViewById(R.id.mainSpinner);
+        spinner = (Spinner) findViewById(R.id.mainSpinner);
         spinner.setOnItemSelectedListener(this);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.menu_array, android.R.layout.simple_spinner_item);
