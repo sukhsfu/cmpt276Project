@@ -8,8 +8,13 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +41,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -64,17 +70,23 @@ import okhttp3.Response;
  * MapsActivity displays Google map centered to user's location and has markers for every restaurant
  */
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_REQUEST_CODE = 1000;
     private static final float DEFAULT_ZOOM = 15;
     public static final String TAG = "mapsActivity";
-    public static final String POSITION = "position";
+    private static final String LATITUDE = "lat";
+    private static final String LONGITUDE = "lng";
+    private static final String SEARCH_TEXT = "SearchText";
+    private static final String SPINNER_POS = "SpinnerPOS";
     private GoogleMap mMap;
     RestaurantManager manager = RestaurantManager.getInstance();
+    private SearchView searchView;
+    private int selectedSpinnerPOS = 0;
+    private boolean searchPerformed = false;
+    private String searchText;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private boolean locationPermissionGranted = false;
@@ -82,17 +94,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationCallback locationCallback;
     String last_modified="";
     String last_modified2;
-    boolean update_required;
-
-
 
     String url = "http://data.surrey.ca/api/3/action/package_show?id=restaurants";
 
     JSONObject obj;
 
-    public static Intent makeLaunchIntent(Context context, int position) {
+    public static Intent makeLaunchIntent(Context context, double lat, double lng) {
         Intent intent = new Intent(context, MapsActivity.class);
-        intent.putExtra(POSITION,position);
+        intent.putExtra(LATITUDE, lat);
+        intent.putExtra(LONGITUDE, lng);
         return intent;
     }
 
@@ -124,9 +134,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
 
             } else {
-
                 comparetime();
-
             }
 
             initMap();
@@ -157,45 +165,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             };
         }
-    }
 
-/*    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+        Spinner spinner = (Spinner) findViewById(R.id.mapSpinner);
+        spinner.setOnItemSelectedListener(this);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.menu_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
-        Intent intent = new Intent(this, ReadDataService.class);
-        startService(intent);
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-
-        initMap();
-        getLocationPermission();
-        setupSwitchButton();
-
-        // user location updates
-        locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(20 * 1000);
-        locationCallback = new LocationCallback() {
+        searchView = findViewById(R.id.mapSearchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
+            public boolean onQueryTextSubmit(String query) {
+                String text = searchView.getQuery().toString();
+                if(text != null || !text.equals("")){
+                    searchText = text;
+                    searchPerformed = true;
+                    updateMarkers();
                 }
-                for (Location location : locationResult.getLocations()) {
-                    if (location != null) {
-
-                        LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                        if(mFusedLocationProviderClient != null){
-                            mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
-                        }
-                        moveCamera(curLocation);
-                    }
-                }
+                return false;
             }
-        };
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.equals("") || newText == null){
+                    mMap.clear();
+                    populateAllMarkers();
+                    searchPerformed = false;
+                }
+                return false;
+            }
+        });
     }
-*/
+
     private void initMap(){
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -206,23 +208,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        if(getIntent().hasExtra(POSITION)){
-            int resId = getIntent().getIntExtra(POSITION, 0);
-            Restaurant restaurant = manager.retrieve(resId);
-            moveCamera(new LatLng(restaurant.getLatitude(), restaurant.getLongitude()));
-            launchInfoWindow(restaurant);
+        Intent intent = getIntent();
+
+        if(intent.hasExtra(SPINNER_POS) && intent.hasExtra(SEARCH_TEXT)){
+            searchText = intent.getStringExtra(SEARCH_TEXT);
+            searchPerformed = true;
+            selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
+            updateMarkers();
+        }else{
+            for (Restaurant restaurant : manager) {
+                addMarker(restaurant);
+            }
         }
-        else{
-            if(locationPermissionGranted){
+
+        if (intent.hasExtra(LATITUDE)) {
+            if(intent.hasExtra(LONGITUDE)){
+                double lat = intent.getDoubleExtra(LATITUDE, 0.0);
+                double lng = intent.getDoubleExtra(LONGITUDE, 0.0);
+                LatLng latlng = new LatLng(lat, lng);
+                Restaurant restaurant = findRestaurantInListFromLatLng(latlng);
+                moveCamera(latlng);
+                Log.d("Moving camera to ","restaurant");
+                launchInfoWindow(restaurant);
+            }
+        } else {
+            if (locationPermissionGranted) {
                 getUserLocation();
             }
         }
+
         // show blue dot for user's current location
         mMap.setMyLocationEnabled(true);
 
-        for (Restaurant restaurant : manager) {
-            addMarker(restaurant);
-        }
         setupInfoWindows();
 
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
@@ -232,9 +249,65 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Restaurant restaurant = findRestaurantInListFromLatLng(latlng);
                 int position = manager.getIndex(restaurant);
                 Intent intent=RestaurantActivity.makeLaunchIntent(MapsActivity.this,position, 1);
+                if(searchPerformed){
+                    intent.putExtra(SEARCH_TEXT, searchText);
+                    intent.putExtra(SPINNER_POS, selectedSpinnerPOS);
+                }
                 startActivity(intent);
             }
         });
+    }
+
+    private void populateAllMarkers(){
+        for (Restaurant restaurant : manager) {
+            addMarker(restaurant);
+        }
+    }
+
+    private void updateMarkers(){
+        switch(selectedSpinnerPOS){
+            case 0:
+                updateMarkersByName(searchText);
+                break;
+            case 1:
+                updateMarkersByHazard(searchText);
+                break;
+            case 2:
+                updateMarkersByViolation(searchText);
+                break;
+            case 3:
+                updateMarkersByFavorite(searchText);
+                break;
+            case 4:
+                updateMarkersByCombined(searchText);
+                break;
+        }
+    }
+
+    private void updateMarkersByName(String name){
+        mMap.clear();
+        for(Restaurant restaurant: manager){
+            if(restaurant.getName().toLowerCase().contains(name.toLowerCase())){
+                addMarker(restaurant);
+            }
+        }
+        setupInfoWindows();
+    }
+
+    private void updateMarkersByHazard(String searchText){
+        //TODO
+    }
+
+    private void updateMarkersByViolation(String searchText){
+        //TODO
+    }
+
+    private void updateMarkersByFavorite(String searchText){
+        //TODO
+    }
+
+    private void updateMarkersByCombined(String searchText){
+        //TODO
     }
 
     private Marker addMarker(Restaurant restaurant){
@@ -264,9 +337,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //setupInfoWindows();
         return mMap.addMarker(options);
-
     }
-
 
     public void openUpdate() {
         Fragment Update;
@@ -363,6 +434,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
       return line;
 
     }
+
     public void comparetime(){
         String filetime=readtime();
         OkHttpClient client = new OkHttpClient();
@@ -426,46 +498,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
-/* public void date_checker(){  //storing last_modified
-        String A="";
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(url)
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.isSuccessful()){
-                    final String myResponse = response.body().string();
-
-                    try {
-                        obj = new JSONObject(myResponse);
-
-                    } catch (Throwable t) {
-
-                    }
-                    try {
-                        last_modified= obj.getJSONObject("result").getJSONArray("resources").getJSONObject(0).getString("last_modified");
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            }
-        });
-
-
-    }
-    */
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -478,7 +510,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btnSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MapsActivity.this, MainActivity.class));
+                Intent intent = new Intent(MapsActivity.this, MainActivity.class);
+                if(searchPerformed){
+                    intent.putExtra(SPINNER_POS, selectedSpinnerPOS);
+                    intent.putExtra(SEARCH_TEXT, searchText);
+                }
+                startActivity(intent);
             }
         });
     }
@@ -538,4 +575,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, MapsActivity.DEFAULT_ZOOM));
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        //String item = parent.getItemAtPosition(position).toString();
+        //Toast.makeText(this, "Position is: " + position, Toast.LENGTH_SHORT).show();
+        selectedSpinnerPOS = position;
+        switch (selectedSpinnerPOS){
+            case 0:
+                searchView.setQueryHint("Pizza");
+                //searchView.clearFocus();
+                break;
+            case 1:
+                searchView.setQueryHint("Low");
+                break;
+            case 2:
+                searchView.setQueryHint("Less than 10");
+                break;
+            case 3:
+                searchView.setQueryHint("All favorites");
+                // TODO: populate markers to be favorites only
+                break;
+            case 4:
+                searchView.setQueryHint("Favorite, pizza, low, 5 or less");
+                break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }

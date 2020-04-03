@@ -1,27 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:theme="@style/AppTheme" />
 
-<fragment
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentStart="true"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    <Spinner
+        android:id="@+id/mapSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <SearchView
+        android:id="@+id/mapSearchView"
+        android:layout_width="310dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/mapSpinner"
+        android:queryHint="@string/search"
+        app:iconifiedByDefault="false"/>
+
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:layout_alignParentStart="true"
+        tools:layout="@layout/activity_maps" />
 
     <Button
         android:id="@+id/btnSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#0000FF"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/toolbar"
         android:layout_alignParentStart="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="#0000FF"
         android:padding="8dp"
-        android:layout_margin="5dp"
         android:text="@string/switch_tab"
         android:textColor="#FFFFFF" />
 

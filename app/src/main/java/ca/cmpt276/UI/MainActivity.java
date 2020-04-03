@@ -1,43 +1,30 @@
 package ca.cmpt276.UI;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.IOException;
-
-
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.Manifest;
-import android.app.DownloadManager;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.widget.Button;
+import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.nio.charset.Charset;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -46,22 +33,22 @@ import java.util.List;
 import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
-import ca.cmpt276.model.Violation;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * The MainActivity displays the list of restaurants to the user.
  */
 
-public class MainActivity extends AppCompatActivity implements jadapter.OnNoteListener {
+public class MainActivity extends AppCompatActivity implements jadapter.OnNoteListener, AdapterView.OnItemSelectedListener {
     private List<String> restaurantText = new ArrayList<>();
     protected static List<Integer> Hazards=new ArrayList<>();
 
     private RestaurantManager manager = RestaurantManager.getInstance();
+    private static final String SEARCH_TEXT = "SearchText";
+    private static final String SPINNER_POS = "SpinnerPOS";
+    private SearchView searchView;
+    private int selectedSpinnerPOS = 0;
+    private String searchText;
+    private boolean searchPerformed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,11 +56,51 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent intent = getIntent();
+        if(intent.hasExtra(SPINNER_POS) && intent.hasExtra(SEARCH_TEXT)){
+            searchText = intent.getStringExtra(SEARCH_TEXT);
+            searchPerformed = true;
+            selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
+            //Toast.makeText(this, "spinner " + selectedSpinnerPOS + " " + searchText, Toast.LENGTH_SHORT).show();
+            updateRestaurantList();
+        }else{
+            // TODO populate entire list normally
+        }
+
         setOutputData();
         setupRestaurantInList();
         setupButtonSwitchToMap();
-    }
 
+        Spinner spinner = (Spinner) findViewById(R.id.mainSpinner);
+        spinner.setOnItemSelectedListener(this);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.menu_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        searchView = findViewById(R.id.mainSearchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String text = searchView.getQuery().toString();
+                if(text != null || !text.equals("")){
+                    searchText = text;
+                    searchPerformed = true;
+                    updateRestaurantList();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.equals("") || newText == null){
+                    searchPerformed = false;
+                   // TODO populate all restaurants
+                }
+                return false;
+            }
+        });
+    }
 
     @Override
     public void onBackPressed() {
@@ -86,12 +113,17 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         switchMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, MapsActivity.class));
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                if(searchPerformed){
+                    intent.putExtra(SPINNER_POS, selectedSpinnerPOS);
+                    intent.putExtra(SEARCH_TEXT, searchText);
+                }
+                startActivity(intent);
             }
         });
     }
 
-    private  void setOutputData(){
+    private void setOutputData(){
         for (Restaurant restaurant : manager) {
             if (restaurant.getInspections().size() != 0) {
                 Inspection inspectionRet = restaurant.getInspections().get(0);
@@ -101,8 +133,11 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                     }
 
                 }
-                restaurantText.add(restaurant.getName() + "\n\n" + dateDifference(inspectionRet.getDate())+ (inspectionRet.getNumCriticalIssues() + inspectionRet
-                        .getNumNonCriticalIssues()) + " issues found\n" + inspectionRet.getNumCriticalIssues() + "  critical, " + inspectionRet.getNumNonCriticalIssues() + "  non-critical");
+                restaurantText.add(restaurant.getName()
+                        + "\n\n" + dateDifference(inspectionRet.getDate())
+                        + getString(R.string.issues_restaurant_tab, (inspectionRet.getNumCriticalIssues() + inspectionRet.getNumNonCriticalIssues()) )
+                        + getString(R.string.critical_restaurant_tab,inspectionRet.getNumCriticalIssues())
+                        + getString(R.string.non_critical_restaurant_tab , inspectionRet.getNumNonCriticalIssues()) );
                    if(inspectionRet.getHazardLevel().equalsIgnoreCase("Low") ){
                        Hazards.add(Color.GREEN);
                    }
@@ -122,6 +157,16 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             }
         }
 
+    }
+
+    private static String[] getMonthArray(Context context) {
+        String[] mon={context.getResources().getString(R.string.jan), context.getResources().getString(R.string.feb),
+                context.getResources().getString(R.string.march), context.getResources().getString(R.string.april),
+                context.getResources().getString(R.string.may), context.getResources().getString(R.string.june),
+                context.getResources().getString(R.string.july), context.getResources().getString(R.string.aug),
+                context.getResources().getString(R.string.sept), context.getResources().getString(R.string.oct),
+                context.getResources().getString(R.string.nov), context.getResources().getString(R.string.dec)};
+        return mon;
     }
 
     protected static String dateDifference(String A){
@@ -172,8 +217,40 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     @Override
     public void onNoteClick(int position) {
         Intent intent=RestaurantActivity.makeLaunchIntent(MainActivity.this,position, 0);
+        if(searchPerformed){
+            intent.putExtra(SEARCH_TEXT, searchText);
+            intent.putExtra(SPINNER_POS, selectedSpinnerPOS);
+        }
         startActivity(intent);
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        //Toast.makeText(this, "Position is: " + position, Toast.LENGTH_SHORT).show();
+        selectedSpinnerPOS = position;
+        switch (selectedSpinnerPOS){
+            case 0:
+                searchView.setQueryHint("Pizza");
+                break;
+            case 1:
+                searchView.setQueryHint("Low");
+                break;
+            case 2:
+                searchView.setQueryHint("Less than 10");
+                break;
+            case 3:
+                searchView.setQueryHint("All favorites");
+                // TODO: populate restaurant list to be favorites only
+                break;
+            case 4:
+                searchView.setQueryHint("Favorite, pizza, low, 5 or less");
+                break;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }
 

@@ -1,9 +1,5 @@
 package ca.cmpt276.UI;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,6 +12,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
@@ -76,6 +76,9 @@ public class InspectionActivity extends AppCompatActivity {
         insDate=Integer.parseInt(inspection.getDate());
         String[] mon={"Jan","Feb","March","April","May","June","July","August","Sept","Oct","Nov","Dec"};
         FormattedDate= mon[((insDate%10000)/100)-1]+" "+insDate%100+", "+insDate/10000;
+        //FormattedDate = getString(R.string.formatted_date, mon[((insDate%10000)/100)-1], insDate%100, insDate/10000);
+        // month day, year
+        // le day month, year
         date.setText(FormattedDate);
 
         TextView InspectionType=findViewById(R.id.InspectionType);
