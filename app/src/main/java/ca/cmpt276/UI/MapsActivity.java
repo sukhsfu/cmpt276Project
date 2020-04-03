@@ -110,7 +110,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        //mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         Intent intent = new Intent(this, ReadDataService.class);
         startService(intent);
@@ -295,7 +294,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateMarkersByHazard(String searchText){
-        //TODO
+        mMap.clear();
+        for(Restaurant restaurant: manager){
+            Inspection inspection = getMostRecentInspection(restaurant);
+            if(inspection != null){
+                if(inspection.getHazardLevel().toLowerCase().equals(searchText.toLowerCase())){
+                    addMarker(restaurant);
+                }
+            }
+        }
+        setupInfoWindows();
     }
 
     private void updateMarkersByViolation(String searchText){
@@ -333,6 +341,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.critical_icon));
             }
             snippet = getString(R.string.maps_markerSnippet, restaurant.getAddress(), hazardLev);
+            options.snippet(snippet);
         }
 
         //setupInfoWindows();
@@ -404,13 +413,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private Inspection getMostRecentInspection(Restaurant restaurant) {
-        Inspection inspectionReturn = restaurant.getInspections().get(0);
-        for (Inspection inspection : restaurant.getInspections()) {
-            if (inspection.getDate().compareTo(inspectionReturn.getDate()) > 0) {
-                inspectionReturn = inspection;
+        if(!restaurant.getInspections().isEmpty()){
+            Inspection inspectionReturn = restaurant.getInspections().get(0);
+            for (Inspection inspection : restaurant.getInspections()) {
+                if (inspection.getDate().compareTo(inspectionReturn.getDate()) > 0) {
+                    inspectionReturn = inspection;
+                }
             }
+            return inspectionReturn;
+        }else{
+            return null;
         }
-        return inspectionReturn;
+
     }
 
     public String readtime(){  //read local_time in file and last_modified in file
