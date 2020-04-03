@@ -220,8 +220,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             searchPerformed = true;
             selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
             updateMarkers();
-            spinner.setSelection(selectedSpinnerPOS);
-            searchView.setQuery(searchText, false);
+            //spinner.setSelection(selectedSpinnerPOS);
+            //searchView.setQuery(searchText, false);
         }else{
             for (Restaurant restaurant : manager) {
                 addMarker(restaurant);
