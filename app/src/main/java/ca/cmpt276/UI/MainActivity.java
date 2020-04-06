@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             public boolean onQueryTextChange(String newText) {
                 if(newText.equals("") || newText == null){
                     searchPerformed = false;
-                   // TODO populate all restaurants
                 }
                 Jadapter.getFilter().filter(newText);
                 return false;
@@ -228,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         list.setLayoutManager(new LinearLayoutManager(this));
         Jadapter=new jadapter(restaurantText,  this);
         list.setAdapter(Jadapter );
+        Jadapter.getFilter().filter("");
     }
 
     @Override
