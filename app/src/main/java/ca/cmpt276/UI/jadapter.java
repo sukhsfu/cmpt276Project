@@ -16,10 +16,10 @@ import java.util.List;
 import static ca.cmpt276.UI.MainActivity.Hazards;
 
 class Mydata {
-    public final long id;
+    public final int id;
     public final String text;
 
-    public Mydata(long id, String text) {
+    public Mydata(int id, String text) {
         this.id = id;
         this.text = text;
     }
@@ -60,6 +60,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
     @Override
     public void onBindViewHolder(vholder holder, int position) {
         String title = mydatafiltered.get(position).text;
+        int positionid = mydatafiltered.get(position).id;
         holder.txxt.setText(title);
         if (title.contains("Lee Yuen Seafood Restaurant")) {
             holder.image.setImageResource(R.mipmap.leeyuan);
@@ -88,12 +89,12 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
         }
 
 
-        holder.Hazardimage.setBackgroundColor((Hazards.get(position)).intValue());
-        if (Color.GREEN == Hazards.get(position).intValue()) {
+        holder.Hazardimage.setBackgroundColor((Hazards.get(positionid)).intValue());
+        if (Color.GREEN == Hazards.get(positionid).intValue()) {
             holder.face.setImageResource(R.drawable.smile);
-        } else if (Color.RED == Hazards.get(position).intValue()) {
+        } else if (Color.RED == Hazards.get(positionid).intValue()) {
             holder.face.setImageResource(R.drawable.sad);
-        } else if (Color.YELLOW == Hazards.get(position).intValue()) {
+        } else if (Color.YELLOW == Hazards.get(positionid).intValue()) {
             holder.face.setImageResource(R.drawable.normal);
         }
     }
@@ -145,8 +146,10 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
                 } else {
                     List<Mydata> filteredList = new ArrayList<>();
                     for (Mydata row : mydata) {
-                        if (row.text.toLowerCase().contains(charString.toLowerCase()))
+                        if (row.text.toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
+
+                        }
                     }
                     mydatafiltered = filteredList;
                 }
