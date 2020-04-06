@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     private String searchText;
     private Spinner spinner;
     private boolean searchPerformed = false;
+    private jadapter Jadapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +53,13 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             searchPerformed = true;
             selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
             //Toast.makeText(this, "spinner " + selectedSpinnerPOS + " " + searchText, Toast.LENGTH_SHORT).show();
-            updateRestaurantList();
+            updateRestaurantList(); //cases 0,1,2,3,4
         }else{
             // TODO populate entire list normally
         }
 
-        setOutputData();
-        setupRestaurantInList();
+        setOutputData();//set data to restaurantText and Hazards list
+        setupRestaurantInList();//pass restaurant and  Hazards to jadapter.
         setupButtonSwitchToMap();
 
         spinner = (Spinner) findViewById(R.id.mainSpinner);
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                     searchPerformed = true;
                     updateRestaurantList();
                 }
+                Jadapter.getFilter().filter(query);
                 return false;
             }
 
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                     searchPerformed = false;
                    // TODO populate all restaurants
                 }
+                Jadapter.getFilter().filter(newText);
                 return false;
             }
         });
@@ -223,7 +226,8 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         list.setNestedScrollingEnabled(false);
         list.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         list.setLayoutManager(new LinearLayoutManager(this));
-        list.setAdapter(new jadapter(restaurantText,  this));
+        Jadapter=new jadapter(restaurantText,  this);
+        list.setAdapter(Jadapter );
     }
 
     @Override
