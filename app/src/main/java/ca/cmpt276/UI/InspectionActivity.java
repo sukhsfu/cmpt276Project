@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -129,6 +130,7 @@ public class InspectionActivity extends AppCompatActivity {
             Violation currViolation = violations.get(position);
 
             String briefDescription = currViolation.getBriefDescription();
+            Log.d("INSPECTION_ACTIVITY", "Brief Description: " + briefDescription);
             ImageView natureIcon = itemView.findViewById(R.id.nature_icon);
             if(briefDescription.toLowerCase().contains("food")){
                 natureIcon.setImageResource(R.drawable.food_icon);

@@ -8,7 +8,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -41,7 +40,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -116,9 +114,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
         Intent intent = new Intent(this, ReadDataService.class);
         startService(intent);
+
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
@@ -141,7 +139,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             } else {
                 comparetime();
             }
-
             initMap();
             getLocationPermission();
             setupSwitchButton();
