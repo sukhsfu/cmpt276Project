@@ -1,8 +1,11 @@
 package ca.cmpt276.UI;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -13,8 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
 import static ca.cmpt276.UI.MainActivity.Hazards;
-
+import static ca.cmpt276.UI.MainActivity.booltorestaurant;
+import static ca.cmpt276.UI.MainActivity.favourite;
+import static ca.cmpt276.UI.MainActivity.numcritical;
 class Mydata {
     public final int id;
     public final String text;
@@ -27,8 +33,8 @@ class Mydata {
 
 
 public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements Filterable {
-    private List<Mydata> mydata;
-    private List<Mydata> mydatafiltered;
+    private List<Mydata> mydata ;
+    private List<Mydata> mydatafiltered ;
     private OnNoteListener monNoteListener;
 
 
@@ -46,6 +52,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
             mydata.add(new Mydata(i, data.get(i)));
 
         }
+
 
 
     }
@@ -97,10 +104,36 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
         } else if (Color.YELLOW == Hazards.get(positionid).intValue()) {
             holder.face.setImageResource(R.drawable.normal);
         }
+        boolean find= favourite.get(positionid);
+        holder.checkBox.setChecked(find);
+        holder.checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            SharedPreferences sharedPreferences= v.getContext().getSharedPreferences("favourites", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor=sharedPreferences.edit();
+            editor.remove("favourite_"+positionid);
+                if(holder.checkBox.isChecked()){
+                    editor.putBoolean("favourite_"+positionid,true);
+                    favourite.set(positionid,true);
+                    booltorestaurant();
+                }
+                else{
+                    editor.putBoolean("favourite_"+positionid,false);
+                    favourite.set(positionid,false);
+                    booltorestaurant();
+                }
+                editor.apply();
+            }
+        });
+
+
+
     }
 
     @Override
     public int getItemCount() {
+        if (mydatafiltered==null)
+            return 0;
         return mydatafiltered.size();
     }
 
@@ -110,6 +143,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
         TextView txxt;
         TextView Hazardimage;
         OnNoteListener onNoteLister;
+        CheckBox checkBox;
 
         public vholder(View itemView, OnNoteListener onNoteLister) {
             super(itemView);
@@ -117,6 +151,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
             Hazardimage = itemView.findViewById(R.id.hazard);
             txxt = itemView.findViewById(R.id.restauranttext);
             face = itemView.findViewById(R.id.imageView4);
+            checkBox = itemView.findViewById(R.id.checkBox);
 
             this.onNoteLister = onNoteLister;
             itemView.setOnClickListener(this);
@@ -124,7 +159,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
 
         @Override
         public void onClick(View v) {
-            onNoteLister.onNoteClick(getAdapterPosition());
+            onNoteLister.onNoteClick(mydatafiltered.get(getAdapterPosition()).id);
 
         }
     }
@@ -140,48 +175,86 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
-                String charString = charSequence.toString();
-                if (charString.isEmpty()) {
+                String charString1 = charSequence.toString();
+                if (charString1.isEmpty()) {
                     mydatafiltered = mydata;
                 } else {
+                    String[] charStringarr;
+                    if (charString1.contains("combined")) {
+                        charString1.replace("combined", "");
+                        charStringarr = charString1.split(",");
+                        charStringarr[0]=charStringarr[0]+"favs";
+                        charStringarr[2]=charStringarr[2]+"clr";
+                        charStringarr[3]=charStringarr[3]+"xxxaaaxxx";
+                    } else {
+                        charStringarr = new String[1];
+                        charStringarr[0] = charString1;
+                    }
 
                     List<Mydata> filteredList = new ArrayList<>();
-                    if(charString.equalsIgnoreCase("lowclr")){
-                        for (Mydata row : mydata) {
-                            if (Hazards.get(row.id)==Color.GREEN) {
-                                filteredList.add(row);
+                    for(String charString:charStringarr) {
+                        if (charString.contains("xxxaaaxxx")) {
+                            String check = charString.replace("xxxaaaxxx", "");
+                            String checkdigits = check.replaceAll("\\D+", "");
+                            if (check.toLowerCase().contains("less") || check.contains("<")) {
+                                for (Mydata row : mydata) {
+                                    if (numcritical.get(row.id) <= Integer.parseInt(checkdigits)) {
+                                        filteredList.add(row);
 
+                                    }
+                                }
+                            } else if (check.toLowerCase().contains("greater") || check.contains(">") || check.toLowerCase().contains("more")) {
+                                for (Mydata row : mydata) {
+                                    if (numcritical.get(row.id) >= Integer.parseInt(checkdigits)) {
+                                        filteredList.add(row);
+
+                                    }
+                                }
+                            }
+                        } else if (charString.equalsIgnoreCase("lowclr")) {
+                            for (Mydata row : mydata) {
+                                if (Hazards.get(row.id) == Color.GREEN) {
+                                    filteredList.add(row);
+
+                                }
+                            }
+
+                        } else if (charString.equalsIgnoreCase("moderateclr")) {
+                            for (Mydata row : mydata) {
+                                if (Hazards.get(row.id) == Color.YELLOW) {
+                                    filteredList.add(row);
+
+                                }
+                            }
+
+                        } else if (charString.equalsIgnoreCase("highclr")) {
+                            for (Mydata row : mydata) {
+                                if (Hazards.get(row.id) == Color.RED) {
+                                    filteredList.add(row);
+
+                                }
+                            }
+
+                        }else if(charString.contains("favs")){
+                            String check=charString.replace("favs","");
+                            for (Mydata row : mydata) {
+                                if (row.text.toLowerCase().contains(check.toLowerCase())&&favourite.get(row.id)) {
+                                    filteredList.add(row);
+
+                                }
                             }
                         }
+                        else {
+                            for (Mydata row : mydata) {
+                                if (row.text.toLowerCase().contains(charString.toLowerCase())) {
+                                    filteredList.add(row);
 
-                    }
-                    else if(charString.equalsIgnoreCase("moderateclr")){
-                        for (Mydata row : mydata) {
-                            if (Hazards.get(row.id)==Color.YELLOW) {
-                                filteredList.add(row);
-
-                            }
-                        }
-
-                    }
-                    else if(charString.equalsIgnoreCase("highclr")){
-                        for (Mydata row : mydata) {
-                            if (Hazards.get(row.id)==Color.RED) {
-                                filteredList.add(row);
-
-                            }
-                        }
-
-                    }
-                    else {
-                        for (Mydata row : mydata) {
-                            if (row.text.toLowerCase().contains(charString.toLowerCase())) {
-                                filteredList.add(row);
-
+                                }
                             }
                         }
                     }
                     mydatafiltered = filteredList;
+
                 }
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = mydatafiltered;

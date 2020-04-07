@@ -2,6 +2,7 @@ package ca.cmpt276.UI;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,11 +18,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
+
+
+import static ca.cmpt276.UI.MainActivity.favourite;
+import static ca.cmpt276.UI.MainActivity.restaurantList;
+
 
 /**
  * The RestaurantActivity is launched from the MainActivity when a restaurant is clicked.
@@ -31,6 +40,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private RestaurantManager manager = RestaurantManager.getInstance();
     private Restaurant restaurant;
+    private Restaurant restaurantfav;
     private List<Inspection> inspections;
     private int resPosition;
     private int backIndex;
@@ -39,6 +49,7 @@ public class RestaurantActivity extends AppCompatActivity {
     private boolean searchPerformed = false;
     private String searchText;
     private int selectedSpinnerPOS;
+    List<String> favList;
 
     public static Intent makeLaunchIntent(Context context,int position, int index) {
         Intent intent = new Intent(context, RestaurantActivity.class);
@@ -65,8 +76,48 @@ public class RestaurantActivity extends AppCompatActivity {
         registerClickCallbackListView();
         setupGPSClickCallback();
 
+        setupFavoriteIcon();//
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+    private void setupFavoriteIcon() {
+        ImageView imageView = (ImageView) findViewById(R.id.imgFavorite);
+
+        if(isRestaurantAFavorite(restaurantfav)){
+            imageView.setImageResource(R.drawable.ic_favorite_yellow_24dp);
+        }else{
+            imageView.setImageResource(R.drawable.ic_favorite_border_yellow_24dp);
+        }
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences sharedPreferences= v.getContext().getSharedPreferences("favourites", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor=sharedPreferences.edit();
+                editor.remove("favourite_"+resPosition);
+                if(isRestaurantAFavorite(restaurantfav)){
+
+                    editor.putBoolean("favourite_"+resPosition,false);
+                    imageView.setImageResource(R.drawable.ic_favorite_border_yellow_24dp);
+                }else{
+                    editor.putBoolean("favourite_"+resPosition,true);
+                    imageView.setImageResource(R.drawable.ic_favorite_yellow_24dp);
+                }
+                editor.apply();
+            }
+        });
+    }
+
+    private boolean isRestaurantAFavorite(Restaurant restaurant){
+        for(Restaurant restaurant1: restaurantList){
+            if(restaurant.getTrackingNumber().equals(restaurant1.getTrackingNumber())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
     private void setupGPSClickCallback() {
         TextView tv = findViewById(R.id.txtGPS);
@@ -111,6 +162,7 @@ public class RestaurantActivity extends AppCompatActivity {
         resPosition = intent.getIntExtra("position", 0);
         backIndex = intent.getIntExtra("index", 0);
         restaurant = manager.retrieve(resPosition);
+        restaurantfav=manager.retrieve(resPosition);
         inspections = restaurant.getInspections();
     }
 
@@ -201,4 +253,7 @@ public class RestaurantActivity extends AppCompatActivity {
             return itemView;
         }
     }
+
+
 }
+

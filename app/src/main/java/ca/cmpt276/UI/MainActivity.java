@@ -1,6 +1,7 @@
 package ca.cmpt276.UI;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -14,9 +15,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import ca.cmpt276.model.Inspection;
@@ -30,8 +35,11 @@ import ca.cmpt276.model.RestaurantManager;
 public class MainActivity extends AppCompatActivity implements jadapter.OnNoteListener, AdapterView.OnItemSelectedListener {
     private List<String> restaurantText = new ArrayList<>();
     protected static List<Integer> Hazards=new ArrayList<>();
-
+    protected static List<Integer> numcritical=new ArrayList<>();
+    protected static List<Boolean> favourite =new ArrayList<>();
+    protected static List<Restaurant> restaurantList =new ArrayList<>();
     private RestaurantManager manager = RestaurantManager.getInstance();
+    private static RestaurantManager manager1 = RestaurantManager.getInstance();
     private static final String SEARCH_TEXT = "SearchText";
     private static final String SPINNER_POS = "SpinnerPOS";
     private SearchView searchView;
@@ -59,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         }
 
         setOutputData();//set data to restaurantText and Hazards list
+        booltorestaurant();
         setupRestaurantInList();//pass restaurant and  Hazards to jadapter.
         setupButtonSwitchToMap();
 
@@ -130,19 +139,44 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 break;
             case 2:
                 //TODO filter restaurants by violations
+                if(!text.isEmpty())
+                    text=text.concat("xxxaaaxxx");
+                Jadapter.getFilter().filter(text);
                 break;
             case 3:
                 //TODO filter restaurants by favorites
+
+                text=text.concat("favs");
+                Jadapter.getFilter().filter(text);
                 break;
             case 4:
                 //TODO filter restaurants by combined criteria
+                if(!text.isEmpty())
+                    text=text.concat("combined");
+                Jadapter.getFilter().filter(text);
                 break;
         }
 
     }
 
     private void setOutputData(){
+        numcritical.clear();
+        Hazards.clear();
+        favourite.clear();
+        int  cnt=0;
         for (Restaurant restaurant : manager) {
+            numcritical.add(getRecentNumCriticalViolations(restaurant));
+            SharedPreferences sharedPreferences=getSharedPreferences("favourites",MODE_PRIVATE);
+             boolean checklist=sharedPreferences.getBoolean("favourite_"+cnt,false);
+             favourite.add(checklist);
+
+             cnt++;
+
+
+
+
+
+
             if (restaurant.getInspections().size() != 0) {
                 Inspection inspectionRet = restaurant.getInspections().get(0);
                 for (Inspection inspection : restaurant.getInspections()) {
@@ -151,6 +185,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                     }
 
                 }
+
+
+
                 restaurantText.add(restaurant.getName()
                         + "\n\n" + dateDifference(inspectionRet.getDate())
                         + getString(R.string.issues_restaurant_tab, (inspectionRet.getNumCriticalIssues() + inspectionRet.getNumNonCriticalIssues()) )
@@ -174,6 +211,8 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 restaurantText.add(restaurant.getName() + "\n");
             }
         }
+
+
 
     }
 
@@ -233,6 +272,27 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         list.setAdapter(Jadapter );
         Jadapter.getFilter().filter("");
     }
+    private int getRecentNumCriticalViolations(Restaurant restaurant){
+        int numCriticalViolations = 0;
+        Calendar cal = Calendar.getInstance();
+        Date today = cal.getTime();
+        cal.add(Calendar.YEAR, -1);
+        Date lastYear = cal.getTime();
+
+        List<Inspection> inspections = restaurant.getInspections();
+        for(Inspection inspection: inspections){
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+            try{
+                Date date = formatter.parse(inspection.getDate());
+                if(date.after(lastYear)){
+                    numCriticalViolations = numCriticalViolations + inspection.getNumCriticalIssues();
+                }
+            }catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return numCriticalViolations;
+    }
 
     @Override
     public void onNoteClick(int position) {
@@ -268,9 +328,36 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         }
     }
 
+
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+    public static void  booltorestaurant(){
+        restaurantList.clear();
+        int cnt=0;
+        for(Restaurant restaurant:manager1){
+              if(favourite.get(cnt++)) {
+                  restaurantList.add(restaurant);
+              }
+        }
+
+    }
+    public static void restauranttobool(){
+        favourite.clear();
+
+        for(Restaurant restaurant:manager1){
+
+            favourite.add(false);
+
+            for(Restaurant restaurant1:restaurantList){
+                if(restaurant1.getTrackingNumber().equals(restaurant.getTrackingNumber())){
+                    favourite.remove(favourite.size()-1);
+                    favourite.add(true);
+                }
+            }
+        }
+    }
+
 }
 
