@@ -3,6 +3,7 @@ package ca.cmpt276.UI;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -56,6 +57,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -93,6 +95,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean searchPerformed = false;
     private String searchText;
     private Spinner spinner;
+    private List<Restaurant> favorites;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private boolean locationPermissionGranted = false;
@@ -284,6 +287,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateMarkers(){
+        getFavorites();
+        mMap.clear();
         switch(selectedSpinnerPOS){
             case 0:
                 updateMarkersByName(searchText);
@@ -304,7 +309,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateMarkersByName(String name){
-        mMap.clear();
         for(Restaurant restaurant: manager){
             if(restaurant.getName().toLowerCase().contains(name.toLowerCase())){
                 addMarker(restaurant);
@@ -314,7 +318,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateMarkersByHazard(String searchText){
-        mMap.clear();
         for(Restaurant restaurant: manager){
             Inspection inspection = getMostRecentInspection(restaurant);
             if(inspection != null){
@@ -327,7 +330,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateMarkersByViolation(String searchText){
-        mMap.clear();
         String search = searchText.toLowerCase();
         String searchParam="";
         if(search.contains("less") || search.contains("<")){
@@ -367,11 +369,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateMarkersByFavorite(String searchText){
-        //TODO
+        String search = searchText.trim().toLowerCase();
+        if(search.equals("all favorites") || search.equals("all") || search.equals("")){
+            for(Restaurant restaurant: favorites){
+                addMarker(restaurant);
+            }
+        }else{
+            for(Restaurant restaurant: favorites){
+                if(restaurant.getName().toLowerCase().contains(search)){
+                    addMarker(restaurant);
+                }
+            }
+        }
     }
 
     private void updateMarkersByCombined(String searchText){
         //TODO
+    }
+
+    private void getFavorites(){
+        int count = 0;
+        favorites = new ArrayList<>();
+        for(Restaurant restaurant: manager){
+            SharedPreferences sharedPreferences=getSharedPreferences("favourites",MODE_PRIVATE);
+            boolean checklist=sharedPreferences.getBoolean("favourite_"+count,false);
+            if(checklist){
+                favorites.add(restaurant);
+            }
+            count++;
+        }
     }
 
     private Marker addMarker(Restaurant restaurant){
