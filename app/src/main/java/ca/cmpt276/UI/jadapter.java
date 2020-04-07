@@ -154,7 +154,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
 
         @Override
         public void onClick(View v) {
-            onNoteLister.onNoteClick(getAdapterPosition());
+            onNoteLister.onNoteClick(mydatafiltered.get(getAdapterPosition()).id);
 
         }
     }
