@@ -51,10 +51,42 @@
     <string name="critical_restaurant_tab">%1$d critical,</string>
     <string name="non_critical_restaurant_tab">%1$d non-critical.</string>
 
-
-
-
-
+    <string name="briefViol_plans">Plans not in accordance.</string>
+    <string name="briefViol_foodPremises">Unapproved food premises.</string>
+    <string name="briefViol_invalidPermit">Fail to hold valid permit.</string>
+    <string name="briefViol_unpostedPermit">Permit not posted.</string>
+    <string name="briefViol_contaminated">Food contaminated..</string>
+    <string name="briefViol_unsafeProcess">Unsafe food processes.</string>
+    <string name="briefViol_cooling">Food not cooled well.</string>
+    <string name="briefViol_heating">Food not cooked or heated enough.</string>
+    <string name="briefViol_coldTemp">Cold food stored above 4 \u00b0 c.</string>
+    <string name="briefViol_hotTemp">Hot food stored below 60 \u00b0 c.</string>
+    <string name="briefViol_unapprovedSource">Foods from unapproved sources.</string>
+    <string name="briefViol_foodContamination">Food might get contaminated.</string>
+    <string name="briefViol_thawing">Food not thawed correctly.</string>
+    <string name="briefViol_frozenTemp">Frozen food stored above -18 \u00b0 c.</string>
+    <string name="briefViol_writtenProc">Unacceptable written procedures.</string>
+    <string name="briefViol_equipUnsanitized">Unsanitized equipment.</string>
+    <string name="briefViol_equipWashing">Equipment not properly washed.</string>
+    <string name="briefViol_water">Hot and cold water not adequate.</string>
+    <string name="briefViol_pestsFree">Premises not free of pests.</string>
+    <string name="briefViol_pestsEntrance">Possible entrance of pests.</string>
+    <string name="briefViol_sanitizationPremises">Premises not sanitized.</string>
+    <string name="briefViol_equipMaterial">Unsuitable equipment material.</string>
+    <string name="briefViol_equipState">Equipment not in good order.</string>
+    <string name="briefViol_cleansers">Cleansers stored improperly.</string>
+    <string name="briefViol_singleUse">Over-use of single use containers.</string>
+    <string name="briefViol_premises">Premises not maintained.</string>
+    <string name="briefViol_unnecessaryItems">Unnecessary items stored.</string>
+    <string name="briefViol_animals">Live animals on premises.</string>
+    <string name="briefViol_sanitationProc">No written sanitation procedures.</string>
+    <string name="briefViol_thermometers">Equipment lack thermometers.</string>
+    <string name="briefViol_handwashingStations">Handwashing stations not available.</string>
+    <string name="briefViol_washHands">Employee doesn\'t wash hands.</string>
+    <string name="briefViol_personalHygiene">Employee lack personal hygiene.</string>
+    <string name="briefViol_smoking">Smoking in prohibited areas.</string>
+    <string name="briefViol_level1">Doesn\'t have Foodsafe Level 1.</string>
+    <string name="briefViol_FOODSAFE">No Foodsafe in operator\'s absence.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <!--<string name="hello_blank_fragment">Hello blank fragment</string> -->

@@ -51,5 +51,43 @@
     <string name="critical_restaurant_tab">%1$d problèmes critique,</string>
     <string name="non_critical_restaurant_tab">%1$d problèmes non-critique</string>
 
+    <string name="briefViol_plans">Plans non conformes.</string>
+    <string name="briefViol_foodPremises">Locaux de restauration non approuvés.</string>
+    <string name="briefViol_invalidPermit">Ne pas détenir un permis valide.</string>
+    <string name="briefViol_unpostedPermit">Permis non affiché.</string>
+    <string name="briefViol_contaminated">Aliments contaminés.</string>
+    <string name="briefViol_unsafeProcess">Processus alimentaires dangereux.</string>
+    <string name="briefViol_cooling">La nourriture n\'est pas bien refroidie.</string>
+    <string name="briefViol_heating">Aliments pas suffisamment cuits ou chauffés.</string>
+    <string name="briefViol_coldTemp">Nourriture froide entreposée à plus de 4 \u00b0 c.</string>
+    <string name="briefViol_hotTemp">Plats chauds stockés à moins de 60 \u00b0 c.</string>
+    <string name="briefViol_unapprovedSource">Aliments provenant de sources non approuvées.</string>
+    <string name="briefViol_foodContamination">Les aliments pourraient être contaminés.</string>
+    <string name="briefViol_thawing">La nourriture n\'est pas décongelée correctement.</string>
+    <string name="briefViol_frozenTemp">Aliments surgelés stockés au-dessus de -18 \u00b0 c.</string>
+    <string name="briefViol_writtenProc">Procédures écrites inacceptables.</string>
+    <string name="briefViol_equipUnsanitized">Équipement non désinfecté.</string>
+    <string name="briefViol_equipWashing">Équipement mal lavé.</string>
+    <string name="briefViol_water">L\'eau chaude et froide ne suffit pas.</string>
+    <string name="briefViol_pestsFree">Locaux non exempts d\'organismes nuisibles.</string>
+    <string name="briefViol_pestsEntrance">Entrée possible d\'organismes nuisibles.</string>
+    <string name="briefViol_sanitizationPremises">Locaux non aseptisés.</string>
+    <string name="briefViol_equipMaterial">Matériel d\'équipement inadapté.</string>
+    <string name="briefViol_equipState">L\'équipement n\'est pas en bon état.</string>
+    <string name="briefViol_cleansers">Nettoyants mal stockés.</string>
+    <string name="briefViol_singleUse">Surutilisation de conteneurs à usage unique.</string>
+    <string name="briefViol_premises">Locaux non entretenus.</string>
+    <string name="briefViol_unnecessaryItems">Éléments inutiles stockés.</string>
+    <string name="briefViol_animals">Animaux vivants sur place.</string>
+    <string name="briefViol_sanitationProc">Pas de procédures d\'assainissement écrites.</string>
+    <string name="briefViol_thermometers">Pas de thermomètres dans l\'équipement.</string>
+    <string name="briefViol_handwashingStations">Stations de lavage des mains non disponibles.</string>
+    <string name="briefViol_washHands">L\'employé ne se lave pas les mains.</string>
+    <string name="briefViol_personalHygiene">L\'employé manque d\'hygiène personnelle.</string>
+    <string name="briefViol_smoking">Fumer dans les zones interdites.</string>
+    <string name="briefViol_level1">N\'a pas de Foodsafe niveau 1.</string>
+    <string name="briefViol_FOODSAFE">Pas de Foodsafe en l\'absence de l\'opérateur.</string>
+
+
 
 </resources>
