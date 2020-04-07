@@ -1,6 +1,7 @@
 package ca.cmpt276.UI;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     private List<String> restaurantText = new ArrayList<>();
     protected static List<Integer> Hazards=new ArrayList<>();
     protected static List<Integer> numcritical=new ArrayList<>();
+    protected static List<Boolean> favourite =new ArrayList<>();
+    private boolean savedfavourite=false;
     private RestaurantManager manager = RestaurantManager.getInstance();
     private static final String SEARCH_TEXT = "SearchText";
     private static final String SPINNER_POS = "SpinnerPOS";
@@ -154,8 +157,20 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     private void setOutputData(){
         numcritical.clear();
         Hazards.clear();
+        favourite.clear();
+        int  cnt=0;
         for (Restaurant restaurant : manager) {
             numcritical.add(getRecentNumCriticalViolations(restaurant));
+            SharedPreferences sharedPreferences=getSharedPreferences("favourites",MODE_PRIVATE);
+             boolean checklist=sharedPreferences.getBoolean("favourite_"+cnt,false);
+             favourite.add(checklist);
+             cnt++;
+
+
+
+
+
+
             if (restaurant.getInspections().size() != 0) {
                 Inspection inspectionRet = restaurant.getInspections().get(0);
                 for (Inspection inspection : restaurant.getInspections()) {

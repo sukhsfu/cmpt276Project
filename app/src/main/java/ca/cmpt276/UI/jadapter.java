@@ -1,8 +1,11 @@
 package ca.cmpt276.UI;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -13,7 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
 import static ca.cmpt276.UI.MainActivity.Hazards;
+import static ca.cmpt276.UI.MainActivity.favourite;
 import static ca.cmpt276.UI.MainActivity.numcritical;
 class Mydata {
     public final int id;
@@ -98,6 +103,26 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
         } else if (Color.YELLOW == Hazards.get(positionid).intValue()) {
             holder.face.setImageResource(R.drawable.normal);
         }
+        boolean find= favourite.get(positionid);
+        holder.checkBox.setChecked(find);
+        holder.checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            SharedPreferences sharedPreferences= v.getContext().getSharedPreferences("favourites", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor=sharedPreferences.edit();
+            editor.remove("favourite_"+positionid);
+                if(holder.checkBox.isChecked()){
+                    editor.putBoolean("favourite_"+positionid,true);
+                }
+                else{
+                    editor.putBoolean("favourite_"+positionid,false);
+                }
+                editor.apply();
+            }
+        });
+
+
+
     }
 
     @Override
@@ -113,6 +138,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
         TextView txxt;
         TextView Hazardimage;
         OnNoteListener onNoteLister;
+        CheckBox checkBox;
 
         public vholder(View itemView, OnNoteListener onNoteLister) {
             super(itemView);
@@ -120,6 +146,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
             Hazardimage = itemView.findViewById(R.id.hazard);
             txxt = itemView.findViewById(R.id.restauranttext);
             face = itemView.findViewById(R.id.imageView4);
+            checkBox = itemView.findViewById(R.id.checkBox);
 
             this.onNoteLister = onNoteLister;
             itemView.setOnClickListener(this);
