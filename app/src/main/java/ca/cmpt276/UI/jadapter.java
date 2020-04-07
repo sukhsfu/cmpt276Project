@@ -178,8 +178,9 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
                     if (charString1.contains("combined")) {
                         charString1.replace("combined", "");
                         charStringarr = charString1.split(",");
-                        charStringarr[1]=charStringarr[1]+"clr";
-                        charStringarr[2]=charStringarr[2]+"xxxaaaxxx";
+                        charStringarr[0]=charStringarr[0]+"favs";
+                        charStringarr[2]=charStringarr[2]+"clr";
+                        charStringarr[3]=charStringarr[3]+"xxxaaaxxx";
                     } else {
                         charStringarr = new String[1];
                         charStringarr[0] = charString1;
@@ -229,7 +230,16 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
                                 }
                             }
 
-                        } else {
+                        }else if(charString.contains("favs")){
+                            String check=charString.replace("favs","");
+                            for (Mydata row : mydata) {
+                                if (row.text.toLowerCase().contains(check.toLowerCase())&&favourite.get(row.id)) {
+                                    filteredList.add(row);
+
+                                }
+                            }
+                        }
+                        else {
                             for (Mydata row : mydata) {
                                 if (row.text.toLowerCase().contains(charString.toLowerCase())) {
                                     filteredList.add(row);
