@@ -113,9 +113,11 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
             editor.remove("favourite_"+positionid);
                 if(holder.checkBox.isChecked()){
                     editor.putBoolean("favourite_"+positionid,true);
+                    favourite.set(positionid,true);
                 }
                 else{
                     editor.putBoolean("favourite_"+positionid,false);
+                    favourite.set(positionid,false);
                 }
                 editor.apply();
             }

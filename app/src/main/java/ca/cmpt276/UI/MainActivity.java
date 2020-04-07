@@ -37,8 +37,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     protected static List<Integer> Hazards=new ArrayList<>();
     protected static List<Integer> numcritical=new ArrayList<>();
     protected static List<Boolean> favourite =new ArrayList<>();
-    private boolean savedfavourite=false;
+    protected static List<Restaurant> restaurantList =new ArrayList<>();
     private RestaurantManager manager = RestaurantManager.getInstance();
+    private static RestaurantManager manager1 = RestaurantManager.getInstance();
     private static final String SEARCH_TEXT = "SearchText";
     private static final String SPINNER_POS = "SpinnerPOS";
     private SearchView searchView;
@@ -208,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 restaurantText.add(restaurant.getName() + "\n");
             }
         }
+        booltorestaurant();
     }
 
     private static String[] getMonthArray(Context context) {
@@ -322,9 +324,34 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         }
     }
 
+
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+    public static void  booltorestaurant(){
+        restaurantList.clear();
+        int cnt=0;
+        for(Restaurant restaurant:manager1){
+              if(favourite.get(cnt))
+                  restaurantList.add(restaurant);
+        }
+
+    }
+    public static void restauranttobool(){
+        favourite.clear();
+
+        for(Restaurant restaurant:manager1){
+            favourite.add(false);
+
+            for(Restaurant restaurant1:restaurantList){
+                if(restaurant1.getTrackingNumber().equals(restaurant.getTrackingNumber())){
+                    favourite.remove(favourite.size()-1);
+                    favourite.add(true);
+                }
+            }
+        }
+    }
+
 }
 
