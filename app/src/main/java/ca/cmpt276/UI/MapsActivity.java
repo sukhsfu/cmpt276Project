@@ -314,7 +314,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 addMarker(restaurant);
             }
         }
-        setupInfoWindows();
+        //setupInfoWindows();
     }
 
     private void updateMarkersByHazard(String searchText){
@@ -326,7 +326,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         }
-        setupInfoWindows();
+        //setupInfoWindows();
     }
 
     private void updateMarkersByViolation(String searchText){
@@ -364,7 +364,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         break;
                 }
             }
-            setupInfoWindows();
+            //setupInfoWindows();
         }
     }
 
@@ -384,7 +384,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateMarkersByCombined(String searchText){
-        //TODO
+        String search = searchText.trim().toLowerCase();
+        if(search.contains("favorite")){
+            for(Restaurant restaurant: favorites){
+                //TODO
+                
+            }
+        }else{
+            for(Restaurant restaurant: manager){
+                //TODO
+            }
+        }
     }
 
     private void getFavorites(){
