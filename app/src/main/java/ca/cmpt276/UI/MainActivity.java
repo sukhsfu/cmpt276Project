@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 break;
             case 1:
                 //TODO filter restaurants by hazard level
+                 if(!text.isEmpty())
                   text=text.concat("clr");
                  Jadapter.getFilter().filter(text);
                 break;
