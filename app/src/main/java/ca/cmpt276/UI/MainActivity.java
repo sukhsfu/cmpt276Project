@@ -143,6 +143,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 break;
             case 4:
                 //TODO filter restaurants by combined criteria
+                if(!text.isEmpty())
+                    text=text.concat("combined");
+                Jadapter.getFilter().filter(text);
                 break;
         }
 

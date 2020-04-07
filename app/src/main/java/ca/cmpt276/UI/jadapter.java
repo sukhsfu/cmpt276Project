@@ -143,68 +143,76 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
-                String charString = charSequence.toString();
-                if (charString.isEmpty()) {
+                String charString1 = charSequence.toString();
+                if (charString1.isEmpty()) {
                     mydatafiltered = mydata;
                 } else {
+                    String[] charStringarr;
+                    if (charString1.contains("combined")) {
+                        charString1.replace("combined", "");
+                        charStringarr = charString1.split(",");
+                        charStringarr[1]=charStringarr[1]+"clr";
+                        charStringarr[2]=charStringarr[2]+"xxxaaaxxx";
+                    } else {
+                        charStringarr = new String[1];
+                        charStringarr[0] = charString1;
+                    }
 
                     List<Mydata> filteredList = new ArrayList<>();
-                    if(charString.contains("xxxaaaxxx")) {
-                        String check = charString.replace("xxxaaaxxx", "");
-                        String checkdigits=check.replaceAll("\\D+","");
-                        if (check.toLowerCase().contains("less") || check.contains("<")){
+                    for(String charString:charStringarr) {
+                        if (charString.contains("xxxaaaxxx")) {
+                            String check = charString.replace("xxxaaaxxx", "");
+                            String checkdigits = check.replaceAll("\\D+", "");
+                            if (check.toLowerCase().contains("less") || check.contains("<")) {
+                                for (Mydata row : mydata) {
+                                    if (numcritical.get(row.id) <= Integer.parseInt(checkdigits)) {
+                                        filteredList.add(row);
+
+                                    }
+                                }
+                            } else if (check.toLowerCase().contains("greater") || check.contains(">") || check.toLowerCase().contains("more")) {
+                                for (Mydata row : mydata) {
+                                    if (numcritical.get(row.id) >= Integer.parseInt(checkdigits)) {
+                                        filteredList.add(row);
+
+                                    }
+                                }
+                            }
+                        } else if (charString.equalsIgnoreCase("lowclr")) {
                             for (Mydata row : mydata) {
-                                if (numcritical.get(row.id) <= Integer.parseInt(checkdigits)) {
+                                if (Hazards.get(row.id) == Color.GREEN) {
                                     filteredList.add(row);
 
                                 }
                             }
-                        }
-                        else if (check.toLowerCase().contains("greater") || check.contains(">")||check.toLowerCase().contains("more")){
+
+                        } else if (charString.equalsIgnoreCase("moderateclr")) {
                             for (Mydata row : mydata) {
-                                if (numcritical.get(row.id) >= Integer.parseInt(checkdigits)) {
+                                if (Hazards.get(row.id) == Color.YELLOW) {
                                     filteredList.add(row);
 
                                 }
                             }
-                        }
-                    }
-                   else if(charString.equalsIgnoreCase("lowclr")){
-                        for (Mydata row : mydata) {
-                            if (Hazards.get(row.id)==Color.GREEN) {
-                                filteredList.add(row);
 
+                        } else if (charString.equalsIgnoreCase("highclr")) {
+                            for (Mydata row : mydata) {
+                                if (Hazards.get(row.id) == Color.RED) {
+                                    filteredList.add(row);
+
+                                }
                             }
-                        }
 
-                    }
-                    else if(charString.equalsIgnoreCase("moderateclr")){
-                        for (Mydata row : mydata) {
-                            if (Hazards.get(row.id)==Color.YELLOW) {
-                                filteredList.add(row);
+                        } else {
+                            for (Mydata row : mydata) {
+                                if (row.text.toLowerCase().contains(charString.toLowerCase())) {
+                                    filteredList.add(row);
 
-                            }
-                        }
-
-                    }
-                    else if(charString.equalsIgnoreCase("highclr")){
-                        for (Mydata row : mydata) {
-                            if (Hazards.get(row.id)==Color.RED) {
-                                filteredList.add(row);
-
-                            }
-                        }
-
-                    }
-                    else {
-                        for (Mydata row : mydata) {
-                            if (row.text.toLowerCase().contains(charString.toLowerCase())) {
-                                filteredList.add(row);
-
+                                }
                             }
                         }
                     }
                     mydatafiltered = filteredList;
+
                 }
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = mydatafiltered;
