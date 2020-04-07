@@ -2,6 +2,7 @@ package ca.cmpt276.UI;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,7 +18,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
@@ -39,6 +43,8 @@ public class RestaurantActivity extends AppCompatActivity {
     private boolean searchPerformed = false;
     private String searchText;
     private int selectedSpinnerPOS;
+    private List<Restaurant> favorites;
+    List<String> favList;
 
     public static Intent makeLaunchIntent(Context context,int position, int index) {
         Intent intent = new Intent(context, RestaurantActivity.class);
@@ -65,7 +71,84 @@ public class RestaurantActivity extends AppCompatActivity {
         registerClickCallbackListView();
         setupGPSClickCallback();
 
+        setupFavoriteIcon();
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void setupFavoriteIcon() {
+        ImageView imageView = (ImageView) findViewById(R.id.imgFavorite);
+        getSharedPreferences();
+        if(isRestaurantAFavorite(restaurant)){
+            imageView.setImageResource(R.drawable.ic_favorite_yellow_24dp);
+        }else{
+            imageView.setImageResource(R.drawable.ic_favorite_border_yellow_24dp);
+        }
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isRestaurantAFavorite(restaurant)){
+                    updateSharedPreferences(restaurant, false);
+                    imageView.setImageResource(R.drawable.ic_favorite_border_yellow_24dp);
+                }else{
+                    imageView.setImageResource(R.drawable.ic_favorite_yellow_24dp);
+                    updateSharedPreferences(restaurant, true);
+                }
+            }
+        });
+    }
+
+    private boolean isRestaurantAFavorite(Restaurant restaurant){
+        for(Restaurant restaurant1: favorites){
+            if(restaurant.getTrackingNumber().equals(restaurant1.getTrackingNumber())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void updateSharedPreferences(Restaurant restaurant, boolean b) {
+
+        if(isRestaurantAFavorite(restaurant)){
+            if(!b){
+                // remove from favorite
+                favorites.remove(restaurant);
+                favList.remove(restaurant.getTrackingNumber());
+            }
+        }else{
+            if(b){
+                //make it favorite
+                favorites.add(restaurant);
+                favList.add(restaurant.getTrackingNumber());
+            }
+        }
+
+        SharedPreferences prefs = getSharedPreferences("favorites", MODE_PRIVATE);
+        Set<String> set = new HashSet<String>();
+        set.addAll(favList);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putStringSet("FAV_LIST", set);
+        editor.apply();
+    }
+
+    private void getSharedPreferences(){
+        SharedPreferences prefs = getSharedPreferences("favorites", MODE_PRIVATE);
+        Set<String> set = prefs.getStringSet("FAV_LIST", null);
+        favList = new ArrayList<>();
+        favorites = new ArrayList<>();
+        if(set != null){
+            favList.addAll(set);
+
+            for(String favorite: favList){
+                for(Restaurant restaurant: manager){
+                    if(restaurant.getTrackingNumber().equals(favorite)){
+                        // it is a favorite
+                        favorites.add(restaurant);
+                    }
+                }
+            }
+        }
+
     }
 
     private void setupGPSClickCallback() {
