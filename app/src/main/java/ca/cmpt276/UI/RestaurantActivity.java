@@ -27,6 +27,11 @@ import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
 
+
+import static ca.cmpt276.UI.MainActivity.favourite;
+import static ca.cmpt276.UI.MainActivity.restaurantList;
+
+
 /**
  * The RestaurantActivity is launched from the MainActivity when a restaurant is clicked.
  * It displays details of the clicked restaurant and a list of the inspections from that restaurant.
@@ -35,6 +40,7 @@ public class RestaurantActivity extends AppCompatActivity {
 
     private RestaurantManager manager = RestaurantManager.getInstance();
     private Restaurant restaurant;
+    private Restaurant restaurantfav;
     private List<Inspection> inspections;
     private int resPosition;
     private int backIndex;
@@ -43,7 +49,6 @@ public class RestaurantActivity extends AppCompatActivity {
     private boolean searchPerformed = false;
     private String searchText;
     private int selectedSpinnerPOS;
-    private List<Restaurant> favorites;
     List<String> favList;
 
     public static Intent makeLaunchIntent(Context context,int position, int index) {
@@ -71,15 +76,15 @@ public class RestaurantActivity extends AppCompatActivity {
         registerClickCallbackListView();
         setupGPSClickCallback();
 
-        setupFavoriteIcon();
+        setupFavoriteIcon();//
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void setupFavoriteIcon() {
         ImageView imageView = (ImageView) findViewById(R.id.imgFavorite);
-        getSharedPreferences();
-        if(isRestaurantAFavorite(restaurant)){
+
+        if(isRestaurantAFavorite(restaurantfav)){
             imageView.setImageResource(R.drawable.ic_favorite_yellow_24dp);
         }else{
             imageView.setImageResource(R.drawable.ic_favorite_border_yellow_24dp);
@@ -87,19 +92,24 @@ public class RestaurantActivity extends AppCompatActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isRestaurantAFavorite(restaurant)){
-                    updateSharedPreferences(restaurant, false);
+                SharedPreferences sharedPreferences= v.getContext().getSharedPreferences("favourites", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor=sharedPreferences.edit();
+                editor.remove("favourite_"+resPosition);
+                if(isRestaurantAFavorite(restaurantfav)){
+
+                    editor.putBoolean("favourite_"+resPosition,false);
                     imageView.setImageResource(R.drawable.ic_favorite_border_yellow_24dp);
                 }else{
+                    editor.putBoolean("favourite_"+resPosition,true);
                     imageView.setImageResource(R.drawable.ic_favorite_yellow_24dp);
-                    updateSharedPreferences(restaurant, true);
                 }
+                editor.apply();
             }
         });
     }
 
     private boolean isRestaurantAFavorite(Restaurant restaurant){
-        for(Restaurant restaurant1: favorites){
+        for(Restaurant restaurant1: restaurantList){
             if(restaurant.getTrackingNumber().equals(restaurant1.getTrackingNumber())){
                 return true;
             }
@@ -107,49 +117,7 @@ public class RestaurantActivity extends AppCompatActivity {
         return false;
     }
 
-    private void updateSharedPreferences(Restaurant restaurant, boolean b) {
 
-        if(isRestaurantAFavorite(restaurant)){
-            if(!b){
-                // remove from favorite
-                favorites.remove(restaurant);
-                favList.remove(restaurant.getTrackingNumber());
-            }
-        }else{
-            if(b){
-                //make it favorite
-                favorites.add(restaurant);
-                favList.add(restaurant.getTrackingNumber());
-            }
-        }
-
-        SharedPreferences prefs = getSharedPreferences("favorites", MODE_PRIVATE);
-        Set<String> set = new HashSet<String>();
-        set.addAll(favList);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putStringSet("FAV_LIST", set);
-        editor.apply();
-    }
-
-    private void getSharedPreferences(){
-        SharedPreferences prefs = getSharedPreferences("favorites", MODE_PRIVATE);
-        Set<String> set = prefs.getStringSet("FAV_LIST", null);
-        favList = new ArrayList<>();
-        favorites = new ArrayList<>();
-        if(set != null){
-            favList.addAll(set);
-
-            for(String favorite: favList){
-                for(Restaurant restaurant: manager){
-                    if(restaurant.getTrackingNumber().equals(favorite)){
-                        // it is a favorite
-                        favorites.add(restaurant);
-                    }
-                }
-            }
-        }
-
-    }
 
     private void setupGPSClickCallback() {
         TextView tv = findViewById(R.id.txtGPS);
@@ -194,6 +162,7 @@ public class RestaurantActivity extends AppCompatActivity {
         resPosition = intent.getIntExtra("position", 0);
         backIndex = intent.getIntExtra("index", 0);
         restaurant = manager.retrieve(resPosition);
+        restaurantfav=manager.retrieve(resPosition);
         inspections = restaurant.getInspections();
     }
 
@@ -284,4 +253,7 @@ public class RestaurantActivity extends AppCompatActivity {
             return itemView;
         }
     }
+
+
 }
+

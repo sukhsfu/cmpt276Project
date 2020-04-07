@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         }
 
         setOutputData();//set data to restaurantText and Hazards list
+        booltorestaurant();
         setupRestaurantInList();//pass restaurant and  Hazards to jadapter.
         setupButtonSwitchToMap();
 
@@ -168,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             SharedPreferences sharedPreferences=getSharedPreferences("favourites",MODE_PRIVATE);
              boolean checklist=sharedPreferences.getBoolean("favourite_"+cnt,false);
              favourite.add(checklist);
+
              cnt++;
 
 
@@ -209,7 +211,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 restaurantText.add(restaurant.getName() + "\n");
             }
         }
-        booltorestaurant();
+
+
+
     }
 
     private static String[] getMonthArray(Context context) {
@@ -333,8 +337,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         restaurantList.clear();
         int cnt=0;
         for(Restaurant restaurant:manager1){
-              if(favourite.get(cnt))
+              if(favourite.get(cnt++)) {
                   restaurantList.add(restaurant);
+              }
         }
 
     }
@@ -342,6 +347,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         favourite.clear();
 
         for(Restaurant restaurant:manager1){
+
             favourite.add(false);
 
             for(Restaurant restaurant1:restaurantList){

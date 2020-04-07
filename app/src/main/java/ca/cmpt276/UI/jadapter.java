@@ -18,6 +18,7 @@ import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 import static ca.cmpt276.UI.MainActivity.Hazards;
+import static ca.cmpt276.UI.MainActivity.booltorestaurant;
 import static ca.cmpt276.UI.MainActivity.favourite;
 import static ca.cmpt276.UI.MainActivity.numcritical;
 class Mydata {
@@ -114,10 +115,12 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
                 if(holder.checkBox.isChecked()){
                     editor.putBoolean("favourite_"+positionid,true);
                     favourite.set(positionid,true);
+                    booltorestaurant();
                 }
                 else{
                     editor.putBoolean("favourite_"+positionid,false);
                     favourite.set(positionid,false);
+                    booltorestaurant();
                 }
                 editor.apply();
             }
