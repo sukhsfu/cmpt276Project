@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     private String searchText;
     private Spinner spinner;
     private boolean searchPerformed = false;
+    private jadapter Jadapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,13 +53,13 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             searchPerformed = true;
             selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
             //Toast.makeText(this, "spinner " + selectedSpinnerPOS + " " + searchText, Toast.LENGTH_SHORT).show();
-            updateRestaurantList();
+            //updateRestaurantList(); //cases 0,1,2,3,4
         }else{
             // TODO populate entire list normally
         }
 
-        setOutputData();
-        setupRestaurantInList();
+        setOutputData();//set data to restaurantText and Hazards list
+        setupRestaurantInList();//pass restaurant and  Hazards to jadapter.
         setupButtonSwitchToMap();
 
         spinner = (Spinner) findViewById(R.id.mainSpinner);
@@ -76,8 +77,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 if(text != null || !text.equals("")){
                     searchText = text;
                     searchPerformed = true;
-                    updateRestaurantList();
+
                 }
+                updateRestaurantList(query);
                 return false;
             }
 
@@ -85,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             public boolean onQueryTextChange(String newText) {
                 if(newText.equals("") || newText == null){
                     searchPerformed = false;
-                   // TODO populate all restaurants
                 }
+                updateRestaurantList(newText);
                 return false;
             }
         });
@@ -113,14 +115,18 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         });
     }
 
-    private void updateRestaurantList(){
+    private void updateRestaurantList(String text){
         switch(selectedSpinnerPOS){
             case 0:
                 //TODO filter restaurants by name
                 // use searchText field to get the search value entered for each case
+                Jadapter.getFilter().filter(text);
                 break;
             case 1:
                 //TODO filter restaurants by hazard level
+                 if(!text.isEmpty())
+                  text=text.concat("clr");
+                 Jadapter.getFilter().filter(text);
                 break;
             case 2:
                 //TODO filter restaurants by violations
@@ -223,7 +229,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         list.setNestedScrollingEnabled(false);
         list.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         list.setLayoutManager(new LinearLayoutManager(this));
-        list.setAdapter(new jadapter(restaurantText,  this));
+        Jadapter=new jadapter(restaurantText,  this);
+        list.setAdapter(Jadapter );
+        Jadapter.getFilter().filter("");
     }
 
     @Override

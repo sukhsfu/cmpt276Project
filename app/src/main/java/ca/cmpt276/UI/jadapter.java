@@ -3,6 +3,8 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,32 +16,34 @@ import java.util.List;
 import static ca.cmpt276.UI.MainActivity.Hazards;
 
 class Mydata {
-    public final long id;
+    public final int id;
     public final String text;
 
-    public Mydata(long id, String text) {
+    public Mydata(int id, String text) {
         this.id = id;
         this.text = text;
     }
 }
 
 
-public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
+public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements Filterable {
     private List<Mydata> mydata;
+    private List<Mydata> mydatafiltered;
     private OnNoteListener monNoteListener;
 
 
-    public interface OnNoteListener{
+    public interface OnNoteListener {
 
         void onNoteClick(int position);
     }
 
-    public jadapter(List<String> data,OnNoteListener monNoteListener){
+    public jadapter(List<String> data, OnNoteListener monNoteListener) {
         setHasStableIds(true);
         mydata = new ArrayList<>();
-        this.monNoteListener=monNoteListener;
-        for ( int i=0;i<data.size();i++){
-            mydata.add(new Mydata(i,data.get(i)));
+        mydatafiltered=new ArrayList<>();
+        this.monNoteListener = monNoteListener;
+        for (int i = 0; i < data.size(); i++) {
+            mydata.add(new Mydata(i, data.get(i)));
 
         }
 
@@ -47,71 +51,57 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
     }
 
     @Override
-    public vholder onCreateViewHolder( ViewGroup parent, int viewType) {
-        LayoutInflater flate= LayoutInflater.from(parent.getContext());
-        View view=flate.inflate(R.layout.restauranttab,parent,false);
-        return new vholder(view,monNoteListener);
+    public vholder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater flate = LayoutInflater.from(parent.getContext());
+        View view = flate.inflate(R.layout.restauranttab, parent, false);
+        return new vholder(view, monNoteListener);
     }
 
     @Override
-    public void onBindViewHolder( vholder holder, int position) {
-        String title = mydata.get(position).text;
+    public void onBindViewHolder(vholder holder, int position) {
+        String title = mydatafiltered.get(position).text;
+        int positionid = mydatafiltered.get(position).id;
         holder.txxt.setText(title);
-        if(title.contains("Lee Yuen Seafood Restaurant")) {
+        if (title.contains("Lee Yuen Seafood Restaurant")) {
             holder.image.setImageResource(R.mipmap.leeyuan);
-        }
-        else if(title.contains("A&W")){
+        } else if (title.contains("A&W")) {
             holder.image.setImageResource(R.mipmap.aw);
-        }
-        else if(title.contains("Top In Town Pizza")||title.contains("Top in Town Pizza")){
+        } else if (title.contains("Top In Town Pizza") || title.contains("Top in Town Pizza")) {
             holder.image.setImageResource(R.mipmap.toppizza);
-        }
-        else if(title.contains("104 Sushi & Co")){
+        } else if (title.contains("104 Sushi & Co")) {
             holder.image.setImageResource(R.mipmap.sushi);
-        }
-        else if(title.contains("Zugba Flame Grilled Chicken")){
+        } else if (title.contains("Zugba Flame Grilled Chicken")) {
             holder.image.setImageResource(R.mipmap.zubra);
-        }
-        else if(title.contains("7Eleven")){
+        } else if (title.contains("7Eleven")) {
             holder.image.setImageResource(R.mipmap.seven);
-        }
-        else if(title.contains("Quizno's")){
+        } else if (title.contains("Quizno's")) {
             holder.image.setImageResource(R.mipmap.quizno);
-        }
-        else if(title.contains("Starbucks")){
+        } else if (title.contains("Starbucks")) {
             holder.image.setImageResource(R.mipmap.starbucks);
-        }
-        else if(title.contains("Papa John's")){
+        } else if (title.contains("Papa John's")) {
             holder.image.setImageResource(R.mipmap.papa);
-        }
-        else if(title.contains("Pizza Hut")){
+        } else if (title.contains("Pizza Hut")) {
             holder.image.setImageResource(R.mipmap.pizzahut);
-        }
-        else if(title.contains("Northview Golf & Country Club")){
+        } else if (title.contains("Northview Golf & Country Club")) {
             holder.image.setImageResource(R.mipmap.north);
-        }
-
-        else{
+        } else {
             holder.image.setImageResource(R.mipmap.restaurant);
         }
 
 
-
-        holder.Hazardimage.setBackgroundColor((Hazards.get(position)).intValue());
-        if(Color.GREEN == Hazards.get(position).intValue()){
+        holder.Hazardimage.setBackgroundColor((Hazards.get(positionid)).intValue());
+        if (Color.GREEN == Hazards.get(positionid).intValue()) {
             holder.face.setImageResource(R.drawable.smile);
-        }
-        else if (Color.RED == Hazards.get(position).intValue()){
+        } else if (Color.RED == Hazards.get(positionid).intValue()) {
             holder.face.setImageResource(R.drawable.sad);
-        }
-        else if(Color.YELLOW == Hazards.get(position).intValue()){
+        } else if (Color.YELLOW == Hazards.get(positionid).intValue()) {
             holder.face.setImageResource(R.drawable.normal);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mydata.size();
+        return mydatafiltered.size();
     }
 
     public class vholder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -120,14 +110,15 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
         TextView txxt;
         TextView Hazardimage;
         OnNoteListener onNoteLister;
-        public vholder( View itemView,OnNoteListener  onNoteLister) {
+
+        public vholder(View itemView, OnNoteListener onNoteLister) {
             super(itemView);
             image = itemView.findViewById(R.id.restauranticon);
-            Hazardimage=itemView.findViewById(R.id.hazard);
-            txxt=itemView.findViewById(R.id.restauranttext);
+            Hazardimage = itemView.findViewById(R.id.hazard);
+            txxt = itemView.findViewById(R.id.restauranttext);
             face = itemView.findViewById(R.id.imageView4);
 
-            this.onNoteLister=onNoteLister;
+            this.onNoteLister = onNoteLister;
             itemView.setOnClickListener(this);
         }
 
@@ -137,9 +128,70 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder> {
 
         }
     }
+
     @Override
     public long getItemId(int position) {
-        return mydata.get(position).id;
+        return mydatafiltered.get(position).id;
     }
 
+    //took reference from the article-https://www.androidhive.info/2017/11/android-recyclerview-with-search-filter-functionality/
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    mydatafiltered = mydata;
+                } else {
+
+                    List<Mydata> filteredList = new ArrayList<>();
+                    if(charString.equalsIgnoreCase("lowclr")){
+                        for (Mydata row : mydata) {
+                            if (Hazards.get(row.id)==Color.GREEN) {
+                                filteredList.add(row);
+
+                            }
+                        }
+
+                    }
+                    else if(charString.equalsIgnoreCase("moderateclr")){
+                        for (Mydata row : mydata) {
+                            if (Hazards.get(row.id)==Color.YELLOW) {
+                                filteredList.add(row);
+
+                            }
+                        }
+
+                    }
+                    else if(charString.equalsIgnoreCase("highclr")){
+                        for (Mydata row : mydata) {
+                            if (Hazards.get(row.id)==Color.RED) {
+                                filteredList.add(row);
+
+                            }
+                        }
+
+                    }
+                    else {
+                        for (Mydata row : mydata) {
+                            if (row.text.toLowerCase().contains(charString.toLowerCase())) {
+                                filteredList.add(row);
+
+                            }
+                        }
+                    }
+                    mydatafiltered = filteredList;
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mydatafiltered;
+                return filterResults;
+            }
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                mydatafiltered = (ArrayList<Mydata>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
 }
