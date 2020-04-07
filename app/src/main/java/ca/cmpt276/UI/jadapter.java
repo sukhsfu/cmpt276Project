@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ca.cmpt276.UI.MainActivity.Hazards;
-
+import static ca.cmpt276.UI.MainActivity.numcritical;
 class Mydata {
     public final int id;
     public final String text;
@@ -27,8 +27,8 @@ class Mydata {
 
 
 public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements Filterable {
-    private List<Mydata> mydata;
-    private List<Mydata> mydatafiltered;
+    private List<Mydata> mydata ;
+    private List<Mydata> mydatafiltered ;
     private OnNoteListener monNoteListener;
 
 
@@ -46,6 +46,7 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
             mydata.add(new Mydata(i, data.get(i)));
 
         }
+
 
 
     }
@@ -101,6 +102,8 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
 
     @Override
     public int getItemCount() {
+        if (mydatafiltered==null)
+            return 0;
         return mydatafiltered.size();
     }
 
@@ -146,7 +149,27 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
                 } else {
 
                     List<Mydata> filteredList = new ArrayList<>();
-                    if(charString.equalsIgnoreCase("lowclr")){
+                    if(charString.contains("xxxaaaxxx")) {
+                        String check = charString.replace("xxxaaaxxx", "");
+                        String checkdigits=check.replaceAll("\\D+","");
+                        if (check.toLowerCase().contains("less") || check.contains("<")){
+                            for (Mydata row : mydata) {
+                                if (numcritical.get(row.id) <= Integer.parseInt(checkdigits)) {
+                                    filteredList.add(row);
+
+                                }
+                            }
+                        }
+                        else if (check.toLowerCase().contains("greater") || check.contains(">")||check.toLowerCase().contains("more")){
+                            for (Mydata row : mydata) {
+                                if (numcritical.get(row.id) >= Integer.parseInt(checkdigits)) {
+                                    filteredList.add(row);
+
+                                }
+                            }
+                        }
+                    }
+                   else if(charString.equalsIgnoreCase("lowclr")){
                         for (Mydata row : mydata) {
                             if (Hazards.get(row.id)==Color.GREEN) {
                                 filteredList.add(row);

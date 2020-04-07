@@ -14,9 +14,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import ca.cmpt276.model.Inspection;
@@ -30,7 +34,7 @@ import ca.cmpt276.model.RestaurantManager;
 public class MainActivity extends AppCompatActivity implements jadapter.OnNoteListener, AdapterView.OnItemSelectedListener {
     private List<String> restaurantText = new ArrayList<>();
     protected static List<Integer> Hazards=new ArrayList<>();
-
+    protected static List<Integer> numcritical=new ArrayList<>();
     private RestaurantManager manager = RestaurantManager.getInstance();
     private static final String SEARCH_TEXT = "SearchText";
     private static final String SPINNER_POS = "SpinnerPOS";
@@ -130,6 +134,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 break;
             case 2:
                 //TODO filter restaurants by violations
+                if(!text.isEmpty())
+                    text=text.concat("xxxaaaxxx");
+                Jadapter.getFilter().filter(text);
                 break;
             case 3:
                 //TODO filter restaurants by favorites
@@ -142,7 +149,10 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     }
 
     private void setOutputData(){
+        numcritical.clear();
+        Hazards.clear();
         for (Restaurant restaurant : manager) {
+            numcritical.add(getRecentNumCriticalViolations(restaurant));
             if (restaurant.getInspections().size() != 0) {
                 Inspection inspectionRet = restaurant.getInspections().get(0);
                 for (Inspection inspection : restaurant.getInspections()) {
@@ -151,6 +161,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                     }
 
                 }
+
+
+
                 restaurantText.add(restaurant.getName()
                         + "\n\n" + dateDifference(inspectionRet.getDate())
                         + getString(R.string.issues_restaurant_tab, (inspectionRet.getNumCriticalIssues() + inspectionRet.getNumNonCriticalIssues()) )
@@ -174,7 +187,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 restaurantText.add(restaurant.getName() + "\n");
             }
         }
-
     }
 
     private static String[] getMonthArray(Context context) {
@@ -232,6 +244,27 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         Jadapter=new jadapter(restaurantText,  this);
         list.setAdapter(Jadapter );
         Jadapter.getFilter().filter("");
+    }
+    private int getRecentNumCriticalViolations(Restaurant restaurant){
+        int numCriticalViolations = 0;
+        Calendar cal = Calendar.getInstance();
+        Date today = cal.getTime();
+        cal.add(Calendar.YEAR, -1);
+        Date lastYear = cal.getTime();
+
+        List<Inspection> inspections = restaurant.getInspections();
+        for(Inspection inspection: inspections){
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+            try{
+                Date date = formatter.parse(inspection.getDate());
+                if(date.after(lastYear)){
+                    numCriticalViolations = numCriticalViolations + inspection.getNumCriticalIssues();
+                }
+            }catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return numCriticalViolations;
     }
 
     @Override
