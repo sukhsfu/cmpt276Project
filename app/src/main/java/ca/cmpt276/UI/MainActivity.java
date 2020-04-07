@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             searchPerformed = true;
             selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
             //Toast.makeText(this, "spinner " + selectedSpinnerPOS + " " + searchText, Toast.LENGTH_SHORT).show();
-            updateRestaurantList(); //cases 0,1,2,3,4
+            //updateRestaurantList(); //cases 0,1,2,3,4
         }else{
             // TODO populate entire list normally
         }
@@ -77,9 +77,9 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 if(text != null || !text.equals("")){
                     searchText = text;
                     searchPerformed = true;
-                    updateRestaurantList();
+
                 }
-                Jadapter.getFilter().filter(query);
+                updateRestaurantList(query);
                 return false;
             }
 
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 if(newText.equals("") || newText == null){
                     searchPerformed = false;
                 }
-                Jadapter.getFilter().filter(newText);
+                updateRestaurantList(newText);
                 return false;
             }
         });
@@ -115,14 +115,17 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         });
     }
 
-    private void updateRestaurantList(){
+    private void updateRestaurantList(String text){
         switch(selectedSpinnerPOS){
             case 0:
                 //TODO filter restaurants by name
                 // use searchText field to get the search value entered for each case
+                Jadapter.getFilter().filter(text);
                 break;
             case 1:
                 //TODO filter restaurants by hazard level
+                  text=text.concat("clr");
+                 Jadapter.getFilter().filter(text);
                 break;
             case 2:
                 //TODO filter restaurants by violations

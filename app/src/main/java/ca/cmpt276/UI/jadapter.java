@@ -144,11 +144,41 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
                 if (charString.isEmpty()) {
                     mydatafiltered = mydata;
                 } else {
-                    List<Mydata> filteredList = new ArrayList<>();
-                    for (Mydata row : mydata) {
-                        if (row.text.toLowerCase().contains(charString.toLowerCase())) {
-                            filteredList.add(row);
 
+                    List<Mydata> filteredList = new ArrayList<>();
+                    if(charString.equalsIgnoreCase("lowclr")){
+                        for (Mydata row : mydata) {
+                            if (Hazards.get(row.id)==Color.GREEN) {
+                                filteredList.add(row);
+
+                            }
+                        }
+
+                    }
+                    else if(charString.equalsIgnoreCase("moderateclr")){
+                        for (Mydata row : mydata) {
+                            if (Hazards.get(row.id)==Color.YELLOW) {
+                                filteredList.add(row);
+
+                            }
+                        }
+
+                    }
+                    else if(charString.equalsIgnoreCase("highclr")){
+                        for (Mydata row : mydata) {
+                            if (Hazards.get(row.id)==Color.RED) {
+                                filteredList.add(row);
+
+                            }
+                        }
+
+                    }
+                    else {
+                        for (Mydata row : mydata) {
+                            if (row.text.toLowerCase().contains(charString.toLowerCase())) {
+                                filteredList.add(row);
+
+                            }
                         }
                     }
                     mydatafiltered = filteredList;
