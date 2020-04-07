@@ -10,7 +10,6 @@ public class Violation {
     private String detailedDescription;
     private boolean isRepeat;
     private ViolationManager manager;
-    private boolean hasManager;
 
     public Violation(int type, String severity, String detailedDescription, Boolean isRepeat) {
         manager = new ViolationManager();
@@ -19,7 +18,6 @@ public class Violation {
         this.briefDescription = "";
         this.detailedDescription = detailedDescription;
         this.isRepeat = isRepeat;
-        this.hasManager = false;
     }
 
     public ViolationManager getManager() {

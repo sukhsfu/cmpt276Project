@@ -1,5 +1,7 @@
 package ca.cmpt276.model;
 
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class ViolationManager extends AppCompatActivity implements Iterable<Viol
     }
 
     public void populateBriefDescriptions() {
+        Log.d("ViolationManager", "populating now.");
         populate();
     }
 
@@ -34,6 +37,7 @@ public class ViolationManager extends AppCompatActivity implements Iterable<Viol
         for(ViolationsBriefDescription description: descriptions){
             if(description.getType() == type){
                 briefDescription = description.getDescription();
+                Log.d("ViolationManager_retrieve" , "brief description: " + briefDescription);
                 return briefDescription;
             }
         }

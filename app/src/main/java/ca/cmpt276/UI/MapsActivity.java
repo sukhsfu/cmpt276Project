@@ -118,7 +118,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         Intent intent = new Intent(this, ReadDataService.class);
         startService(intent);
-        setupBriefDescriptions();
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
@@ -200,11 +199,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return false;
             }
         });
+        setupBriefDescriptions();
     }
 
     private void setupBriefDescriptions() {
         for (Restaurant restaurant : manager) {
             for (Inspection inspection : restaurant.getInspections()) {
+                Log.d(TAG, "violations: " + inspection.getViolations().toString());
                 for (Violation violation : inspection.getViolations() ) {
                     ViolationManager violationManager = violation.getManager();
                     violationManager.populateBriefDescriptions();
@@ -275,6 +276,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
+//        setupBriefDescriptions();
     }
 
     private void populateAllMarkers(){
