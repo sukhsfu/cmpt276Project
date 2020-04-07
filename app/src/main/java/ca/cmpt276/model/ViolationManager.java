@@ -22,6 +22,9 @@ public class ViolationManager extends AppCompatActivity implements Iterable<Viol
     }
 
     public ViolationManager() {
+    }
+
+    public void populateBriefDescriptions() {
         populate();
     }
 

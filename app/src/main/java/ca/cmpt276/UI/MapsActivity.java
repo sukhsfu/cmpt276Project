@@ -63,6 +63,8 @@ import java.util.List;
 import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
+import ca.cmpt276.model.Violation;
+import ca.cmpt276.model.ViolationManager;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -116,7 +118,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         Intent intent = new Intent(this, ReadDataService.class);
         startService(intent);
-
+        setupBriefDescriptions();
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
@@ -199,6 +201,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
+
+    private void setupBriefDescriptions() {
+        for (Restaurant restaurant : manager) {
+            for (Inspection inspection : restaurant.getInspections()) {
+                for (Violation violation : inspection.getViolations() ) {
+                    ViolationManager violationManager = violation.getManager();
+                    violationManager.populateBriefDescriptions();
+                    violation.setBriefDescription( violationManager.retrieve(violation.getType()) );
+                }
+            }
+        }
+    }
+
 
     private void initMap(){
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
