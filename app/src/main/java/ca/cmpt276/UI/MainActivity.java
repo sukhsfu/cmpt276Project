@@ -167,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
              cnt++;
 
-
             if (restaurant.getInspections().size() != 0) {
                 Inspection inspectionRet = restaurant.getInspections().get(0);
                 for (Inspection inspection : restaurant.getInspections()) {
@@ -176,8 +175,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                     }
 
                 }
-
-
 
                 restaurantText.add(restaurant.getName()
                         + "\n\n" + dateDifference(inspectionRet.getDate())
@@ -202,8 +199,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 restaurantText.add(restaurant.getName() + "\n");
             }
         }
-
-
 
     }
 
@@ -297,7 +292,8 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        //Toast.makeText(this, "Position is: " + position, Toast.LENGTH_SHORT).show();
+        searchView.setQuery("", false);
+        searchView.setIconified(false);
         selectedSpinnerPOS = position;
         switch (selectedSpinnerPOS){
             case 0:
