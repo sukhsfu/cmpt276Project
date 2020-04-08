@@ -129,30 +129,23 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
     private void updateRestaurantList(String text){
         switch(selectedSpinnerPOS){
             case 0:
-                //TODO filter restaurants by name
-                // use searchText field to get the search value entered for each case
                 Jadapter.getFilter().filter(text);
                 break;
             case 1:
-                //TODO filter restaurants by hazard level
                  if(!text.isEmpty())
                   text=text.concat("clr");
                  Jadapter.getFilter().filter(text);
                 break;
             case 2:
-                //TODO filter restaurants by violations
                 if(!text.isEmpty())
                     text=text.concat("xxxaaaxxx");
                 Jadapter.getFilter().filter(text);
                 break;
             case 3:
-                //TODO filter restaurants by favorites
-
                 text=text.concat("favs");
                 Jadapter.getFilter().filter(text);
                 break;
             case 4:
-                //TODO filter restaurants by combined criteria
                 if(!text.isEmpty())
                     text=text.concat("combined");
                 Jadapter.getFilter().filter(text);
