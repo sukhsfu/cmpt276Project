@@ -205,14 +205,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    private void setupBriefDescriptions() {
+    public void setupBriefDescriptions() {
         Log.d(TAG, "Inside setupBriefDescriptions()");
         for (Restaurant restaurant : manager) {
             for (Inspection inspection : restaurant.getInspections()) {
                 Log.d(TAG, "violations: " + inspection.getViolations().toString());
                 for (Violation violation : inspection.getViolations() ) {
                     ViolationManager violationManager = violation.getManager();
-                    violationManager.populateBriefDescriptions();
+                    violationManager.populateBriefDescriptions(MapsActivity.this);
                     violation.setBriefDescription( violationManager.retrieve(violation.getType()) );
                 }
             }
@@ -280,7 +280,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
-//        setupBriefDescriptions();
+        setupBriefDescriptions();
     }
 
     private void populateAllMarkers(){
