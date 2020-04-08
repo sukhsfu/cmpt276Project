@@ -49,6 +49,7 @@ public class RestaurantActivity extends AppCompatActivity {
     private boolean searchPerformed = false;
     private String searchText;
     private int selectedSpinnerPOS;
+    private List<Restaurant> favorites;
     List<String> favList;
 
     public static Intent makeLaunchIntent(Context context,int position, int index) {
@@ -75,7 +76,7 @@ public class RestaurantActivity extends AppCompatActivity {
         populateInspectionsListView();
         registerClickCallbackListView();
         setupGPSClickCallback();
-
+        getFavorites();
         setupFavoriteIcon();//
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -104,20 +105,32 @@ public class RestaurantActivity extends AppCompatActivity {
                     imageView.setImageResource(R.drawable.ic_favorite_yellow_24dp);
                 }
                 editor.apply();
+                getFavorites();
             }
         });
     }
 
-    private boolean isRestaurantAFavorite(Restaurant restaurant){
-        for(Restaurant restaurant1: restaurantList){
-            if(restaurant.getTrackingNumber().equals(restaurant1.getTrackingNumber())){
+    private void getFavorites(){
+        int count = 0;
+        favorites = new ArrayList<>();
+        for(Restaurant restaurant: manager){
+            SharedPreferences sharedPreferences=getSharedPreferences("favourites",MODE_PRIVATE);
+            boolean checklist=sharedPreferences.getBoolean("favourite_"+count,false);
+            if(checklist){
+                favorites.add(restaurant);
+            }
+            count++;
+        }
+    }
+
+    private boolean isRestaurantAFavorite(Restaurant restaurant) {
+        for (Restaurant restaurant1 : favorites) {
+            if (restaurant.getTrackingNumber().equals(restaurant1.getTrackingNumber())) {
                 return true;
             }
         }
         return false;
     }
-
-
 
     private void setupGPSClickCallback() {
         TextView tv = findViewById(R.id.txtGPS);
