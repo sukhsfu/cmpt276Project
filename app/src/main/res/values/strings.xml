@@ -87,6 +87,7 @@
     <string name="briefViol_smoking">Smoking in prohibited areas.</string>
     <string name="briefViol_level1">Doesn\'t have Foodsafe Level 1.</string>
     <string name="briefViol_FOODSAFE">No Foodsafe in operator\'s absence.</string>
+    <string name="favorite">Favorite</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <!--<string name="hello_blank_fragment">Hello blank fragment</string> -->

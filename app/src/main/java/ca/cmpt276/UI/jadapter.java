@@ -52,9 +52,6 @@ public class jadapter extends RecyclerView.Adapter<jadapter.vholder>implements F
             mydata.add(new Mydata(i, data.get(i)));
 
         }
-
-
-
     }
 
     @Override

@@ -137,9 +137,8 @@ public class RestaurantActivity extends AppCompatActivity {
         tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                double lat = restaurant.getLatitude();
-                double lng = restaurant.getLongitude();
-                Intent intent = MapsActivity.makeLaunchIntent(RestaurantActivity.this, lat, lng);
+                String trackingNumer = restaurant.getTrackingNumber();
+                Intent intent = MapsActivity.makeLaunchIntent(RestaurantActivity.this, trackingNumer);
                 startActivity(intent);
                 finish();
             }

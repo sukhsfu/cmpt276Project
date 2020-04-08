@@ -11,6 +11,8 @@
         android:id="@+id/item_inspectionDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:capitalize="characters"
         android:fontFamily="sans-serif-black"
         android:letterSpacing="0.1"

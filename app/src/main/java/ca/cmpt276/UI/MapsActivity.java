@@ -88,6 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String LONGITUDE = "lng";
     private static final String SEARCH_TEXT = "SearchText";
     private static final String SPINNER_POS = "SpinnerPOS";
+    private static final String TRACKING_NUMBER = "trackingNumber";
     private GoogleMap mMap;
     RestaurantManager manager = RestaurantManager.getInstance();
     private SearchView searchView;
@@ -108,10 +109,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     JSONObject obj;
 
-    public static Intent makeLaunchIntent(Context context, double lat, double lng) {
+    public static Intent makeLaunchIntent(Context context, String trackingNumber) {
         Intent intent = new Intent(context, MapsActivity.class);
-        intent.putExtra(LATITUDE, lat);
-        intent.putExtra(LONGITUDE, lng);
+        intent.putExtra(TRACKING_NUMBER, trackingNumber);
         return intent;
     }
 
@@ -245,16 +245,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-        if (intent.hasExtra(LATITUDE)) {
-            if(intent.hasExtra(LONGITUDE)){
-                double lat = intent.getDoubleExtra(LATITUDE, 0.0);
-                double lng = intent.getDoubleExtra(LONGITUDE, 0.0);
-                LatLng latlng = new LatLng(lat, lng);
-                Restaurant restaurant = findRestaurantInListFromLatLng(latlng);
-                moveCamera(latlng);
-                Log.d("Moving camera to ","restaurant");
-                launchInfoWindow(restaurant);
-            }
+        if (intent.hasExtra(TRACKING_NUMBER)) {
+            String trackingNumber = intent.getStringExtra(TRACKING_NUMBER);
+            Restaurant restaurant = findRestaurantFromTrackingNumber(trackingNumber);
+            double lat = restaurant.getLatitude();
+            double lng = restaurant.getLongitude();
+            LatLng latlng = new LatLng(lat, lng);
+            moveCamera(latlng);
+            Log.d("Moving camera to ","restaurant");
+            launchInfoWindow(restaurant);
         } else {
             if (locationPermissionGranted) {
                 getUserLocation();
@@ -270,7 +269,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onInfoWindowClick(Marker marker) {
                 LatLng latlng = marker.getPosition();
-                Restaurant restaurant = findRestaurantInListFromLatLng(latlng);
+                String restaurantName = marker.getTitle().trim();
+                Restaurant restaurant = findRestaurantInListFromLatLng(latlng, restaurantName);
                 int position = manager.getIndex(restaurant);
                 Intent intent=RestaurantActivity.makeLaunchIntent(MapsActivity.this,position, 1);
                 if(searchPerformed){
@@ -316,6 +316,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for(Restaurant restaurant: manager){
             if(restaurant.getName().toLowerCase().contains(name.toLowerCase())){
                 addMarker(restaurant);
+                Log.d("Name: ", restaurant.getName());
             }
         }
     }
@@ -366,7 +367,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         break;
                 }
             }
-            //setupInfoWindows();
         }
     }
 
@@ -417,6 +417,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MarkerOptions options = new MarkerOptions();
         options.position(displayRestaurant);
         options.title(restaurant.getName());
+        Log.d("Options name: ", options.getTitle());
         String snippet;
         if (restaurant.getInspections().isEmpty()) {
             options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
@@ -437,8 +438,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             snippet = getString(R.string.maps_markerSnippet, restaurant.getAddress(), hazardLev);
             options.snippet(snippet);
         }
-
-        //setupInfoWindows();
         return mMap.addMarker(options);
     }
 
@@ -473,7 +472,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     TextView hazardLevel = row.findViewById(R.id.resHazardLevel);
 
                     LatLng latlng = marker.getPosition();
-                    Restaurant res = findRestaurantInListFromLatLng(latlng);
+                    String resName = marker.getTitle().trim();
+                    Restaurant res = findRestaurantInListFromLatLng(latlng, resName);
                     String hazardLev;
                     if ( res.getInspections().isEmpty() ) {
                         hazardLev = getString(R.string.maps_infoWin_noInsp);
@@ -482,7 +482,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         hazardLev = getString(R.string.maps_infoWin_hazLev ,inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", ""));
                     }
 
-                    name.setText(res.getName());
+                    name.setText(marker.getTitle());
                     address.setText(res.getAddress());
                     hazardLevel.setText(hazardLev);
                     return row;
@@ -497,9 +497,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         marker.showInfoWindow();
     }
 
-    private Restaurant findRestaurantInListFromLatLng(LatLng latLng) {
+    private Restaurant findRestaurantFromTrackingNumber(String trackingNumber) {
+        for(Restaurant restaurant: manager){
+            if(restaurant.getTrackingNumber().toLowerCase().equals(trackingNumber.toLowerCase())){
+                return restaurant;
+            }
+        }
+        return null;
+    }
+
+    private Restaurant findRestaurantInListFromLatLng(LatLng latLng, String restaurantName) {
         for (Restaurant restaurant:manager) {
             if (restaurant.getLatitude()==latLng.latitude && restaurant.getLongitude()==latLng.longitude) {
+                if(restaurant.getName().toLowerCase().equals(restaurantName.toLowerCase()))
                 return restaurant;
             }
         }

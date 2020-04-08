@@ -51,7 +51,8 @@ public class ViolationManager extends AppCompatActivity implements Iterable<Viol
 
     private void populate(){
         //Log.d( "in POPULATE: ",getString(R.string.briefViol_plans));
-        addDescription(new ViolationsBriefDescription(101, getString(R.string.briefViol_plans) ));
+        //addDescription(new ViolationsBriefDescription(101, "getString(R.string.briefViol_plans) )");
+        addDescription(new ViolationsBriefDescription(101, "Plans not in accordance"));
         addDescription(new ViolationsBriefDescription(102,  getString(R.string.briefViol_foodPremises) ));
         addDescription(new ViolationsBriefDescription(103, getString(R.string.briefViol_invalidPermit)));
         addDescription(new ViolationsBriefDescription(104, getString(R.string.briefViol_unpostedPermit)));
