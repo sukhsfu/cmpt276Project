@@ -272,7 +272,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String restaurantName = marker.getTitle().trim();
                 Restaurant restaurant = findRestaurantInListFromLatLng(latlng, restaurantName);
                 int position = manager.getIndex(restaurant);
-                Intent intent=RestaurantActivity.makeLaunchIntent(MapsActivity.this,position, 1);
+                Intent intent=RestaurantActivity.makeLaunchIntent(MapsActivity.this, position, 1);
                 if(searchPerformed){
                     intent.putExtra(SEARCH_TEXT, searchText);
                     intent.putExtra(SPINNER_POS, selectedSpinnerPOS);
@@ -316,19 +316,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for(Restaurant restaurant: manager){
             if(restaurant.getName().toLowerCase().contains(name.toLowerCase())){
                 addMarker(restaurant);
-                Log.d("Name: ", restaurant.getName());
             }
         }
     }
 
     private void updateMarkersByHazard(String searchText){
-        for(Restaurant restaurant: manager){
-            Inspection inspection = getMostRecentInspection(restaurant);
-            if(inspection != null){
-                if(inspection.getHazardLevel().toLowerCase().equals(searchText.toLowerCase())){
-                    addMarker(restaurant);
-                }
-            }
+        List<Restaurant> restaurantList = getRestuarantsByHazard(searchText);
+        for(Restaurant restaurant: restaurantList){
+            addMarker(restaurant);
         }
     }
 
@@ -342,30 +337,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         if(searchParam != ""){
-            final StringBuilder sb = new StringBuilder(searchText.length());
-            for(int i = 0; i < searchText.length(); i++){
-                final char c = searchText.charAt(i);
-                if(c > 47 && c < 58){
-                    sb.append(c);
-                }
-            }
-            int numViolations = Integer.parseInt(sb.toString());
-            for(Restaurant restaurant: manager){
-                int num = getRecentNumCriticalViolations(restaurant);
-                switch(searchParam){
-                    case "less":
-                        if(num <= numViolations){
-                            addMarker(restaurant);
-                        }
-                        break;
-                    case "more":
-                        if(num >= numViolations){
-                            addMarker(restaurant);
-                        }
-                        break;
-                    default:
-                        break;
-                }
+            List<Restaurant> restaurantList = getRestaurantsByViolation(searchParam);
+            for(Restaurant restaurant: restaurantList){
+                addMarker(restaurant);
             }
         }
     }
@@ -387,16 +361,174 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateMarkersByCombined(String searchText){
         String search = searchText.trim().toLowerCase();
+        String hazard = "";
+        String violation = "";
+        int numViolations;
+        List<Restaurant> filteredList = new ArrayList<>();
+        if(search.contains("low")){
+            hazard = "low";
+            searchText = searchText.replace("low", "");
+        }else if(search.contains("high")){
+            hazard = "high";
+            searchText = searchText.replace("high", "");
+        }else if(search.contains("moderate")){
+            hazard = "moderate";
+            searchText = searchText.replace("moderate", "");
+        }
+
+        if(search.contains("less") || search.contains("<")){
+            violation = "less";
+            searchText = searchText.replace("less", "");
+            searchText = searchText.replace("<", "");
+            numViolations = extractNumViolations(search);
+            searchText = searchText.replace(Integer.toString(numViolations), "");
+        }else if(search.contains("more") || search.contains(">") || search.contains("greater")){
+            violation = "more";
+            searchText = searchText.replace("more", "");
+            searchText = searchText.replace("greater", "");
+            searchText = searchText.replace(">", "");
+            numViolations = extractNumViolations(search);
+            searchText = searchText.replace(Integer.toString(numViolations), "");
+        }
+        searchText = searchText.replace("than", "");
+        searchText = searchText.replace("=", "");
+        searchText = searchText.replace(",", "");
+
         if(search.contains("favorite")){
-            for(Restaurant restaurant: favorites){
-                //TODO
-                
+            searchText = searchText.replace("favorite", "");
+            Log.d("SearchText: ", searchText.trim());
+            searchText = searchText.trim();
+            if(hazard != ""){
+                filteredList = getRestuarantsByHazard(hazard, favorites);
+                if(violation != ""){
+                    filteredList = getRestaurantsByViolation(violation, filteredList);
+                }
+            }else{
+                filteredList = favorites;
+            }
+            if(searchText != ""){
+                for(Restaurant restaurant1: filteredList){
+                    if(restaurant1.getName().toLowerCase().contains(searchText.toLowerCase())){
+                        addMarker(restaurant1);
+                    }
+                }
+            }else{
+                for(Restaurant restaurant1: filteredList){
+                    addMarker(restaurant1);
+                }
             }
         }else{
+            // not favorite
+            List<Restaurant> restaurants = new ArrayList<>();
             for(Restaurant restaurant: manager){
-                //TODO
+                restaurants.add(restaurant);
+            }
+            Log.d("SearchText: ", searchText.trim());
+            searchText = searchText.trim();
+            if(hazard != ""){
+                filteredList = getRestuarantsByHazard(hazard, restaurants);
+                if(violation != ""){
+                    filteredList = getRestaurantsByViolation(violation, filteredList);
+                }
+            }else{
+                filteredList = restaurants;
+            }
+            if(searchText != ""){
+                for(Restaurant restaurant1: filteredList){
+                    if(restaurant1.getName().toLowerCase().contains(searchText.toLowerCase())){
+                        addMarker(restaurant1);
+                    }
+                }
+            }else{
+                for(Restaurant restaurant1: filteredList){
+                    addMarker(restaurant1);
+                }
             }
         }
+    }
+
+    private List<Restaurant> getRestuarantsByHazard(String hazard){
+        List<Restaurant> restaurantList = new ArrayList<>();
+        for(Restaurant restaurant: manager){
+            Inspection inspection = getMostRecentInspection(restaurant);
+            if(inspection != null){
+                if(inspection.getHazardLevel().toLowerCase().equals(hazard.toLowerCase())){
+                    restaurantList.add(restaurant);
+                }
+            }
+        }
+        return restaurantList;
+    }
+
+    private List<Restaurant> getRestuarantsByHazard(String hazard, List<Restaurant> restaurants){
+        List<Restaurant> restaurantList = new ArrayList<>();
+        for(Restaurant restaurant: restaurants){
+            Inspection inspection = getMostRecentInspection(restaurant);
+            if(inspection != null){
+                if(inspection.getHazardLevel().toLowerCase().equals(hazard.toLowerCase())){
+                    restaurantList.add(restaurant);
+                }
+            }
+        }
+        return restaurantList;
+    }
+
+    private List<Restaurant> getRestaurantsByViolation(String violation){
+        List<Restaurant> restaurantList = new ArrayList<>();
+        int numViolations = extractNumViolations(searchText);
+        for(Restaurant restaurant: manager){
+            int num = getRecentNumCriticalViolations(restaurant);
+            switch(violation){
+                case "less":
+                    if(num <= numViolations){
+                        restaurantList.add(restaurant);
+                    }
+                    break;
+                case "more":
+                    if(num >= numViolations){
+                        restaurantList.add(restaurant);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return restaurantList;
+    }
+
+    private List<Restaurant> getRestaurantsByViolation(String violation, List<Restaurant> restaurants){
+        List<Restaurant> restaurantList = new ArrayList<>();
+        int numViolations = extractNumViolations(searchText);
+        for(Restaurant restaurant: restaurants){
+            int num = getRecentNumCriticalViolations(restaurant);
+            switch(violation){
+                case "less":
+                    if(num <= numViolations){
+                        restaurantList.add(restaurant);
+                    }
+                    break;
+                case "more":
+                    if(num >= numViolations){
+                        restaurantList.add(restaurant);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return restaurantList;
+    }
+
+    private int extractNumViolations(String searchText){
+        final StringBuilder sb = new StringBuilder(searchText.length());
+        for(int i = 0; i < searchText.length(); i++){
+            final char c = searchText.charAt(i);
+            if(c > 47 && c < 58){
+                sb.append(c);
+            }
+        }
+        int numViolations = Integer.parseInt(sb.toString());
+        return numViolations;
     }
 
     private void getFavorites(){
@@ -733,7 +865,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case 3:
                 searchView.setQueryHint("All favorites");
-                // TODO: populate markers to be favorites only
+                mMap.clear();
+                updateMarkersByFavorite("");
                 break;
             case 4:
                 searchView.setQueryHint("Favorite, pizza, low, 5 or less");
