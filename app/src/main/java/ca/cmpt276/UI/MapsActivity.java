@@ -119,6 +119,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+//        setupBriefDescriptions();
         Intent intent = new Intent(this, ReadDataService.class);
         startService(intent);
 
@@ -202,10 +203,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return false;
             }
         });
-        setupBriefDescriptions();
     }
 
     private void setupBriefDescriptions() {
+        Log.d(TAG, "Inside setupBriefDescriptions()");
         for (Restaurant restaurant : manager) {
             for (Inspection inspection : restaurant.getInspections()) {
                 Log.d(TAG, "violations: " + inspection.getViolations().toString());
