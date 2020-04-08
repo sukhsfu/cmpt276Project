@@ -21,17 +21,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import ca.cmpt276.model.Inspection;
 import ca.cmpt276.model.Restaurant;
 import ca.cmpt276.model.RestaurantManager;
-
-
-import static ca.cmpt276.UI.MainActivity.favourite;
-import static ca.cmpt276.UI.MainActivity.restaurantList;
 
 
 /**
@@ -76,6 +70,8 @@ public class RestaurantActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+
 
     private void setupFavoriteIcon() {
         ImageView imageView = (ImageView) findViewById(R.id.imgFavorite);

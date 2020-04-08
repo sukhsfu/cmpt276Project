@@ -196,34 +196,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onQueryTextChange(String newText) {
                 if(newText.equals("") || newText == null){
-                    if(selectedSpinnerPOS == 3){
-                        mMap.clear();
-                        updateMarkersByFavorite("");
-                    }else{
-                        mMap.clear();
-                        populateAllMarkers();
-                        searchPerformed = false;
-                    }
-                }else{
-                    if(selectedSpinnerPOS == 0){
-                        searchText = newText;
-                        searchPerformed = true;
-                        updateMarkers();
-                    }
+                    mMap.clear();
+                    populateAllMarkers();
+                    searchPerformed = false;
                 }
                 return false;
             }
         });
     }
 
-    private void setupBriefDescriptions() {
+    public void setupBriefDescriptions() {
         Log.d(TAG, "Inside setupBriefDescriptions()");
         for (Restaurant restaurant : manager) {
             for (Inspection inspection : restaurant.getInspections()) {
                 Log.d(TAG, "violations: " + inspection.getViolations().toString());
                 for (Violation violation : inspection.getViolations() ) {
                     ViolationManager violationManager = violation.getManager();
-                    violationManager.populateBriefDescriptions();
+                    violationManager.populateBriefDescriptions(MapsActivity.this);
                     violation.setBriefDescription( violationManager.retrieve(violation.getType()) );
                 }
             }
@@ -248,9 +237,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             searchPerformed = true;
             selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
             updateMarkers();
-            spinner.setSelection(selectedSpinnerPOS);
-            searchView.setIconified(false);
-            searchView.setQuery(searchText, false);
+            //spinner.setSelection(selectedSpinnerPOS);
+            //searchView.setQuery(searchText, false);
         }else{
             for (Restaurant restaurant : manager) {
                 addMarker(restaurant);
@@ -292,10 +280,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
-
-        getFavorites();
-
-//        setupBriefDescriptions();
+        setupBriefDescriptions();
     }
 
     private void populateAllMarkers(){
@@ -305,6 +290,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateMarkers(){
+        getFavorites();
         mMap.clear();
         switch(selectedSpinnerPOS){
             case 0:
@@ -869,6 +855,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         switch (selectedSpinnerPOS){
             case 0:
                 searchView.setQueryHint("Pizza");
+                //searchView.clearFocus();
                 break;
             case 1:
                 searchView.setQueryHint("Low");
