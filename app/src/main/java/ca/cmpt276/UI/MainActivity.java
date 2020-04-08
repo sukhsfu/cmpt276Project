@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             spinner.setSelection(selectedSpinnerPOS);
             searchView.setIconified(false);
             searchView.setQuery(searchText, true);
+            updateRestaurantList(searchText);
         }
     }
 
@@ -117,9 +119,12 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                Log.d("SearchPerformed is: ", Boolean.toString(searchPerformed));
                 if(searchPerformed){
                     intent.putExtra(SPINNER_POS, selectedSpinnerPOS);
                     intent.putExtra(SEARCH_TEXT, searchText);
+                    Log.d("Passing: ", Integer.toString(selectedSpinnerPOS));
+                    Log.d("Passing: ", searchText);
                 }
                 startActivity(intent);
             }
@@ -292,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        searchView.setQuery("", false);
+        //searchView.setQuery("", false);
         searchView.setIconified(false);
         selectedSpinnerPOS = position;
         switch (selectedSpinnerPOS){

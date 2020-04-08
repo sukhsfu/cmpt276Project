@@ -147,8 +147,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             getLocationPermission();
             setupSwitchButton();
             setupLocationUpdates();
-
-
         }
     }
     private void initMap(){
@@ -185,8 +183,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        extractDataFromIntent();
-
         // show blue dot for user's current location
         mMap.setMyLocationEnabled(true);
 
@@ -195,6 +191,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getFavorites();
         setupSpinner();
         setupSearchView();
+        extractDataFromIntent();
         setupBriefDescriptions();
     }
 
@@ -876,7 +873,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         selectedSpinnerPOS = position;
-        searchView.setQuery("", false);
+        //searchView.setQuery("", false);
         searchView.setIconified(false);
         switch (selectedSpinnerPOS){
             case 0:
