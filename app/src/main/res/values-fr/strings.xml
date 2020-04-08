@@ -30,6 +30,8 @@
     <string name="maps_infoWin_noInsp">Pas de Données d\'Inspection.</string>
     <string name="maps_infoWin_hazLev">le Niveau de Danger: %1$s</string>
     <string name="location_permission_denied">Permission refusée.</string>
+    <string name="search">Chercher...</string>
+
 
     <string name="days_ago">il y a %1$d jours\n</string>
     <string name="jan">Janvier</string>
@@ -87,7 +89,13 @@
     <string name="briefViol_smoking">Fumer dans les zones interdites.</string>
     <string name="briefViol_level1">N\'a pas de Foodsafe niveau 1.</string>
     <string name="briefViol_FOODSAFE">Pas de Foodsafe en l\'absence de l\'opérateur.</string>
+    <string name="favorite">le favori</string>
 
 
+    <string name="searchViewHint_pizza">la Pizza</string>
+    <string name="searchViewHint_low">Faible</string>
+    <string name="searchViewHint_num">Moins de 10</string>
+    <string name="searchViewHint_favourite">les favoris</string>
+    <string name="searchViewHint_combined">les favoris, la pizza, faible, 5 ou moins</string>
 
 </resources>

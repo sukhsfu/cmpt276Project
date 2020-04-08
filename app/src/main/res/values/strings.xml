@@ -87,7 +87,13 @@
     <string name="briefViol_smoking">Smoking in prohibited areas.</string>
     <string name="briefViol_level1">Doesn\'t have Foodsafe Level 1.</string>
     <string name="briefViol_FOODSAFE">No Foodsafe in operator\'s absence.</string>
-    <string name="favorite">Favorite</string>
+    <string name="favorite">Favourite</string>
+
+    <string name="searchViewHint_pizza">Pizza</string>
+    <string name="searchViewHint_low">Low</string>
+    <string name="searchViewHint_num">Less than 10</string>
+    <string name="searchViewHint_favourite">All favourites</string>
+    <string name="searchViewHint_combined">Favorite, pizza, low, 5 or less</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <!--<string name="hello_blank_fragment">Hello blank fragment</string> -->

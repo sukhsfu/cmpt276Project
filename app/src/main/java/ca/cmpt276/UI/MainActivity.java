@@ -308,20 +308,20 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         selectedSpinnerPOS = position;
         switch (selectedSpinnerPOS){
             case 0:
-                searchView.setQueryHint("Pizza");
+                searchView.setQueryHint(getString(R.string.searchViewHint_pizza));
                 break;
             case 1:
-                searchView.setQueryHint("Low");
+                searchView.setQueryHint(getString(R.string.searchViewHint_low));
                 break;
             case 2:
-                searchView.setQueryHint("Less than 10");
+                searchView.setQueryHint(getString(R.string.searchViewHint_num));
                 break;
             case 3:
-                searchView.setQueryHint("All favorites");
+                searchView.setQueryHint(getString(R.string.searchViewHint_favourite));
                 // TODO: populate restaurant list to be favorites only
                 break;
             case 4:
-                searchView.setQueryHint("Favorite, pizza, low, 5 or less");
+                searchView.setQueryHint(getString(R.string.searchViewHint_combined));
                 break;
         }
     }
