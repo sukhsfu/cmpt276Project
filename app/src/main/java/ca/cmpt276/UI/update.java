@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,6 +16,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -27,11 +30,14 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import ca.cmpt276.model.Restaurant;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static ca.cmpt276.UI.MainActivity.restaurantList;
 
 public class update extends AppCompatDialogFragment {
     Context context;
@@ -65,12 +71,33 @@ public class update extends AppCompatDialogFragment {
                 builderdownload.setMessage("Synchronized Data with City.");
                 builderdownload.create();
                 builderdownload.show();
+                SharedPreferences sharedPreferences= context.getSharedPreferences("restaurants", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor=sharedPreferences.edit();
+                SharedPreferences sharedPreferences2= context.getSharedPreferences("Inspections", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor2=sharedPreferences2.edit();
+                Gson gson;
+                int cnt=0;
+                editor.remove("restaurant_size");
+                editor.putInt("restaurant_size",restaurantList.size());
+                editor.apply();
+                for(Restaurant restaurant:restaurantList){
+                    gson = new Gson();
+                    String json = gson.toJson(restaurant);
+                    editor.remove("restaurant_"+cnt);
+                    editor2.remove("Inspection_"+cnt);
+                    editor.putString("restaurant_"+cnt,json);
+                    if(restaurant.getInspections().size()!=0)
+                    editor2.putString("Inspection_"+cnt,restaurant.getInspections().get(0).getTrackingNumber());
+                    cnt++;
+                    editor.apply();
+                    editor2.apply();
+                }
 
                 jsonParse();
                 jsonParse2();
                 savetime();
                 builderdownload.cancel();
-
+                //add here.
 
 
             }
