@@ -306,6 +306,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 updateMarkersByCombined(searchText);
                 break;
         }
+        setupInfoWindows();
     }
 
     private void updateMarkersByName(String name){
@@ -314,7 +315,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 addMarker(restaurant);
             }
         }
-        //setupInfoWindows();
     }
 
     private void updateMarkersByHazard(String searchText){
@@ -326,7 +326,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             }
         }
-        //setupInfoWindows();
     }
 
     private void updateMarkersByViolation(String searchText){

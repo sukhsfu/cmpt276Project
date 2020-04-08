@@ -177,10 +177,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
              cnt++;
 
 
-
-
-
-
             if (restaurant.getInspections().size() != 0) {
                 Inspection inspectionRet = restaurant.getInspections().get(0);
                 for (Inspection inspection : restaurant.getInspections()) {
