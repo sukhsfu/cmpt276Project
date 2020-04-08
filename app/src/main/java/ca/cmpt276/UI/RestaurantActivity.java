@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -77,7 +78,7 @@ public class RestaurantActivity extends AppCompatActivity {
         registerClickCallbackListView();
         setupGPSClickCallback();
         getFavorites();
-        setupFavoriteIcon();//
+        setupFavoriteIcon();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -140,9 +141,35 @@ public class RestaurantActivity extends AppCompatActivity {
                 String trackingNumer = restaurant.getTrackingNumber();
                 Intent intent = MapsActivity.makeLaunchIntent(RestaurantActivity.this, trackingNumer);
                 startActivity(intent);
-                finish();
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            switch (backIndex){
+                case 0:
+                    Intent intent = new Intent(RestaurantActivity.this, MainActivity.class);
+                    if(searchPerformed){
+                        intent.putExtra(SPINNER_POS, selectedSpinnerPOS);
+                        intent.putExtra(SEARCH_TEXT, searchText);
+                    }
+                    startActivity(intent);
+                    break;
+                case 1:
+                    Intent intent1 = new Intent(RestaurantActivity.this, MapsActivity.class);
+                    if(searchPerformed){
+                        intent1.putExtra(SPINNER_POS, selectedSpinnerPOS);
+                        intent1.putExtra(SEARCH_TEXT, searchText);
+                    }
+                    startActivity(intent1);
+                    // go back to maps activity
+                    break;
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

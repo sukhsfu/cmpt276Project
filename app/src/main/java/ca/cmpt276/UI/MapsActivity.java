@@ -272,7 +272,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String restaurantName = marker.getTitle().trim();
                 Restaurant restaurant = findRestaurantInListFromLatLng(latlng, restaurantName);
                 int position = manager.getIndex(restaurant);
-                Intent intent=RestaurantActivity.makeLaunchIntent(MapsActivity.this,position, 1);
+                Intent intent=RestaurantActivity.makeLaunchIntent(MapsActivity.this, position, 1);
                 if(searchPerformed){
                     intent.putExtra(SEARCH_TEXT, searchText);
                     intent.putExtra(SPINNER_POS, selectedSpinnerPOS);
