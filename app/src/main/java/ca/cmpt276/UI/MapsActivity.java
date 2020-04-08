@@ -119,7 +119,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-//        setupBriefDescriptions();
         Intent intent = new Intent(this, ReadDataService.class);
         startService(intent);
 
@@ -147,102 +146,59 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             initMap();
             getLocationPermission();
             setupSwitchButton();
+            setupLocationUpdates();
 
 
-            // user location updates
-            locationRequest = LocationRequest.create();
-            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setInterval(20 * 1000);
-            locationCallback = new LocationCallback() {
-                @Override
-                public void onLocationResult(LocationResult locationResult) {
-                    if (locationResult == null) {
-                        return;
-                    }
-                    for (Location location : locationResult.getLocations()) {
-                        if (location != null) {
-
-                            LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                            if(mFusedLocationProviderClient != null){
-                                mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
-                            }
-                            moveCamera(curLocation);
-                        }
-                    }
-                }
-            };
-        }
-
-        spinner = (Spinner) findViewById(R.id.mapSpinner);
-        spinner.setOnItemSelectedListener(this);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.menu_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
-        searchView = findViewById(R.id.mapSearchView);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                String text = searchView.getQuery().toString();
-                if(text != null || !text.equals("")){
-                    searchText = text;
-                    searchPerformed = true;
-                    updateMarkers();
-                }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if(newText.equals("") || newText == null){
-                    mMap.clear();
-                    populateAllMarkers();
-                    searchPerformed = false;
-                    if(selectedSpinnerPOS == 3){
-                        mMap.clear();
-                        updateMarkersByFavorite("");
-                    }
-                }else{
-                    if(selectedSpinnerPOS == 0){
-                        searchText = newText;
-                        searchPerformed = true;
-                        updateMarkers();
-                    }
-                }
-
-                return false;
-            }
-        });
-
-        getFavorites();
-    }
-
-    public void setupBriefDescriptions() {
-        Log.d(TAG, "Inside setupBriefDescriptions()");
-        for (Restaurant restaurant : manager) {
-            for (Inspection inspection : restaurant.getInspections()) {
-                //Log.d(TAG, "violations: " + inspection.getViolations().toString());
-                for (Violation violation : inspection.getViolations() ) {
-                    ViolationManager violationManager = violation.getManager();
-                    violationManager.populateBriefDescriptions(MapsActivity.this);
-                    violation.setBriefDescription( violationManager.retrieve(violation.getType()) );
-                }
-            }
         }
     }
-
-
     private void initMap(){
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(MapsActivity.this);
     }
 
+    private void setupLocationUpdates() {
+        // user location updates
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(20 * 1000);
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+
+                        LatLng curLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        if(mFusedLocationProviderClient != null){
+                            mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
+                        }
+                        moveCamera(curLocation);
+                    }
+                }
+            }
+        };
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        extractDataFromIntent();
 
+        // show blue dot for user's current location
+        mMap.setMyLocationEnabled(true);
+
+        setupInfoWindows();
+        setupInfoWindowListener();
+        getFavorites();
+        setupSpinner();
+        setupSearchView();
+        setupBriefDescriptions();
+    }
+
+    private void extractDataFromIntent() {
         Intent intent = getIntent();
 
         if(intent.hasExtra(SPINNER_POS) && intent.hasExtra(SEARCH_TEXT)){
@@ -251,7 +207,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
             updateMarkers();
             spinner.setSelection(selectedSpinnerPOS);
-            searchView.setQuery(searchText, true);
+            searchView.setQuery(searchText, false);
             searchView.setIconified(false);
         }else{
             for (Restaurant restaurant : manager) {
@@ -273,12 +229,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 getUserLocation();
             }
         }
+    }
 
-        // show blue dot for user's current location
-        mMap.setMyLocationEnabled(true);
-
-        setupInfoWindows();
-
+    private void setupInfoWindowListener() {
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
@@ -286,7 +239,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String restaurantName = marker.getTitle().trim();
                 Restaurant restaurant = findRestaurantInListFromLatLng(latlng, restaurantName);
                 int position = manager.getIndex(restaurant);
-                Intent intent=RestaurantActivity.makeLaunchIntent(MapsActivity.this, position, 1);
+                Intent intent= RestaurantActivity.makeLaunchIntent(MapsActivity.this, position, 1);
                 if(searchPerformed){
                     intent.putExtra(SEARCH_TEXT, searchText);
                     intent.putExtra(SPINNER_POS, selectedSpinnerPOS);
@@ -294,10 +247,69 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity(intent);
             }
         });
-        setupBriefDescriptions();
     }
 
+    private void setupSearchView() {
+        searchView = findViewById(R.id.mapSearchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String text = searchView.getQuery().toString();
+                if(text != null || !text.equals("")){
+                    searchText = text;
+                    searchPerformed = true;
+                    updateMarkers();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.equals("") || newText == null){
+                    populateAllMarkers();
+                    searchPerformed = false;
+                    if(selectedSpinnerPOS == 3){
+                        updateMarkersByFavorite("");
+                    }
+                }else{
+                    if(selectedSpinnerPOS == 0){
+                        searchText = newText;
+                        searchPerformed = true;
+                        updateMarkers();
+                    }
+                }
+
+                return false;
+            }
+        });
+    }
+
+    private void setupSpinner() {
+        spinner = (Spinner) findViewById(R.id.mapSpinner);
+        spinner.setOnItemSelectedListener(this);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.menu_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+    }
+
+    public void setupBriefDescriptions() {
+        Log.d(TAG, "Inside setupBriefDescriptions()");
+        for (Restaurant restaurant : manager) {
+            for (Inspection inspection : restaurant.getInspections()) {
+                //Log.d(TAG, "violations: " + inspection.getViolations().toString());
+                for (Violation violation : inspection.getViolations() ) {
+                    ViolationManager violationManager = violation.getManager();
+                    violationManager.populateBriefDescriptions(MapsActivity.this);
+                    violation.setBriefDescription( violationManager.retrieve(violation.getType()) );
+                }
+            }
+        }
+    }
+
+
     private void populateAllMarkers(){
+        mMap.clear();
         for (Restaurant restaurant : manager) {
             addMarker(restaurant);
         }
@@ -359,6 +371,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void updateMarkersByFavorite(String searchText){
         getFavorites();
+        mMap.clear();
         String search = searchText.trim().toLowerCase();
         if(search.equals("all favorites") || search.equals("all") || search.equals("")){
             for(Restaurant restaurant: favorites){
@@ -847,7 +860,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 public void onComplete(@NonNull Task<Location> task) {
                     if (task.isSuccessful()) {
                         Location curLocation = task.getResult();
-                        moveCamera(new LatLng(curLocation.getLatitude(), curLocation.getLongitude()));
+                        if(curLocation != null){
+                            moveCamera(new LatLng(curLocation.getLatitude(), curLocation.getLongitude()));
+                        }
                     }
                 }
             });
@@ -875,7 +890,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case 3:
                 searchView.setQueryHint(getString(R.string.searchViewHint_favourite));
-                mMap.clear();
                 updateMarkersByFavorite("");
                 break;
             case 4:
