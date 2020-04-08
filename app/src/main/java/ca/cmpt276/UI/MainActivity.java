@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -56,17 +57,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = getIntent();
-        if(intent.hasExtra(SPINNER_POS) && intent.hasExtra(SEARCH_TEXT)){
-            searchText = intent.getStringExtra(SEARCH_TEXT);
-            searchPerformed = true;
-            selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
-            //Toast.makeText(this, "spinner " + selectedSpinnerPOS + " " + searchText, Toast.LENGTH_SHORT).show();
-            //updateRestaurantList(); //cases 0,1,2,3,4
-        }else{
-            // TODO populate entire list normally
-        }
-
         setOutputData();//set data to restaurantText and Hazards list
         booltorestaurant();
         setupRestaurantInList();//pass restaurant and  Hazards to jadapter.
@@ -98,11 +88,21 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 if(newText.equals("") || newText == null){
                     searchPerformed = false;
                 }
+
                 updateRestaurantList(newText);
                 return false;
             }
         });
 
+        Intent intent = getIntent();
+        if(intent.hasExtra(SPINNER_POS) && intent.hasExtra(SEARCH_TEXT)){
+            searchText = intent.getStringExtra(SEARCH_TEXT);
+            searchPerformed = true;
+            selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
+            spinner.setSelection(selectedSpinnerPOS);
+            searchView.setIconified(false);
+            searchView.setQuery(searchText, true);
+        }
     }
 
     @Override
@@ -318,7 +318,6 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
                 break;
             case 3:
                 searchView.setQueryHint("All favorites");
-                // TODO: populate restaurant list to be favorites only
                 break;
             case 4:
                 searchView.setQueryHint("Favorite, pizza, low, 5 or less");
