@@ -196,9 +196,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onQueryTextChange(String newText) {
                 if(newText.equals("") || newText == null){
-                    mMap.clear();
-                    populateAllMarkers();
-                    searchPerformed = false;
+                    if(selectedSpinnerPOS == 3){
+                        mMap.clear();
+                        updateMarkersByFavorite("");
+                    }else{
+                        mMap.clear();
+                        populateAllMarkers();
+                        searchPerformed = false;
+                    }
+                }else{
+                    if(selectedSpinnerPOS == 0){
+                        searchText = newText;
+                        searchPerformed = true;
+                        updateMarkers();
+                    }
                 }
                 return false;
             }
