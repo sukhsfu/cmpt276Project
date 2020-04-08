@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -302,19 +301,19 @@ public class MainActivity extends AppCompatActivity implements jadapter.OnNoteLi
         selectedSpinnerPOS = position;
         switch (selectedSpinnerPOS){
             case 0:
-                searchView.setQueryHint("Pizza");
+                searchView.setQueryHint(getString(R.string.searchViewHint_pizza));
                 break;
             case 1:
-                searchView.setQueryHint("Low");
+                searchView.setQueryHint(getString(R.string.searchViewHint_low));
                 break;
             case 2:
-                searchView.setQueryHint("Less than 10");
+                searchView.setQueryHint(getString(R.string.searchViewHint_num));
                 break;
             case 3:
-                searchView.setQueryHint("All favorites");
+                searchView.setQueryHint(getString(R.string.searchViewHint_favourite));
                 break;
             case 4:
-                searchView.setQueryHint("Favorite, pizza, low, 5 or less");
+                searchView.setQueryHint(getString(R.string.searchViewHint_combined));
                 break;
         }
     }

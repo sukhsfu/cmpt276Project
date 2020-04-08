@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="menu_array">
-        <item>Name</item>
-        <item>Hazard</item>
-        <item>Violations</item>
-        <item>Favorites</item>
-        <item>Combined</item>
+        <item>@string/search_name</item>
+        <item>@string/search_hazard</item>
+        <item>@string/search_viol</item>
+        <item>@string/search_favorites</item>
+        <item>@string/search_combined</item>
     </string-array>
 </resources>

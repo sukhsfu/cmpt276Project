@@ -29,7 +29,7 @@
     <string name="maps_infoWin_noInsp">No inspections found.</string>
     <string name="maps_infoWin_hazLev">Hazard Level: %1$s</string>
     <string name="location_permission_denied">Permission Denied</string>
-    <string name="search">Search...</string>
+    <string name="search">Search…</string>
 
     <string name="days_ago">%1$d days ago\n</string>
     <string name="jan">January</string>
@@ -94,6 +94,13 @@
     <string name="searchViewHint_num">Less than 10</string>
     <string name="searchViewHint_favourite">All favourites</string>
     <string name="searchViewHint_combined">Favorite, pizza, low, 5 or less</string>
+
+    <string name="search_name">Name</string>
+    <string name="search_hazard">Hazard</string>
+    <string name="search_viol">Violations</string>
+    <string name="search_favorites">Favourites</string>
+    <string name="search_combined">Combined</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <!--<string name="hello_blank_fragment">Hello blank fragment</string> -->

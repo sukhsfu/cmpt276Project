@@ -30,7 +30,7 @@
     <string name="maps_infoWin_noInsp">Pas de Données d\'Inspection.</string>
     <string name="maps_infoWin_hazLev">le Niveau de Danger: %1$s</string>
     <string name="location_permission_denied">Permission refusée.</string>
-    <string name="search">Chercher...</string>
+    <string name="search">Chercher…</string>
 
 
     <string name="days_ago">il y a %1$d jours\n</string>
@@ -97,5 +97,12 @@
     <string name="searchViewHint_num">Moins de 10</string>
     <string name="searchViewHint_favourite">les favoris</string>
     <string name="searchViewHint_combined">les favoris, la pizza, faible, 5 ou moins</string>
+
+    <string name="search_name">le Nom</string>
+    <string name="search_hazard">le Danger</string>
+    <string name="search_viol">les Violations</string>
+    <string name="search_favorites">les Favoris</string>
+    <string name="search_combined">filtre combiné</string>
+
 
 </resources>
