@@ -196,13 +196,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onQueryTextChange(String newText) {
                 if(newText.equals("") || newText == null){
+                    mMap.clear();
+                    populateAllMarkers();
+                    searchPerformed = false;
                     if(selectedSpinnerPOS == 3){
                         mMap.clear();
                         updateMarkersByFavorite("");
-                    }else{
-                        mMap.clear();
-                        populateAllMarkers();
-                        searchPerformed = false;
                     }
                 }else{
                     if(selectedSpinnerPOS == 0){
@@ -211,6 +210,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         updateMarkers();
                     }
                 }
+
                 return false;
             }
         });
@@ -222,7 +222,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "Inside setupBriefDescriptions()");
         for (Restaurant restaurant : manager) {
             for (Inspection inspection : restaurant.getInspections()) {
-                Log.d(TAG, "violations: " + inspection.getViolations().toString());
+                //Log.d(TAG, "violations: " + inspection.getViolations().toString());
                 for (Violation violation : inspection.getViolations() ) {
                     ViolationManager violationManager = violation.getManager();
                     violationManager.populateBriefDescriptions(MapsActivity.this);
@@ -250,8 +250,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             searchPerformed = true;
             selectedSpinnerPOS = intent.getIntExtra(SPINNER_POS, 0);
             updateMarkers();
-            //spinner.setSelection(selectedSpinnerPOS);
-            //searchView.setQuery(searchText, false);
+            spinner.setSelection(selectedSpinnerPOS);
+            searchView.setQuery(searchText, true);
+            searchView.setIconified(false);
         }else{
             for (Restaurant restaurant : manager) {
                 addMarker(restaurant);
@@ -357,6 +358,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateMarkersByFavorite(String searchText){
+        getFavorites();
         String search = searchText.trim().toLowerCase();
         if(search.equals("all favorites") || search.equals("all") || search.equals("")){
             for(Restaurant restaurant: favorites){
@@ -561,7 +563,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MarkerOptions options = new MarkerOptions();
         options.position(displayRestaurant);
         options.title(restaurant.getName());
-        Log.d("Options name: ", options.getTitle());
         String snippet;
         if (restaurant.getInspections().isEmpty()) {
             options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
@@ -570,7 +571,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             Inspection inspection = getMostRecentInspection(restaurant);
             String hazardLev = inspection.getHazardLevel().replaceAll("[^a-zA-Z0-9 &]", "");
-            Log.d(TAG, inspection.toString());
 
             if (hazardLev.equalsIgnoreCase("low")) {
                 options.icon(BitmapDescriptorFactory.fromResource(R.mipmap.low_hazard_green_check));
@@ -855,7 +855,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void moveCamera(LatLng latlng){
-        Log.d(TAG, "move Camera: moving the camera to: lat: " + latlng.latitude + " long: " + latlng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, MapsActivity.DEFAULT_ZOOM));
     }
 
@@ -864,10 +863,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //String item = parent.getItemAtPosition(position).toString();
         //Toast.makeText(this, "Position is: " + position, Toast.LENGTH_SHORT).show();
         selectedSpinnerPOS = position;
+        searchView.setQuery("", false);
+        searchView.setIconified(false);
         switch (selectedSpinnerPOS){
             case 0:
                 searchView.setQueryHint(getString(R.string.searchViewHint_pizza));
-                //searchView.clearFocus();
                 break;
             case 1:
                 searchView.setQueryHint(getString(R.string.searchViewHint_low));

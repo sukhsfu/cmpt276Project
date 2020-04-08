@@ -276,10 +276,10 @@ public class ReadDataService extends Service {
 
     private void debugData() {
         for (Restaurant restaurant : manager) {
-            Log.d("LogAllData", "Restaurant: " + restaurant.toString());
+            //Log.d("LogAllData", "Restaurant: " + restaurant.toString());
         }
         for (Inspection inspection : inspections) {
-            Log.d("LogAllData", "Inspection: " + inspection.toString());
+            //Log.d("LogAllData", "Inspection: " + inspection.toString());
         }
 
     }

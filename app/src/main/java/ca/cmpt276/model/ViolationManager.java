@@ -28,7 +28,7 @@ public class ViolationManager extends AppCompatActivity implements Iterable<Viol
     }
 
     public void populateBriefDescriptions(Context context) {
-        Log.d("ViolationManager", "populating now.");
+        //Log.d("ViolationManager", "populating now.");
         populate(context);
     }
 
@@ -38,7 +38,7 @@ public class ViolationManager extends AppCompatActivity implements Iterable<Viol
         for(ViolationsBriefDescription description: descriptions){
             if(description.getType() == type){
                 briefDescription = description.getDescription();
-                Log.d("ViolationManager_retrieve" , "brief description: " + briefDescription);
+                //Log.d("ViolationManager_retrieve" , "brief description: " + briefDescription);
                 return briefDescription;
             }
         }
