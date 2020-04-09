@@ -726,7 +726,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
       return line;
-
     }
 
     public void comparetime(){
@@ -767,8 +766,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                         if((c-d)>=(20*60))
                         {
-
-
                             if(last_modified.equals(last_modified2)) {
 
                             }
@@ -786,7 +783,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         e.printStackTrace();
                     }
                 }
-
             }
         });
 

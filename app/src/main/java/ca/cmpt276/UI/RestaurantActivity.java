@@ -158,7 +158,7 @@ public class RestaurantActivity extends AppCompatActivity {
                     break;
             }
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
